@@ -1,3 +1,5 @@
 numpy
 netCDF4
-flake8
+git-lint
+pylint
+pep8

@@ -21,12 +21,12 @@ Thor - The web server of WeatherMagic
 Dependencies
 ------------
 
-This project is built using Python 3. You need to insteall Python and its package manager pip in order to run thor.
+This project is built using Python 3. You need to insteall Python and its package manager pip in order to run thor. You'll also need some netcdf libraries.
 
 On Debian or Ubuntu:
 
 ```bash
-sudo apt-get install python3 python3-pip
+sudo apt-get install python3 python3-pip netcdf-bin libhdf5-serial-dev libnetcdf-dev
 ```
 
 
