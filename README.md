@@ -101,7 +101,7 @@ which python
 You're now ready to install the additional python dependencies into your virtual environment using pip:
 
 ```bash
-pip3 install -r requirements.txt
+pip3 install -U -r requirements.txt
 ```
 
 In order to escape the virtualenv one can either close the terminal or run:
