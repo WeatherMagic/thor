@@ -65,7 +65,7 @@ Development requires a couple additional dependencies (see also additional pip d
 On Debian/Ubuntu:
 
 ```bash
-sudo apt-get install python3-dev virtualenv
+sudo apt-get install python3-dev python-virtualenv
 ```
 
 ON macOS:
