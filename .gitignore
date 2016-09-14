@@ -5,8 +5,4 @@ bin
 include
 lib
 pip-selfcheck.json
-env/.Python
-env/bin
-env/include
-env/lib
-env/pip-selfcheck.json
+env
