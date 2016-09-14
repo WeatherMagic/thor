@@ -29,11 +29,6 @@ On Debian or Ubuntu:
 sudo apt-get install python3 python3-pip
 ```
 
-On macOS with homebrew:
-
-```bash
-Courage!
-```
 
 Installation
 ------------
@@ -43,7 +38,7 @@ To install from source first install the dependencies detailed above and then ru
 ```bash
 git clone https://github.com/WeatherMagic/thor.git
 cd thor
-sudo pip3 install -r requirements.txt
+sudo pip3 install -U -r requirements.txt
 sudo pip3 install .
 ```
 
@@ -70,7 +65,7 @@ Development requires a couple additional dependencies (see also additional pip d
 On Debian/Ubuntu:
 
 ```bash
-sudo apt-get install virtualenv pep8 pylint python3-pytest python3-yaml
+sudo apt-get install python3-dev virtualenv
 ```
 
 ON macOS:
@@ -101,18 +96,7 @@ which python
 You're now ready to install the additional python dependencies into your virtual environment using pip:
 
 ```bash
-pip3 install -U -r requirements.txt
-```
-
-In order to escape the virtualenv one can either close the terminal or run:
-
-```bash
-deactivate
-```
-To install the development version of comet-sensor on your folder into your newly created virtualenv, make sure that you didn't just deactivate it, run:
-
-```bash
-pip3 install --editable .
+pip3 install -U -r dev-requirements.txt
 ```
 
 To keep everything nice and clean we should also lint our code before commiting it, still standing in the root of the source code folder:
@@ -121,6 +105,11 @@ To keep everything nice and clean we should also lint our code before commiting 
 ln -s `which pre-commit.git-lint.sh` .git/hooks/pre-commit
 ```
 
+In order to escape the virtualenv one can either close the terminal or run:
+
+```bash
+deactivate
+```
 
 Testing
 -------
