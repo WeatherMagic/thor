@@ -67,8 +67,17 @@ Development
 
 Development requires a couple additional dependencies (see also additional pip dependencies after virtualenv is set up):
 
+On Debian/Ubuntu:
+
 ```bash
 sudo apt-get install virtualenv pep8 pylint python3-pytest python3-yaml
+```
+
+ON macOS:
+
+```bash
+brew install python3
+pip3 install virtualenv
 ```
 
 It's recommended to use virtualenv for development which allows for setup and other possibly system damaging procedures without actually running the risk of doing so. To set up the virtual environment for the first time, stand in the source code folder and run:
@@ -92,7 +101,7 @@ which python
 You're now ready to install the additional python dependencies into your virtual environment using pip:
 
 ```bash
-pip3 install -r development-requirements.txt
+pip3 install -r requirements.txt
 ```
 
 In order to escape the virtualenv one can either close the terminal or run:
