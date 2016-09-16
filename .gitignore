@@ -1,0 +1,8 @@
+
+# Python files
+.Python
+bin
+include
+lib
+pip-selfcheck.json
+env
