@@ -2,9 +2,10 @@
 
 The following example will extract data from a NetCDF file:
 
-Variables consists of arrays, with the number of dimensions defined by the variable attribute. For example, the air/ta variable has three dimensions - time, lat, lon. 
+- Variables consists of arrays, with the number of dimensions defined by the variable attribute. For example, the air/ta variable has three dimensions - time, lat, lon. 
+- The time is an array with numbers that represent the number of days from the date specified within DIMENSION ATTRIBUTES.
+- Each position in the array of the air temperature maps to the same index in the time array, meaning time[i] is the date for air[i][rlong][rlat]
 
-The time is an array with numbers that represent the number of days from the date specified within DIMENSION ATTRIBUTES.
 
 ```python
 
