@@ -1,5 +1,4 @@
-Thor - The web server of WeatherMagic
-=============================
+# Thor - The web server of WeatherMagic
 
 [![Build Status](https://travis-ci.org/WeatherMagic/thor.svg?branch=master)](https://travis-ci.org/WeatherMagic/thor)
 
@@ -18,8 +17,7 @@ Thor - The web server of WeatherMagic
 <!-- markdown-toc end -->
 
 
-Dependencies
-------------
+# Installation of dependencies
 
 This project is built using Python 3. You need to insteall Python and its package manager pip in order to run thor. You'll also need some netcdf libraries.
 
@@ -29,36 +27,15 @@ On Debian or Ubuntu:
 sudo apt-get install python3 python3-pip netcdf-bin libhdf5-serial-dev libnetcdf-dev
 ```
 
-
-Installation
-------------
-
-To install from source first install the dependencies detailed above and then run the following:
+ON macOS:
 
 ```bash
-git clone https://github.com/WeatherMagic/thor.git
-cd thor
-sudo pip3 install -U -r requirements.txt
-sudo pip3 install .
+brew install python3 gfindutils
+pip3 install virtualenv
 ```
 
 
-
-Usage
------
-
-Magic!
-
-
-License
--------
-
-You are granted a licensed to use this program and all of it's components, which we hold the copyright of, under the GNU Affero General Public License version 3. A complete copy of the license is available in the LICENSE.txt file and can also be viewed on the [GNU website](http://www.gnu.org/licenses/agpl-3.0.html).
-
-
-
-Development
------------
+# Installation for Development
 
 Development requires a couple additional dependencies (see also additional pip dependencies after virtualenv is set up):
 
@@ -68,29 +45,16 @@ On Debian/Ubuntu:
 sudo apt-get install python3-dev python-virtualenv
 ```
 
-ON macOS:
-
-```bash
-brew install python3
-pip3 install virtualenv
-```
-
 It's recommended to use virtualenv for development which allows for setup and other possibly system damaging procedures without actually running the risk of doing so. To set up the virtual environment for the first time, stand in the source code folder and run:
 
 ```bash
-virtualenv -p /usr/bin/python3 env
+virtualenv -p python3 env
 ```
 
 Then activate the environment, this is the only thing you need to do on consecutive shells you want to develop in:
 
 ```bash
 source env/bin/activate
-```
-
-You can test that you are in the virtualenv by checking that the following command results in a path which ends in your source code folder.
-
-```bash
-which python
 ```
 
 You're now ready to install the additional python dependencies into your virtual environment using pip:
@@ -102,8 +66,10 @@ pip3 install -U -r dev-requirements.txt
 To keep everything nice and clean we should also lint our code before commiting it, still standing in the root of the source code folder:
 
 ```bash
-ln -s `which pre-commit.git-lint.sh` .git/hooks/pre-commit
+ln -s src/commit-hook.bash .git/hooks/pre-commit
 ```
+
+## Exiting virtualenv
 
 In order to escape the virtualenv one can either close the terminal or run:
 
@@ -111,11 +77,35 @@ In order to escape the virtualenv one can either close the terminal or run:
 deactivate
 ```
 
-Testing
--------
+## Testing
 
 Before submitting any pull requests the code should be run through the linter as described under [Development](#development) but also pass all the existing test. Running these on your local machine is as simple as:
 
 ```bash
 py.test tests/
 ```
+
+
+# Installation
+
+To install from source first install the dependencies detailed above and then run the following:
+
+```bash
+git clone https://github.com/WeatherMagic/thor.git
+cd thor
+sudo pip3 install -U -r requirements.txt
+sudo pip3 install .
+```
+
+
+# Usage
+
+Magic!
+
+
+# License
+
+You are granted a licensed to use this program and all of it's components, which we hold the copyright of, under the GNU Affero General Public License version 3. A complete copy of the license is available in the LICENSE.txt file and can also be viewed on the [GNU website](http://www.gnu.org/licenses/agpl-3.0.html).
+
+
+
