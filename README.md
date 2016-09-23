@@ -18,7 +18,7 @@
 <!-- markdown-toc end -->
 
 
-# Installation for running
+# Dependencies
 
 This project is built using Python 3. You need to insteall Python and its package manager pip in order to run thor. You'll also need some netcdf libraries.
 
@@ -28,7 +28,7 @@ On Debian or Ubuntu:
 sudo apt-get install python3 python3-pip netcdf-bin libhdf5-serial-dev libnetcdf-dev
 ```
 
-ON macOS:
+On macOS:
 
 ```bash
 brew install python3 gfindutils
@@ -87,7 +87,7 @@ py.test tests/
 ```
 
 
-# Installation
+# Installation for production
 
 To install from source first install the dependencies detailed above and then run the following:
 
