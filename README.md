@@ -7,17 +7,18 @@
 **Table of Contents**
 
 - [Thor - The web server of WeatherMagic](#thor---the-web-server-of-weathermagic)
-    - [Dependencies](#dependencies)
-    - [Installation](#installation)
-    - [Usage](#usage)
-    - [License](#license)
-    - [Development](#development)
+- [Installation for running](#installation-for-running)
+- [Installation for development](#installation-for-development)
+    - [Exiting virtualenv](#exiting-virtualenv)
     - [Testing](#testing)
+- [Installation](#installation)
+- [Usage](#usage)
+- [License](#license)
 
 <!-- markdown-toc end -->
 
 
-# Installation of dependencies
+# Installation for running
 
 This project is built using Python 3. You need to insteall Python and its package manager pip in order to run thor. You'll also need some netcdf libraries.
 
@@ -35,7 +36,7 @@ pip3 install virtualenv
 ```
 
 
-# Installation for Development
+# Installation for development
 
 Development requires a couple additional dependencies (see also additional pip dependencies after virtualenv is set up):
 
