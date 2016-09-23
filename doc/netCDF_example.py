@@ -51,8 +51,9 @@ for var in nc_fid.variables:
 lats = nc_fid.variables['lat'][:] 
 lons = nc_fid.variables['lon'][:]
 time = nc_fid.variables['time'][:]
+plev = nc_fid.variables['plev'][:]
 
-air = nc_fid.variables['ta200'][:] # three dimensional array
+#air = nc_fid.variables['taLEVEL'][:] #Exchange level with info from file
+# three dimensional array
 # airt[time][longitude][latitude]
 
-plev = nc_fid.variables['plev'][:]
