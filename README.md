@@ -7,11 +7,11 @@
 **Table of Contents**
 
 - [Thor - The web server of WeatherMagic](#thor---the-web-server-of-weathermagic)
-- [Installation for running](#installation-for-running)
+- [Dependencies](#dependencies)
 - [Installation for development](#installation-for-development)
     - [Exiting virtualenv](#exiting-virtualenv)
     - [Testing](#testing)
-- [Installation](#installation)
+- [Installation for production](#installation-for-production)
 - [Usage](#usage)
 - [License](#license)
 
@@ -107,6 +107,3 @@ Magic!
 # License
 
 You are granted a licensed to use this program and all of it's components, which we hold the copyright of, under the GNU Affero General Public License version 3. A complete copy of the license is available in the LICENSE.txt file and can also be viewed on the [GNU website](http://www.gnu.org/licenses/agpl-3.0.html).
-
-
-
