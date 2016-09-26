@@ -32,4 +32,4 @@ A simple guide on how to get climate data netCDF files from www.earthsystemcog.c
 ## Viewing netCDF files
 1. A simple way to view the netCDF files is with ncview it can be downloaded from http://meteora.ucsd.edu/~pierce/ncview_home_page.html
 2. Once a nerCDF file is downloaded and opend with ncview the data can be visualized this is done by pressing the variable of intresst.
-
+3. OBS! With most climate data models there is only one variable of interesst often by the same name as the file. Press it and nothing else.
