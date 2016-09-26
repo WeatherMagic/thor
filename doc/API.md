@@ -11,14 +11,16 @@ The URL-scheme are as follows:
 /api/dimension/zoom-level/long/lat/year/month
 ```
 
-Where ''dimension'' is one of the following: 
+Where the two schemes gives different resolution on data. The first returns interpolated data for every month, with extreme values for that month. The second URL scheme returns data points for every day during specified month. 
+
+** ''dimension'' is one of the following: **
 
 - temperature
 - air-pressure
 - precipitation
 - water-level
 
-Zoom level is one of a predefined set of zoom levels, these are not yet specified.
+**Zoom level is one of a predefined set of zoom levels, these are not yet specified.**
 
 All methods must be called using HTTP(S). Arguments can be passed as GET or POST params, or a mix.
 
