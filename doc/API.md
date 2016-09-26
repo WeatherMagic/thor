@@ -29,15 +29,19 @@ The response contains a JSON object, which at the top level contains a boolean v
 Example of successful request:
 
 ```json
-"ok": true
-"other-stuff": [All the goodie simulations here]
+{
+    "ok": true
+    "other-stuff": [All the goodie simulations here]
+}
 ```
 
 Example of a non successful request: 
 
 ```
-"ok": false
-"error": "ERROR MESSAGE"
+{
+    "ok": false
+    "error": "ERROR MESSAGE"
+}
 ```
 
 For more specific information on each function, please see the respective functions:
