@@ -1,4 +1,4 @@
-# netCDF README
+# earthsystemcog README
 A simple guide on how to get climate data netCDF files from www.earthsystemcog.com
 
 ## Getting started
