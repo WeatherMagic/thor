@@ -42,8 +42,8 @@ Example of a non successful request:
 
 For more specific information on each function, please see the respective functions:
 
-[temperature](temperature.md)
-[air-pressure](air-pressure.md)
-[precipitation](precipitation.md)
-[water-level](water-level.md)
+- [temperature](temperature.md)
+- [air-pressure](air-pressure.md)
+- [precipitation](precipitation.md)
+- [water-level](water-level.md)
 
