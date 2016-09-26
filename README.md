@@ -78,15 +78,6 @@ In order to escape the virtualenv one can either close the terminal or run:
 deactivate
 ```
 
-## Testing
-
-Before submitting any pull requests the code should be run through the linter as described under [Development](#development) but also pass all the existing test. Running these on your local machine is as simple as:
-
-```bash
-py.test tests/
-```
-
-
 # Installation for production
 
 To install from source first install the dependencies detailed above and then run the following:
