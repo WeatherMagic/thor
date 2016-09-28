@@ -31,7 +31,7 @@ sudo apt-get install python3 python3-pip netcdf-bin libhdf5-serial-dev libnetcdf
 On macOS:
 
 ```bash
-brew install python3 gfindutils
+brew install python3 findutils
 pip3 install virtualenv
 ```
 
