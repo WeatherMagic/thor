@@ -1,4 +1,4 @@
-# Earth System CoG README
+# Earth System CoG summary
 A simple guide on how to get climate data netCDF files from www.earthsystemcog.org
 
 ## Getting started
@@ -33,3 +33,6 @@ A simple guide on how to get climate data netCDF files from www.earthsystemcog.o
 1. A simple way to view the netCDF files is with ncview it can be downloaded from http://meteora.ucsd.edu/~pierce/ncview_home_page.html
 2. Once a nerCDF file is downloaded and opend with ncview the data can be visualized this is done by pressing the variable of intresst.
 3. OBS! With most climate data models there is only one variable of interesst often by the same name as the file. Press it and nothing else.
+
+## Variable categori
+When choosing data from earthsystemCoG there are a lot of different categories to choose from. This text is ment to explain what those different categories are and what the variables in them stand for.
