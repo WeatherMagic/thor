@@ -62,5 +62,22 @@ After the region name there is always a number if the number is high say 44 it m
 
 After the number there can be and "i" if it is there it means that the 2D map has been projected on a sphere.
 
-###
+### Institute
+Self explanitory. We use smhi
 
+### Driving model
+* CNRM-CERFACS-CNRM-CM5 a french model from 1995
+* ECMWF-ERAINT is a global atmospheric reanalysis from 1979, continuously updated in real time.
+* ICHEC-EC-EARTH Irish model
+* IPSL-IPSL-CM5A-MR The Institut Pierre Simon Laplace active since 1995
+* MOHC-HadGEM2-ES Met Office Hadley Centre active from 1990 from UK, uses data from the past 100 years to predict the next 100 years
+* MPI-M-MPI-ESM-LR Max-Planck-institut for meteorologie German
+
+other things to note
+* MR - medium resolution
+* LR - low resolution
+* A - Atomosphere
+* ES - Earth system
+* CC - Carbon cycle
+
+### 
