@@ -80,4 +80,11 @@ other things to note
 * ES - Earth system
 * CC - Carbon cycle
 
-### 
+### Experiment
+What type of data are we looking at?
+* Evaluation - Used to evaluate model with historical data
+* Historical - Historical data 
+* rcp - prescribed greenhouse-gasconcentration pathways throughout the 21st century corresponding to different radiative forcing stabilization levels by the year 2100.
+* rcp26 - lvl 2.6
+* rcp45 - lvl 4.5 high probability.
+* rcp85 - lvl 8.5 high probability.
