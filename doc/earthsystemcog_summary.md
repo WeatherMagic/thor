@@ -35,4 +35,32 @@ A simple guide on how to get climate data netCDF files from www.earthsystemcog.o
 3. OBS! With most climate data models there is only one variable of interesst often by the same name as the file. Press it and nothing else.
 
 ## Variable categori
-When choosing data from earthsystemCoG there are a lot of different categories to choose from. This text is ment to explain what those different categories are and what the variables in them stand for.
+When choosing a project in earthsystemCoG and searching for data in it there are a lot of different categories to choose from. This text is ment to explain what those different categories are and what the variables in them stand for.
+
+### Project
+What project do you want to serch for data in? Often the same as the project you are in but certain projects can have "sub" projects.
+
+### Product
+???
+
+### Domain
+What region is the data from? The normal regions are:
+
+* AFR - Africa
+* ANT - Antartica
+* ARC - Arctic
+* AUS - Australia
+* CAM - Central America
+* EAS - East America
+* EUR - Europe
+* MNA - 
+* NAM - 
+* SAM - 
+* WAS - West America
+
+After the region name there is always a number if the number is high say 44 it means low resolution. If the number is low it means high resolution.
+
+After the number there can be and "i" if it is there it means that the 2D map has been projected on a sphere.
+
+###
+
