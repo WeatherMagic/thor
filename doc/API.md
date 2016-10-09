@@ -7,8 +7,8 @@ This document outlines the Thor Web API.
 The URL-scheme are as follows:
 
 ```
-/api/dimension/zoom-level/long/lat/year
-/api/dimension/zoom-level/long/lat/year/month
+/api/dimension
+/api/dimension
 ```
 
 Where the two schemes gives different resolution on data. The first returns interpolated data for every month, with extreme values for that month. The second URL scheme returns data points for every day during specified month. 
@@ -19,6 +19,16 @@ Where the two schemes gives different resolution on data. The first returns inte
 - air-pressure
 - precipitation
 - water-level
+
+Each request needs to provide parameters either in URL or as a json data object: 
+
+- zoom-level
+- longitude
+- latitude
+- year
+- month (optional)
+
+If month is omitted, data returned will be as filtered over a month. If month is specified, data points for each day will be returned. 
 
 **Zoom level is one of a predefined set of zoom levels, these are not yet specified.**
 
