@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 
-from routes import *
-import reader
+from thor.routes import thorApp
+import thor.reader
 
 if __name__ == "__main__":
     
     files = []
 
-    thor.run()
+    thorApp.run()

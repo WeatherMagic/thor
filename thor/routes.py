@@ -3,14 +3,13 @@
 from flask import Flask, request
 import json
 
-thor = Flask(__name__)
+thorApp = Flask("thor")
 
-
-@thor.route('/')
+@thorApp.route('/')
 def hello_world():
     return 'Hello, World!'
 
-@thor.route('/api/<dimension>', methods=["GET", "POST"])
+@thorApp.route('/api/<dimension>', methods=["GET", "POST"])
 def api(dimension):
     # None if args not given as json
     arguments = request.get_json()

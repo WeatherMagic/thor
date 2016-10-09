@@ -48,6 +48,8 @@ lons = nc_file.variables['lon'][:]
 time = nc_file.variables['time'][:]
 plev = nc_file.variables['plev'][:]
 
+print(nc_file.variables["time"].getncattr("units").split()[-1])
+
 #air = nc_file.variables['taLEVEL'][:] #Exchange level with info from file
 # three dimensional array
 # airt[time][longitude][latitude]
