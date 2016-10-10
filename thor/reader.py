@@ -36,12 +36,17 @@ class Reader():
     def getDimensionData(self, dimension):
         return self.netCDF.variables[dimension]
 
-    def getStartDate():
+    def getStartDate(self):
         return self.startDate
 
-    def getLongLimits():
+    def getLastDate(self):
+        last = len(self.netCDF.variables['time']) - 1
+        return self.startDate +\
+            datetime.timedelta(days=self.netCDF.variables['time'][last])
+
+    def getLongLimits(self):
         return [self.startLong, self.startLong +
-                self.longitudeRes*len(self.netCDF.varables['lon'])]
+                self.longitudeRes*len(self.netCDF.variables['lon'])]
 
     def getSurfaceTemp(self,
                        fromLong,
