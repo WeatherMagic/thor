@@ -1,13 +1,15 @@
 #!/usr/bin/env python3
 
 from flask import Flask, request, g
-import json,os
+import json
+import os
 import thor.util as util
 import thor.temperature as temperature
 import thor.const as const
 
 
 thorApp = Flask("thor")
+
 
 @thorApp.route('/')
 def hello_world():
@@ -21,14 +23,16 @@ def api(dimension):
     # Set arguments from URL if not from json
     if arguments is None:
         arguments = request.args.to_dict(flat=False)
-    
+
     # Check arguments given by client
     argCheck = util.checkArguments(arguments)
-    if argCheck["ok"] == False:
+    if argCheck["ok"] is False:
         return json.dumps(argCheck)
 
     if dimension == "temperature":
-        return json.dumps(temperature.handleRequest(arguments, const.ncFiles, const.log))
+        return json.dumps(temperature.handleRequest(arguments,
+                          const.ncFiles,
+                          const.log))
     elif dimension == "air-pressure":
         pass
     elif dimension == "precipitation":

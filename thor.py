@@ -19,7 +19,7 @@ if __name__ == "__main__":
             ncFolder = argument.replace("--netCDF-folder=", "")
         elif "--log-file=" in argument:
             logFiles.append(argument.replace("--log-file=", ""))
-    
+
     # appName and subfolder to read netCDF files from
     const.appName = appName
 
@@ -28,7 +28,9 @@ if __name__ == "__main__":
     const.log.setLevel(logLevel)
     consoleHandler = logging.StreamHandler()
     consoleHandler.setLevel(logLevel)
-    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    formatter = logging.Formatter(
+            '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+            )
     consoleHandler.setFormatter(formatter)
     const.log.addHandler(consoleHandler)
     for logFile in logFiles:
@@ -36,13 +38,13 @@ if __name__ == "__main__":
         fileHandler.setLevel(logLevel)
         fileHandler.setFormatter(formatter)
         const.log.addHandler(fileHandler)
-    
+
     # Load ncFiles
     const.ncFiles = util.openFiles(ncFolder)
-    
+
     # This defines valid arguments for API
     const.apiMustArgs = apiMustArgs
     const.apiOptionalArgs = apiOptionalArgs
-    
+
     # Run app!
     routes.thorApp.run()

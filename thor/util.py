@@ -13,7 +13,7 @@ def checkArguments(arguments):
         if arg not in arguments:
             failure = True
             missingArgs.append(arg)
-    
+
     if failure:
         errorMessage = ""
         for arg in missingArgs:
@@ -22,19 +22,23 @@ def checkArguments(arguments):
                 errorMessage += ", "
             elif arg == missingArgs[-2] and len(missingArgs) != 1:
                 errorMessage += " and "
-        return {"ok": False, "error": "Missing non-optional argument(s) " + errorMessage + "!"}
-    
+        return {
+                "ok":
+                False,
+                "error":
+                "Missing non-optional argument(s) " + errorMessage + "!"}
+
     return {"ok": True}
 
 
 def openFiles(folder):
     files = os.listdir(folder)
     ncFiles = []
-    
+
     for currentFile in files:
         if currentFile.endswith(".nc"):
-            const.log.info("Loading netCDF file: " + folder + os.sep + currentFile)
+            const.log.info("Loading netCDF file: " +
+                           folder + os.sep + currentFile)
             ncFiles.append(reader.Reader(folder + os.sep + currentFile))
-    
-    return ncFiles
 
+    return ncFiles
