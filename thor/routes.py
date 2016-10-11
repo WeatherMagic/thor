@@ -2,7 +2,8 @@
 
 from flask import Flask, request, g
 import json,os
-import thor.init,thor.temperature
+import thor.util as util
+import thor.temperature as temperature
 import thor.const as const
 
 
@@ -20,9 +21,13 @@ def api(dimension):
     # Set arguments from URL if not from json
     if arguments is None:
         arguments = request.args.to_dict(flat=False)
+    
+    argCheck = util.checkArguments(arguments)
+    if argCheck["ok"] == False:
+        return json.dumps(argCheck)
 
     if dimension == "temperature":
-        return thor.temperature.handleRequest(arguments, const.ncFiles, const.log)
+        return temperature.handleRequest(arguments, const.ncFiles, const.log)
     elif dimension == "air-pressure":
         pass
     elif dimension == "precipitation":

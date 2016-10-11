@@ -2,7 +2,7 @@
 
 from thor.routes import thorApp
 import thor.const as const
-import thor.init
+import thor.util
 import sys
 import logging
 
@@ -33,6 +33,6 @@ if __name__ == "__main__":
     consoleHandler.setFormatter(formatter)
     const.log.addHandler(consoleHandler)
     # Load ncFiles
-    const.ncFiles = thor.init.openFiles(const.ncFolder)
+    const.ncFiles = thor.util.openFiles(const.ncFolder)
     
     thorApp.run()
