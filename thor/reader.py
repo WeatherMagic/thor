@@ -11,6 +11,7 @@ class Reader():
     def __init__(self, filename):
         # Open netCDF file for reading
         self.netCDF = netCDF4.Dataset(filename, 'r')
+        self.filename = filename
 
         self.startLong = self.netCDF["lon"][0]
         self.startLat = self.netCDF["lat"][0]
@@ -35,6 +36,9 @@ class Reader():
 
     def getDimensionData(self, dimension):
         return self.netCDF.variables[dimension]
+
+    def getFileName(self):
+        return self.filename
 
     def getStartDate(self):
         return self.startDate
