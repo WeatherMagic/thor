@@ -6,7 +6,7 @@ include
 lib
 pip-selfcheck.json
 env
-__pychache__
+__pycache__
 
 # Vim and Emacs swap file
 *.swp
