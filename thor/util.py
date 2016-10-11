@@ -4,6 +4,14 @@ import thor.reader as reader
 import thor.const as const
 import os
 
+def printHelp(execName):
+    print("Thor - bringer of weather")
+    print("")
+    print("Usage: ")
+    print("    " + execName + " [--debug] [--app-name=appName] [--netCDF-folder=folder] [--log-file=logFile]")
+    print("")
+    print("Default values for all arguments can be found (and set) in the file defaults.py.")
+    print("")
 
 def checkArguments(arguments):
     failure = False

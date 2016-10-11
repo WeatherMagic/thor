@@ -11,7 +11,10 @@ import logging
 if __name__ == "__main__":
     # Read arguments from command line
     for argument in sys.argv:
-        if "--app-name=" in argument:
+        if "--help" in argument or "-h" in argument:
+            util.printHelp(sys.argv[0])
+            sys.exit(1)
+        elif "--app-name=" in argument:
             appName = argument.replace("--app-name", "")
         elif "--debug" == argument:
             logLevel = logging.DEBUG
