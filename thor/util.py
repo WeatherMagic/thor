@@ -6,14 +6,10 @@ import os
 
 
 def checkArguments(arguments):
-    mustArgs = ["zoom-level",
-                "longitude",
-                "latitude",
-                "year"]
     failure = False
     missingArgs = []
 
-    for arg in mustArgs:
+    for arg in const.apiMustArgs:
         if arg not in arguments:
             failure = True
             missingArgs.append(arg)

@@ -28,7 +28,7 @@ def api(dimension):
         return json.dumps(argCheck)
 
     if dimension == "temperature":
-        return temperature.handleRequest(arguments, const.ncFiles, const.log)
+        return json.dumps(temperature.handleRequest(arguments, const.ncFiles, const.log))
     elif dimension == "air-pressure":
         pass
     elif dimension == "precipitation":
