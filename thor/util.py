@@ -10,10 +10,25 @@ def checkArguments(arguments):
                 "longitude",
                 "latitude",
                 "year"]
+    failure = False
+    missingArgs = []
 
     for arg in mustArgs:
         if arg not in arguments:
-            return {"ok": False, "error": "Missing non-optional argument " + arg + "!"}
+            failure = True
+            missingArgs.append(arg)
+    
+    if failure:
+        errorMessage = ""
+        for arg in missingArgs:
+            errorMessage += arg
+            if arg != missingArgs[-1] and arg != missingArgs[-2]:
+                errorMessage += ", "
+            elif arg == missingArgs[-2] and len(missingArgs) != 1:
+                errorMessage += " and "
+        return {"ok": False, "error": "Missing non-optional argument(s) " + errorMessage + "!"}
+    
+    return {"ok": True}
 
 
 def openFiles(folder):

@@ -4,4 +4,6 @@ import thor.reader as reader
 
 
 def handleRequest(arguments, ncFiles, log):
-    return "Not implemented"
+    for file in ncFiles:
+        pass
+
