@@ -29,12 +29,14 @@ def handleRequest(arguments, ncFiles, log):
                 and lastDate < ncFile.getLastDate():
                     returnData = {"ok": True,
                                   "data": ncFile.getSurfaceTemp(startLong,
-                                  startLong+90,
-                                  startLat,
-                                  startLat+45,
-                                  startDate,
-                                  lastDate)}
+                                                                startLong+90,
+                                                                startLat,
+                                                                startLat+45,
+                                                                startDate,
+                                                                lastDate)}
                     return returnData
         else:
-            returnData = {"ok": False, "errorMessage": "Specified range not within server dataset."}
+            returnData = {"ok": False,
+                          "errorMessage":
+                          "Specified range not within server dataset."}
             return returnData
