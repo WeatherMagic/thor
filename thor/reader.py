@@ -48,10 +48,18 @@ class Reader():
         return self.startDate +\
             datetime.timedelta(days=self.netCDF.variables['time'][last])
 
-    def getLongLimits(self):
-        return [self.startLong, self.startLong +
-                self.longitudeRes*len(self.netCDF.variables['lon'])]
+    def getStartLong(self):
+        return self.startLong
 
+    def getLastLong(self):
+        return self.longitudeRes*len(self.netCDF.variables['lon'])
+    
+    def getStartLat(self):
+        return self.startLat
+    
+    def getLastLat(self):
+        return self.latitudeRes*len(self.netCDF.variables['lat'])
+    
     def getSurfaceTemp(self,
                        fromLong,
                        toLong,
@@ -72,4 +80,4 @@ class Reader():
                 startLong:stopLong,
                 0,
                 startLat:stopLat,
-                startTime:stopTime]
+                startTime:stopTime].tolist()

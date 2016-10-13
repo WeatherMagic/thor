@@ -10,7 +10,7 @@ def handleRequest(arguments, ncFiles, log):
     if "month" not in arguments:
         return {"ok": False,
                 "error": "Interpolation method not implemented yet!"}
-    if arguments["zoom-level"] != 1:
+    if arguments["zoom-level"] != "1":
         return {"ok": False,
                 "error": "Only zoom-level 1 implemented as of now!"}
 
@@ -18,13 +18,23 @@ def handleRequest(arguments, ncFiles, log):
     zoomLevel = int(arguments["zoom-level"])
     startDate = datetime.strptime(arguments["year"] +
                                   arguments["month"] +
-                                  "00",
+                                  "1",
                                   "%Y%m%d")
     lastDate = startDate + timedelta(days=10)
-    startLong = arguments["longitude"]
-    startLat = arguments["latitude"]
+    startLong = int(arguments["longitude"])
+    startLat = int(arguments["latitude"])
 
     for ncFile in ncFiles:
         if startDate > ncFile.getStartDate()\
                 and lastDate < ncFile.getLastDate():
-            pass
+                    returnData = {"ok": True,
+                                  "data": ncFile.getSurfaceTemp(startLong,
+                                  startLong+90,
+                                  startLat,
+                                  startLat+45,
+                                  startDate,
+                                  lastDate)}
+                    return returnData
+        else:
+            returnData = {"ok": False, "errorMessage": "Specified range not within server dataset."}
+            return returnData
