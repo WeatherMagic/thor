@@ -29,9 +29,9 @@ def handleRequest(arguments, ncFiles, log):
                 and lastDate < ncFile.getLastDate():
                     returnData = {"ok": True,
                                   "data": ncFile.getSurfaceTemp(startLong,
-                                                                startLong+90,
+                                                                startLong+45,
                                                                 startLat,
-                                                                startLat+45,
+                                                                startLat+25,
                                                                 startDate,
                                                                 lastDate)}
                     return returnData
