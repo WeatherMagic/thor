@@ -8,7 +8,6 @@ The URL-scheme are as follows:
 
 ```
 /api/dimension
-/api/dimension
 ```
 
 Where the two schemes gives different resolution on data. The first returns interpolated data for every month, with extreme values for that month. The second URL scheme returns data points for every day during specified month. 
