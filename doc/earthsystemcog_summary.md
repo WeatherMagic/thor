@@ -1,4 +1,4 @@
-# Earth System CoG README
+# Earth System CoG summary
 A simple guide on how to get climate data netCDF files from www.earthsystemcog.org
 
 ## Getting started
@@ -33,3 +33,58 @@ A simple guide on how to get climate data netCDF files from www.earthsystemcog.o
 1. A simple way to view the netCDF files is with ncview it can be downloaded from http://meteora.ucsd.edu/~pierce/ncview_home_page.html
 2. Once a nerCDF file is downloaded and opend with ncview the data can be visualized this is done by pressing the variable of intresst.
 3. OBS! With most climate data models there is only one variable of interesst often by the same name as the file. Press it and nothing else.
+
+## Variable categori
+When choosing a project in earthsystemCoG and searching for data in it there are a lot of different categories to choose from. This text is ment to explain what those different categories are and what the variables in them stand for.
+
+### Project
+What project do you want to serch for data in? Often the same as the project you are in but certain projects can have "sub" projects.
+
+### Product
+???
+
+### Domain
+What region is the data from? The normal regions are:
+
+* AFR - Africa
+* ANT - Antartica
+* ARC - Arctic
+* AUS - Australia
+* CAM - Central America
+* EAS - East America
+* EUR - Europe
+* MNA - 
+* NAM - 
+* SAM - 
+* WAS - West America
+
+After the region name there is always a number if the number is high say 44 it means low resolution. If the number is low it means high resolution.
+
+After the number there can be and "i" if it is there it means that the 2D map has been projected on a sphere.
+
+### Institute
+Self explanitory. We use smhi
+
+### Driving model
+* CNRM-CERFACS-CNRM-CM5 a french model from 1995
+* ECMWF-ERAINT is a global atmospheric reanalysis from 1979, continuously updated in real time.
+* ICHEC-EC-EARTH Irish model
+* IPSL-IPSL-CM5A-MR The Institut Pierre Simon Laplace active since 1995
+* MOHC-HadGEM2-ES Met Office Hadley Centre active from 1990 from UK, uses data from the past 100 years to predict the next 100 years
+* MPI-M-MPI-ESM-LR Max-Planck-institut for meteorologie German
+
+other things to note
+* MR - medium resolution
+* LR - low resolution
+* A - Atomosphere
+* ES - Earth system
+* CC - Carbon cycle
+
+### Experiment
+What type of data are we looking at?
+* Evaluation - Used to evaluate model with historical data
+* Historical - Historical data 
+* rcp - prescribed greenhouse-gasconcentration pathways throughout the 21st century corresponding to different radiative forcing stabilization levels by the year 2100.
+* rcp26 - lvl 2.6
+* rcp45 - lvl 4.5 high probability.
+* rcp85 - lvl 8.5 high probability.
