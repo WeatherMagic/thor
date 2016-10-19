@@ -64,11 +64,13 @@ check_os() {
             ((debug)) && echo "Linux operating system detected"
             LINUX=1
             MACOSX=0
+            SHA256="sha256sum"
             ;;
         Darwin)
             ((debug)) && echo "Mac OS X operating system detected"
             LINUX=0
             MACOSX=1
+            SHA256="shasum -a 256"
             ;;
         *)
             echo "Unrecognized OS [${os_name}]"
@@ -401,7 +403,7 @@ check_chksum() {
 
     case $chk_type in
         md5) local_chksum=$(md5sum_ $file | cut -f1 -d" ");;
-        sha256) local_chksum=$(sha256sum $file|awk '{print $1}'|cut -d ' ' -f1);;
+        sha256) local_chksum=$($SHA256 $file|awk '{print $1}'|cut -d ' ' -f1);;
         *) echo "Can't verify checksum." && return 0;;
     esac
 
