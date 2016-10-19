@@ -4,6 +4,8 @@ import datetime
 from math import floor
 # Import netCDF
 import netCDF4
+# Regex
+import re
 
 
 class Reader():
@@ -20,9 +22,22 @@ class Reader():
         self.latitudeRes = abs(self.netCDF.variables['lat'][1] -
                                self.netCDF.variables['lat'][0])
 
+        # NetCDF file contains a date string looking like:
+        # days since YYYY-MM-DD HH:MM:SS
+        # or
+        # days since YYYY-MM-DD
+        #
+        # We only want "YYYY-MM-DD", make sure we get it
+        dateString = self.netCDF.variables["time"].getncattr("units")
+        # Replace all non-digit characters
+        dateString = re.sub("\D", "", dateString)
+        # Get only first 8 digits
+        if len(dateString) > 6:
+            dateString = dateString[0:7]
+
         self.baseDate = datetime.datetime.strptime(
-                self.netCDF.variables["time"].getncattr(
-                    "units").split()[-1], "%Y-%m-%d"
+                dateString,
+                "%Y%m%d"
                 )
 
         self.startDate = \
@@ -53,13 +68,13 @@ class Reader():
 
     def getLastLong(self):
         return self.longitudeRes*len(self.netCDF.variables['lon'])
-    
+
     def getStartLat(self):
         return self.startLat
-    
+
     def getLastLat(self):
         return self.latitudeRes*len(self.netCDF.variables['lat'])
-    
+
     def getSurfaceTemp(self,
                        fromLong,
                        toLong,
