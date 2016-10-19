@@ -32,8 +32,7 @@ class Reader():
         # Replace all non-digit characters
         dateString = re.sub("\D", "", dateString)
         # Get only first 8 digits
-        if len(dateString) > 6:
-            dateString = dateString[0:7]
+        dateString = dateString[0:7]
 
         self.baseDate = datetime.datetime.strptime(
                 dateString,

@@ -35,8 +35,8 @@ def handleRequest(arguments, ncFiles, log):
                                                                 startDate,
                                                                 lastDate)}
                     return returnData
-        else:
-            returnData = {"ok": False,
-                          "errorMessage":
-                          "Specified range not within server dataset."}
-            return returnData
+
+    returnData = {"ok": False,
+                  "errorMessage":
+                   "Specified range not within server dataset."}
+    return returnData
