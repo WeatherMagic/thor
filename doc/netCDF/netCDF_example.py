@@ -23,6 +23,13 @@ for attribute in attributes:
     # Repr converts objects to a string representation
 print("")
 
+print(" -------------- VARIABLE ATTRIBUTES")
+for var in nc_file.variables:
+    print("Name: " + var)
+    print("Dimensions: ", nc_file.variables[var].dimensions)
+    print("Size: ", nc_file.variables[var].size) # Can't print touple
+    print("")
+
 print(" -------------- DIMENSION ATTRIBUTES")
 # Gets available dimensions in file, which is a dict
 dimensions = nc_file.dimensions
@@ -46,7 +53,6 @@ for dim in dimensions:
 lats = nc_file.variables['lat'][:] 
 lons = nc_file.variables['lon'][:]
 time = nc_file.variables['time'][:]
-plev = nc_file.variables['plev'][:]
 
 print(nc_file.variables["time"].getncattr("units").split()[-1])
 
