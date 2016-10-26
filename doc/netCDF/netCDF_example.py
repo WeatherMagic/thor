@@ -53,10 +53,10 @@ for dim in dimensions:
 lats = nc_file.variables['lat'][:] 
 lons = nc_file.variables['lon'][:]
 time = nc_file.variables['time'][:]
+air = nc_file.variables['tas'][:] #Exchange level with info from file
+# air[time][longitude][latitude]
 
-print(nc_file.variables["time"].getncattr("units").split()[-1])
+print(air[0][0][0])
 
-#air = nc_file.variables['taLEVEL'][:] #Exchange level with info from file
 # three dimensional array
-# airt[time][longitude][latitude]
 

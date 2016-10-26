@@ -15,12 +15,8 @@ class Reader():
         self.netCDF = netCDF4.Dataset(filename, 'r')
         self.filename = filename
 
-        self.startLong = self.netCDF["lon"][0]
-        self.startLat = self.netCDF["lat"][0]
-        self.longitudeRes = abs(self.netCDF.variables['lon'][1] -
-                                self.netCDF.variables['lon'][0])
-        self.latitudeRes = abs(self.netCDF.variables['lat'][1] -
-                               self.netCDF.variables['lat'][0])
+        self.startLong = self.netCDF["lon"][0][0]
+        self.startLat = self.netCDF["lat"][0][0]
 
         # NetCDF file contains a date string looking like:
         # days since YYYY-MM-DD HH:MM:SS
@@ -81,11 +77,28 @@ class Reader():
                        toLat,
                        fromDate,
                        toDate):
-        startLong = floor((fromLong-self.startLong)/self.longitudeRes)
-        stopLong = floor((toLong-self.startLong)/self.longitudeRes)
+        
+        stopLat = 0
+        maxLen = len(self.netCDF.variables["rlat"])
+        while True:
+            if stopLat < maxLen:
+                if self.netCDF.variables["lat"][stopLat][1] > toLat:
+                    stopLat = stopLat + 1
+                else:
+                    break
+            else:
+                return {"ok": False, "error": "Latitiude not within file for this time period..."}
 
-        startLat = floor((fromLat-self.startLat)/self.latitudeRes)
-        stopLat = floor((toLat-self.startLat)/self.latitudeRes)
+        stopLong = 0
+        maxLen = len(self.netCDF.variables["rlong"])
+        while True:
+            if stopLong < maxLen:
+                if self.netCDF.variables["long"][stopLong][1] > toLat:
+                    stopLong = stopLong + 1
+                    continue
+                break
+            else:
+                return {"ok": False, "error": "Latitiude not within file for this time period..."}
 
         startTime = (fromDate-self.startDate).days
         stopTime = (toDate-self.startDate).days
