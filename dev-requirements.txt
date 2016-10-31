@@ -4,4 +4,3 @@ git-lint
 pylint
 pep8
 flask
-transforms3d
