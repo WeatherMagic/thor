@@ -6,6 +6,7 @@ from math import floor
 import netCDF4
 # Regex
 import re
+import thor.transform
 
 
 class Reader():
