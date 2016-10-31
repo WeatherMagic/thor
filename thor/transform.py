@@ -59,18 +59,23 @@ def cartToLonLat(cart):
     zCoord = cart.item((2,0))
  
     lon = 0
-    if zCoord != 0:
+    epsilon = 0.001
+    if abs(zCoord) > 0+epsilon:
         lon = degrees(arctan(xCoord/zCoord))
-    elif x > 0:
-        lon = degrees(pi/2)
+    elif abs(yCoord) > 1-epsilon:
+        lon = 0
+    elif xCoord > 0:
+        lon = degrees(pi/2.0)
     else:
-        lon = degrees(-pi/2)
+        lon = degrees(-pi/2.0)
     
     lat = 0
-    if yCoord != 0:
-        lat = degrees(arcsin(yCoord))
+    if yCoord > 1-epsilon:
+        lat = degrees(pi/2.0)
+    elif yCoord < -1+epsilon:
+        lat = degrees(-pi/2.0)
     else:
-        lat = 0
+        lat = degrees(arcsin(yCoord))
 
     return matrix(array([[lon], [lat]]))
 
@@ -99,6 +104,7 @@ def regFromRot(lon, lat):
     # Get regular cart coordinates
     regCartCoord_tmp = Ry * rotatedCoord
     regCartCoord = Rx * regCartCoord_tmp
+    print(regCartCoord)
     
     return cartToLonLat(regCartCoord)
 
