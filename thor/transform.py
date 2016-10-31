@@ -22,14 +22,14 @@ def lonLatToCart(lonLat):
     Output:
         Cartesian coordinates, denoting earth radius as 1 unit
     """
-    theta = radians(lonLat[0])
-    phiPrime = radians(lonLat[1])
+    lon = radians(lonLat[0])
+    lat = radians(lonLat[1])
 
-    xCoord = cos(theta)
+    xCoord = sin(lon)
     # yCoord is upwards, computer graphics style
-    yCoord = cos(phiPrime)
+    yCoord = sin(lat)
     # zCoord is "towards the observer", computer graphics style
-    zCoord = -sin(theta)
+    zCoord = cos(lon)
 
     return vector(xCoord, yCoord, zCoord)
 
@@ -44,13 +44,12 @@ def cartToLonLat(cart):
     xCoord = cart[0]
     yCoord = cart[1]
     zCoord = cart[2]
-    earthRadius = 1
     
     lon = 0
-    if xCoord > 0:
-        lon = pi-arcsin(-z/earthRadius)
-    if xCoord < 0:
-        lon = arcsin(z/earthRadius)
+    if zCoord > 0:
+        lon = arcsin(x)
+    if zCoord < 0:
+        lon = pi - arcsin(x)
     else:
         lon = 0
     
@@ -78,14 +77,16 @@ def regFromRot(lon, lat):
     # How far to rotate around Y
     angleY = 0-spRotLon
     # How far to rotate around Z
-    angleZ = 0-spRotLat
+    angleX = -90-spRotLat
     
     # Create rotation matrixes
     Ry = getRotationMatrix(yAxis, angleY)
-    Rz = getRotationMatrix(zAxis, angleZ)
+    Rx = getRotationMatrix(xAxis, angleZ)
     
-    # Get regular coordinates
-    return Rz * Rz * rotatedCoord
+    # Get regular cart coordinates
+    regCartCoord = Rx * Ry * rotatedCoord
+
+    return cartToLonLat(regCartCoord)
 
 
 
