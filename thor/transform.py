@@ -104,7 +104,6 @@ def regFromRot(lon, lat):
     # Get regular cart coordinates
     regCartCoord_tmp = Ry * rotatedCoord
     regCartCoord = Rx * regCartCoord_tmp
-    print(regCartCoord)
     
     return cartToLonLat(regCartCoord)
 
