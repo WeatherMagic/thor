@@ -2,6 +2,7 @@
 
 import datetime
 from math import floor
+from math import ceil
 # Import netCDF
 import netCDF4
 # Regex
@@ -116,7 +117,7 @@ class Reader():
 
         
         startTime = floor((fromDate-self.startDate).days/self.dateResolution)
-        stopTime = floor((toDate-self.startDate).days/self.dateResolution)
+        stopTime = ceil((toDate-self.startDate).days/self.dateResolution)
         
         print("Time: " + str(startTime) + " " + str(stopTime))
         
