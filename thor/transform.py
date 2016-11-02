@@ -80,11 +80,11 @@ def cartToLonLat(cart):
     return matrix(array([[lon], [lat]]))
 
 
-def regFromRot(lon, lat):
+def regFromRot(rlon, rlat):
     """
     Takes rotated coordinates and outputs regular coordinates
     """
-    rotatedCoord = lonLatToCart(matrix(array([[lon], [lat]])))
+    rotatedCoord = lonLatToCart(matrix(array([[rlon], [rlat]])))
 
     # Axises to rotate around
     xAxis = [1,0,0]
@@ -93,7 +93,7 @@ def regFromRot(lon, lat):
     spRotLon = -162
     spRotLat = 39.25
     # How far to rotate around Y
-    angleY = 0-spRotLon
+    angleY = -spRotLon
     # How far to rotate around X
     angleX = 90+spRotLat
     
@@ -102,10 +102,31 @@ def regFromRot(lon, lat):
     Rx = getRotationMatrix(xAxis, angleX)
     
     # Get regular cart coordinates
-    regCartCoord_tmp = Ry * rotatedCoord
-    regCartCoord = Rx * regCartCoord_tmp
+    regCartCoord = Rx * Ry * rotatedCoord
     
     return cartToLonLat(regCartCoord)
 
 
+def rotFromReg(lon, lat):
+    """
+    Takes regular coordinates and outputs rotated coordinates
+    """
+    regCoord = lonLatToCart(matrix(array([[lon], [lat]])))
+    
+    # Axises to rotate around
+    xAxis = [1,0,0]
+    yAxis = [0,1,0]
+    # South Pole location in rotated coordinate system
+    spRotLon = -162
+    spRotLat = 39.25
+    # How far to rotate around Y
+    angleY = spRotLon
+    # How far to rotate around X
+    angleX = -90-spRotLat
+    
+    Ry = getRotationMatrix(yAxis, angleY)
+    Rx = getRotationMatrix(xAxis, angleX)
 
+    rotCartCoord = Ry * Rx * regCoord
+
+    return cartToLonLat(rotCartCoord)

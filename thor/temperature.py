@@ -23,15 +23,26 @@ def handleRequest(arguments, ncFiles, log):
     lastDate = startDate + timedelta(days=10)
     startLong = int(arguments["longitude"])
     startLat = int(arguments["latitude"])
-
+    lastLong = startLong + 10
+    lastLat = startLat + 10
+    
     for ncFile in ncFiles:
+        print("")
+        print("startLong: " + str(ncFile.getStartLong()))
+        print("stopLong: " + str(ncFile.getLastLong()))
+        print("startLat: " + str(ncFile.getStartLat()))
+        print("stopLat: " + str(ncFile.getLastLat()))
         if startDate > ncFile.getStartDate()\
-                and lastDate < ncFile.getLastDate():
+                and lastDate < ncFile.getLastDate()\
+                and startLong > ncFile.getStartLong()\
+                and lastLong < ncFile.getLastLong()\
+                and startLat > ncFile.getStartLong()\
+                and lastLat < ncFile.getLastLat():
                     returnData = {"ok": True,
                                   "data": ncFile.getSurfaceTemp(startLong,
-                                                                startLong+45,
+                                                                lastLong,
                                                                 startLat,
-                                                                startLat+25,
+                                                                lastLat,
                                                                 startDate,
                                                                 lastDate)}
                     return returnData

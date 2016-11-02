@@ -6,7 +6,7 @@ from math import floor
 import netCDF4
 # Regex
 import re
-import thor.transform
+import thor.transform as transform
 
 
 class Reader():
@@ -15,9 +15,21 @@ class Reader():
         # Open netCDF file for reading
         self.netCDF = netCDF4.Dataset(filename, 'r')
         self.filename = filename
-
-        self.startLong = self.netCDF["lon"][0][0]
-        self.startLat = self.netCDF["lat"][0][0]
+        
+        # Last lonLat, the file seems to start backwards?
+        lonLat = transform.regFromRot(
+                self.netCDF["rlon"][0],
+                self.netCDF["rlat"][0])
+        self.lastLong = lonLat.item(0,0)
+        self.lastLat = lonLat.item(1,0)
+        # start lonLat
+        lonLen = len(self.netCDF["rlon"])-1
+        latLen = len(self.netCDF["rlat"])-1
+        lonLat = transform.regFromRot(
+                self.netCDF["rlon"][lonLen],
+                self.netCDF["rlat"][latLen])
+        self.startLong = lonLat.item(0,0)
+        self.startLat = lonLat.item(1,0)
 
         # NetCDF file contains a date string looking like:
         # days since YYYY-MM-DD HH:MM:SS
@@ -63,13 +75,13 @@ class Reader():
         return self.startLong
 
     def getLastLong(self):
-        return self.longitudeRes*len(self.netCDF.variables['lon'])
+        return self.lastLong
 
     def getStartLat(self):
         return self.startLat
 
     def getLastLat(self):
-        return self.latitudeRes*len(self.netCDF.variables['lat'])
+        return self.lastLat
 
     def getSurfaceTemp(self,
                        fromLong,
@@ -78,34 +90,37 @@ class Reader():
                        toLat,
                        fromDate,
                        toDate):
+        # Find where to start and stop in rotated coordinates
+        rotFrom = transform.rotFromReg(fromLong, fromLat)
+        rotTo = transform.rotFromReg(toLong, toLat)
+                    
+        startLong = len(self.netCDF.variables['rlon']) - 1
+        while self.netCDF.variables['rlon'][startLong] > rotFrom[0]:
+            startLong =  startLong - 1
         
-        stopLat = 0
-        maxLen = len(self.netCDF.variables["rlat"])
-        while True:
-            if stopLat < maxLen:
-                if self.netCDF.variables["lat"][stopLat][1] > toLat:
-                    stopLat = stopLat + 1
-                else:
-                    break
-            else:
-                return {"ok": False, "error": "Latitiude not within file for this time period..."}
+        stopLong = startLong - 1
+        while self.netCDF.variables['rlon'][stopLong] > rotTo[0]:
+            stopLong = stopLong - 1
+        
+        startLat = len(self.netCDF.variables['rlat']) - 1
+        while self.netCDF.variables['rlat'][startLat] > rotFrom[1]:
+            startLat =  startLat - 1
 
-        stopLong = 0
-        maxLen = len(self.netCDF.variables["rlong"])
-        while True:
-            if stopLong < maxLen:
-                if self.netCDF.variables["long"][stopLong][1] > toLat:
-                    stopLong = stopLong + 1
-                    continue
-                break
-            else:
-                return {"ok": False, "error": "Latitiude not within file for this time period..."}
+        stopLat = startLat
+        while self.netCDF.variables['rlat'][stopLat] > rotTo[1]:
+            stopLat =  stopLat - 1
 
+        print("Lons: " + str(startLong) + " " + str(stopLong))    
+        print("Lats: " + str(startLat) + " " + str(stopLat))
+
+        
         startTime = (fromDate-self.startDate).days
         stopTime = (toDate-self.startDate).days
+        print("Time: " + str(startTime) + " " + str(stopTime))
+        
+        returnData = self.netCDF.variables['tas'][startTime:stopTime,
+                                                 startLat:stopLat,
+                                                 startLong:stopLong]
 
-        return self.netCDF.variables['ta'][
-                startLong:stopLong,
-                0,
-                startLat:stopLat,
-                startTime:stopTime].tolist()
+        print(returnData)
+        return returnData.tolist()
