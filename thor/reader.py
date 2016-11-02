@@ -38,22 +38,23 @@ class Reader():
         #
         # We only want "YYYY-MM-DD", make sure we get it
         dateString = self.netCDF.variables["time"].getncattr("units")
+        
         # Replace all non-digit characters
         dateString = re.sub("\D", "", dateString)
         # Get only first 8 digits
-        dateString = dateString[0:7]
-
+        dateString = dateString[0:8]
+        
         self.baseDate = datetime.datetime.strptime(
                 dateString,
                 "%Y%m%d"
                 )
-
+        
         self.startDate = \
             self.baseDate + \
             datetime.timedelta(
                 days=self.netCDF["time"][0]
             )
-
+        print(self.startDate)
         self.dateResolution = abs(self.netCDF.variables['time'][1] -
                                   self.netCDF.variables['time'][0])
 
@@ -114,13 +115,14 @@ class Reader():
         print("Lats: " + str(startLat) + " " + str(stopLat))
 
         
-        startTime = (fromDate-self.startDate).days
-        stopTime = (toDate-self.startDate).days
+        startTime = floor((fromDate-self.startDate).days/self.dateResolution)
+        stopTime = floor((toDate-self.startDate).days/self.dateResolution)
+        
         print("Time: " + str(startTime) + " " + str(stopTime))
         
         returnData = self.netCDF.variables['tas'][startTime:stopTime,
-                                                 startLat:stopLat,
-                                                 startLong:stopLong]
+                                                  stopLat:startLat,
+                                                  stopLong:startLong]
 
         print(returnData)
         return returnData.tolist()
