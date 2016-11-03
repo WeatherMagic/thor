@@ -20,18 +20,16 @@ def handleRequest(arguments, ncFiles, log):
                                   arguments["month"] +
                                   "1",
                                   "%Y%m%d")
-    lastDate = startDate + timedelta(days=10)
+    lastDate = startDate + timedelta(days=90)
     startLong = int(arguments["longitude"])
     startLat = int(arguments["latitude"])
     lastLong = startLong + 10
     lastLat = startLat + 10
-    
+
     for ncFile in ncFiles:
-        print("")
-        print("startLong: " + str(ncFile.getStartLong()))
-        print("stopLong: " + str(ncFile.getLastLong()))
-        print("startLat: " + str(ncFile.getStartLat()))
-        print("stopLat: " + str(ncFile.getLastLat()))
+        # Make sure data is within range
+        # TODO: Enable fetching data from multiple files
+        # if range is split between two files
         if startDate > ncFile.getStartDate()\
                 and lastDate < ncFile.getLastDate()\
                 and startLong > ncFile.getStartLong()\
@@ -49,5 +47,5 @@ def handleRequest(arguments, ncFiles, log):
 
     returnData = {"ok": False,
                   "errorMessage":
-                   "Specified range not within server dataset."}
+                  "Specified range not within server dataset."}
     return returnData

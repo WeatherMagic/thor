@@ -5,16 +5,16 @@ from numpy import *
 
 def getRotationMatrix(axis, degrees):
     """
-    Input: 
+    Input:
         Rotation axis, angle to rotate
-    Output: 
+    Output:
         Rotation matrix (3x3)
     """
     angle = radians(degrees)
     Ux = axis[0]
     Uy = axis[1]
     Uz = axis[2]
-    
+
     cosT = cos(angle)
     sinT = sin(angle)
     oneMinC = 1-cosT
@@ -30,14 +30,14 @@ def getRotationMatrix(axis, degrees):
 
 def lonLatToCart(lonLat):
     """
-    Input: 
+    Input:
         Lon,lat as numpy matrix
     Output:
         Cartesian coordinates, denoting earth radius as 1 unit
     """
-    lon = radians(lonLat.item((0,0)))
-    lat = radians(lonLat.item((1,0)))
-    
+    lon = radians(lonLat.item((0, 0)))
+    lat = radians(lonLat.item((1, 0)))
+
     xCoord = sin(lon)*cos(lat)
     # yCoord is upwards, computer graphics style
     yCoord = sin(lat)
@@ -49,15 +49,15 @@ def lonLatToCart(lonLat):
 
 def cartToLonLat(cart):
     """
-    Input: 
+    Input:
         Carthesian coordinates as numpy matrix
     Output:
         Lon,lat as numpy matrix
     """
-    xCoord = cart.item((0,0))
-    yCoord = cart.item((1,0))
-    zCoord = cart.item((2,0))
- 
+    xCoord = cart.item((0, 0))
+    yCoord = cart.item((1, 0))
+    zCoord = cart.item((2, 0))
+
     lon = 0
     epsilon = 0.001
     if abs(zCoord) > 0+epsilon:
@@ -68,7 +68,7 @@ def cartToLonLat(cart):
         lon = degrees(pi/2.0)
     else:
         lon = degrees(-pi/2.0)
-    
+
     lat = 0
     if yCoord > 1-epsilon:
         lat = degrees(pi/2.0)
@@ -87,8 +87,8 @@ def regFromRot(rlon, rlat):
     rotatedCoord = lonLatToCart(matrix(array([[rlon], [rlat]])))
 
     # Axises to rotate around
-    xAxis = [1,0,0]
-    yAxis = [0,1,0]
+    xAxis = [1, 0, 0]
+    yAxis = [0, 1, 0]
     # South Pole location in rotated coordinate system
     spRotLon = -162
     spRotLat = 39.25
@@ -96,14 +96,14 @@ def regFromRot(rlon, rlat):
     angleY = -spRotLon
     # How far to rotate around X
     angleX = 90+spRotLat
-    
+
     # Create rotation matrixes
     Ry = getRotationMatrix(yAxis, angleY)
     Rx = getRotationMatrix(xAxis, angleX)
-    
+
     # Get regular cart coordinates
     regCartCoord = Rx * Ry * rotatedCoord
-    
+
     return cartToLonLat(regCartCoord)
 
 
@@ -112,10 +112,10 @@ def rotFromReg(lon, lat):
     Takes regular coordinates and outputs rotated coordinates
     """
     regCoord = lonLatToCart(matrix(array([[lon], [lat]])))
-    
+
     # Axises to rotate around
-    xAxis = [1,0,0]
-    yAxis = [0,1,0]
+    xAxis = [1, 0, 0]
+    yAxis = [0, 1, 0]
     # South Pole location in rotated coordinate system
     spRotLon = -162
     spRotLat = 39.25
@@ -123,7 +123,7 @@ def rotFromReg(lon, lat):
     angleY = spRotLon
     # How far to rotate around X
     angleX = -90-spRotLat
-    
+
     Ry = getRotationMatrix(yAxis, angleY)
     Rx = getRotationMatrix(xAxis, angleX)
 

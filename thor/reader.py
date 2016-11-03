@@ -16,21 +16,21 @@ class Reader():
         # Open netCDF file for reading
         self.netCDF = netCDF4.Dataset(filename, 'r')
         self.filename = filename
-        
+
         # Last lonLat, the file seems to start backwards?
         lonLat = transform.regFromRot(
                 self.netCDF["rlon"][0],
                 self.netCDF["rlat"][0])
-        self.lastLong = lonLat.item(0,0)
-        self.lastLat = lonLat.item(1,0)
+        self.lastLong = lonLat.item(0, 0)
+        self.lastLat = lonLat.item(1, 0)
         # start lonLat
         lonLen = len(self.netCDF["rlon"])-1
         latLen = len(self.netCDF["rlat"])-1
         lonLat = transform.regFromRot(
                 self.netCDF["rlon"][lonLen],
                 self.netCDF["rlat"][latLen])
-        self.startLong = lonLat.item(0,0)
-        self.startLat = lonLat.item(1,0)
+        self.startLong = lonLat.item(0, 0)
+        self.startLat = lonLat.item(1, 0)
 
         # NetCDF file contains a date string looking like:
         # days since YYYY-MM-DD HH:MM:SS
@@ -39,23 +39,23 @@ class Reader():
         #
         # We only want "YYYY-MM-DD", make sure we get it
         dateString = self.netCDF.variables["time"].getncattr("units")
-        
+
         # Replace all non-digit characters
         dateString = re.sub("\D", "", dateString)
         # Get only first 8 digits
         dateString = dateString[0:8]
-        
+
         self.baseDate = datetime.datetime.strptime(
                 dateString,
                 "%Y%m%d"
                 )
-        
+
         self.startDate = \
             self.baseDate + \
             datetime.timedelta(
                 days=self.netCDF["time"][0]
             )
-        print(self.startDate)
+
         self.dateResolution = abs(self.netCDF.variables['time'][1] -
                                   self.netCDF.variables['time'][0])
 
@@ -70,7 +70,7 @@ class Reader():
 
     def getLastDate(self):
         last = len(self.netCDF.variables['time']) - 1
-        return self.startDate +\
+        return self.baseDate +\
             datetime.timedelta(days=self.netCDF.variables['time'][last])
 
     def getStartLong(self):
@@ -95,35 +95,28 @@ class Reader():
         # Find where to start and stop in rotated coordinates
         rotFrom = transform.rotFromReg(fromLong, fromLat)
         rotTo = transform.rotFromReg(toLong, toLat)
-                    
+
         startLong = len(self.netCDF.variables['rlon']) - 1
         while self.netCDF.variables['rlon'][startLong] > rotFrom[0]:
-            startLong =  startLong - 1
-        
+            startLong = startLong - 1
+
         stopLong = startLong - 1
         while self.netCDF.variables['rlon'][stopLong] > rotTo[0]:
             stopLong = stopLong - 1
-        
+
         startLat = len(self.netCDF.variables['rlat']) - 1
         while self.netCDF.variables['rlat'][startLat] > rotFrom[1]:
-            startLat =  startLat - 1
+            startLat = startLat - 1
 
         stopLat = startLat
         while self.netCDF.variables['rlat'][stopLat] > rotTo[1]:
-            stopLat =  stopLat - 1
+            stopLat = stopLat - 1
 
-        print("Lons: " + str(startLong) + " " + str(stopLong))    
-        print("Lats: " + str(startLat) + " " + str(stopLat))
-
-        
         startTime = floor((fromDate-self.startDate).days/self.dateResolution)
         stopTime = ceil((toDate-self.startDate).days/self.dateResolution)
-        
-        print("Time: " + str(startTime) + " " + str(stopTime))
-        
+
         returnData = self.netCDF.variables['tas'][startTime:stopTime,
                                                   stopLat:startLat,
                                                   stopLong:startLong]
 
-        print(returnData)
         return returnData.tolist()
