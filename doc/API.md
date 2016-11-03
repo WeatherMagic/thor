@@ -19,11 +19,13 @@ Where the two schemes gives different resolution on data. The first returns inte
 - precipitation
 - water-level
 
-Each request needs to provide parameters either in URL or as a json data object: 
+Each request needs to provide parameters either in URL or as a json (OBS: Set the HTTP header "Content-type" to "application/json") data object: 
 
 - zoom-level
-- longitude
-- latitude
+- fromLongitude
+- toLongitude
+- fromLatitude
+- toLatitude
 - year
 - month (optional)
 
@@ -32,6 +34,21 @@ If month is omitted, data returned will be as filtered over a month. If month is
 **Zoom level is one of a predefined set of zoom levels, these are not yet specified.**
 
 All methods must be called using HTTP(S). Arguments can be passed as GET or POST params, or a mix.
+
+### Example
+
+```
+{
+	"year": "2012",
+	"month": "12",
+	"fromLongitude": "1",
+	"toLongitude": "5",
+	"fromLatitude": "37",
+	"toLatitude": "45",
+	"zoom-level": "1"
+}
+```
+
 
 ## Response
 

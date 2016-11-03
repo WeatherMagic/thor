@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from flask import Flask, request, g
+from flask import Flask, request, g, redirect
 import json
 import os
 import thor.util as util
@@ -13,7 +13,7 @@ thorApp = Flask("thor")
 
 @thorApp.route('/')
 def hello_world():
-    return 'Hello, World!'
+    return redirect("https://github.com/WeatherMagic/thor/blob/flask_app/doc/API.md", code=302)
 
 
 @thorApp.route('/api/<dimension>', methods=["GET", "POST"])
