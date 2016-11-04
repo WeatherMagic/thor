@@ -116,7 +116,6 @@ class Reader():
         startTime = floor((fromDate-self.startDate).days/self.dateResolution)
         stopTime = ceil((toDate-self.startDate).days/self.dateResolution)
 
-
         return(startLong,
                stopLong,
                startLat,
@@ -131,21 +130,45 @@ class Reader():
                        toLat,
                        fromDate,
                        toDate):
-        print("hit")
         [startLong,
          stopLong,
          startLat,
          stopLat,
          startTime,
          stopTime] = self.getArea(fromLong,
-                             toLong,
-                             fromLat,
-                             toLat,
-                             fromDate,
-                             toDate)
+                                  toLong,
+                                  fromLat,
+                                  toLat,
+                                  fromDate,
+                                  toDate)
 
         returnData = self.netCDF.variables['tas'][startTime:stopTime,
                                                   stopLat:startLat,
                                                   stopLong:startLong]
+
+        return returnData.tolist()
+
+    def getSurfacePersp(self,
+                        fromLong,
+                        toLong,
+                        fromLat,
+                        toLat,
+                        fromDate,
+                        toDate):
+        [startLong,
+         stopLong,
+         startLat,
+         stopLat,
+         startTime,
+         stopTime] = self.getArea(fromLong,
+                                  toLong,
+                                  fromLat,
+                                  toLat,
+                                  fromDate,
+                                  toDate)
+
+        returnData = self.netCDF.variables['pr'][startTime:stopTime,
+                                                 stopLat:startLat,
+                                                 stopLong:startLong]
 
         return returnData.tolist()
