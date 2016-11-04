@@ -15,19 +15,28 @@ else
     mkdir ../$DIR
 fi
 
+#Changeing folder to get the wget files in the right place
+cd ../$DIR
+
 #Downloads the choosen amount of ncFiles to the ncFiles folder
 while true; do 
     read -p "* How much data should I get? (min/med/max/ext) " RESP
     if [ "$RESP" = "min" ]; then
-        echo "$RESP"
+        echo "* Begining Downloading $RESP amount of data."
+        ../scripts/wget-ncFilesMin.sh
+        break
     elif [ "$RESP" = "med" ]; then
-        echo "$RESP"
+        echo "* Begining Downloading $RESP amount of data."
+        ../scripts/wget-ncFilesMedium.sh
+        break
     elif [ "$RESP" = "max" ]; then
-        echo "$RESP"
+        echo "* Begining Downloading $RESP amount of data."
+        ../scripts/wget-ncFilesMax.sh
+        break
     elif [ "$RESP" = "ext" ]; then
-        echo "$RESP"
+        echo "* Exiting."
         break
     else
-        echo "* Wrong input"
+        echo "* $RESP is not a valid input pls help me help you."
     fi
 done
