@@ -85,13 +85,14 @@ class Reader():
     def getLastLat(self):
         return self.lastLat
 
-    def getSurfaceTemp(self,
-                       fromLong,
-                       toLong,
-                       fromLat,
-                       toLat,
-                       fromDate,
-                       toDate):
+    def getArea(self,
+                fromLong,
+                toLong,
+                fromLat,
+                toLat,
+                fromDate,
+                toDate):
+
         # Find where to start and stop in rotated coordinates
         rotFrom = transform.rotFromReg(fromLong, fromLat)
         rotTo = transform.rotFromReg(toLong, toLat)
@@ -114,6 +115,34 @@ class Reader():
 
         startTime = floor((fromDate-self.startDate).days/self.dateResolution)
         stopTime = ceil((toDate-self.startDate).days/self.dateResolution)
+
+
+        return(startLong,
+               stopLong,
+               startLat,
+               stopLat,
+               startTime,
+               stopTime)
+
+    def getSurfaceTemp(self,
+                       fromLong,
+                       toLong,
+                       fromLat,
+                       toLat,
+                       fromDate,
+                       toDate):
+        print("hit")
+        [startLong,
+         stopLong,
+         startLat,
+         stopLat,
+         startTime,
+         stopTime] = self.getArea(fromLong,
+                             toLong,
+                             fromLat,
+                             toLat,
+                             fromDate,
+                             toDate)
 
         returnData = self.netCDF.variables['tas'][startTime:stopTime,
                                                   stopLat:startLat,
