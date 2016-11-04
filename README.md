@@ -110,13 +110,14 @@ http://esgf1.dkrz.de/thredds/fileServer/cordex/cordex/output/ARC-44/AWI/ECMWF-ER
 Now you should have the necessary permissions to do the next step.
 
 ## Downloading with wget
-To use the wget script to download all required files to use thor simply type the following commands while standing in the thor folder.
+To use the wget script to download all required files to use thor simply type the following commands while standing in the thor folder and then follow the instructions in your terminal.
 
 ```bash
 cd scripts
 ./Get_ESCOG_files.sh
 ```
 
+Congratulation you should now have all the required files to start running the thor application.
 
 # Usage
 
