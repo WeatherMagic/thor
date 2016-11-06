@@ -6,14 +6,14 @@ import logging
 appName = "thor"
 
 logLevel = logging.WARNING
-logFiles = []
+logFiles = ()
 
 ncFolder = "ncFiles"
 
-apiMustArgs = ["zoom-level",
+apiMustArgs = ("zoom-level",
                "fromLongitude",
                "fromLatitude",
                "year",
                "toLatitude",
-               "toLongitude"]
-apiOptionalArgs = ["month"]
+               "toLongitude")
+apiOptionalArgs = ("month")

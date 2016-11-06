@@ -22,18 +22,20 @@ def checkArguments(arguments):
     failure = False
     missingArgs = []
 
+    # Check that request includes all arguments
     for arg in const.apiMustArgs:
         if arg not in arguments:
             failure = True
             missingArgs.append(arg)
 
+    # If not, format a human readable error message
     if failure:
         errorMessage = ""
         for arg in missingArgs:
             errorMessage += arg
             if arg != missingArgs[-1] and arg != missingArgs[-2]:
                 errorMessage += ", "
-            elif arg == missingArgs[-2] and len(missingArgs) != 1:
+            elif len(missingArgs) != 1 and arg == missingArgs[-2]:
                 errorMessage += " and "
         return {
                 "ok":
@@ -54,4 +56,5 @@ def openFiles(folder):
                            folder + os.sep + currentFile)
             ncFiles.append(reader.Reader(folder + os.sep + currentFile))
 
-    return ncFiles
+    # Return touple since immutable
+    return tuple(ncFiles)
