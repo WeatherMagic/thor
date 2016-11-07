@@ -129,7 +129,8 @@ class Reader():
                        fromLat,
                        toLat,
                        fromDate,
-                       toDate):
+                       toDate,
+                       zoomLevel):
         [startLong,
          stopLong,
          startLat,
@@ -143,8 +144,8 @@ class Reader():
                                   toDate)
 
         returnData = self.netCDF.variables['tas'][startTime:stopTime,
-                                                  stopLat:startLat,
-                                                  stopLong:startLong]
+                                                  stopLat:startLat:zoomLevel,
+                                                  stopLong:startLong:zoomLevel]
 
         return returnData.tolist()
 
@@ -154,7 +155,8 @@ class Reader():
                         fromLat,
                         toLat,
                         fromDate,
-                        toDate):
+                        toDate,
+                        zoomLevel):
         [startLong,
          stopLong,
          startLat,
@@ -168,7 +170,7 @@ class Reader():
                                   toDate)
 
         returnData = self.netCDF.variables['pr'][startTime:stopTime,
-                                                 stopLat:startLat,
-                                                 stopLong:startLong]
+                                                 stopLat:startLat:zoomLevel,
+                                                 stopLong:startLong:zoomLevel]
 
         return returnData.tolist()

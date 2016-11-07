@@ -10,14 +10,14 @@ def handleRequest(arguments, ncFiles, log):
     if "month" not in arguments:
         return {"ok": False,
                 "error": "Interpolation method not implemented yet!"}
-    if int(arguments["zoom-level"]) != 1:
-        return {"ok": False,
-                "error": "Only zoom-level 1 implemented as of now!"}
+    #if arguments["zoom-level"] == int(arguments["zoom-level"]):
+     #   return {"ok": False,
+      #          "error": "Only zoom-level 1 implemented as of now!"}
 
     # This info is supplied by client
-    zoomLevel = int(arguments["zoom-level"])
-    startDate = datetime.strptime(str(arguments["year"]) +
-                                  str(arguments["month"]) +
+    zoomLevel = int(float(arguments["zoom-level"]))
+    startDate = datetime.strptime(arguments["year"] +
+                                  arguments["month"] +
                                   "1",
                                   "%Y%m%d")
     lastDate = startDate + timedelta(days=90)
@@ -42,7 +42,8 @@ def handleRequest(arguments, ncFiles, log):
                                                                 startLat,
                                                                 lastLat,
                                                                 startDate,
-                                                                lastDate)}
+                                                                lastDate,
+                                                                zoomLevel)}
                     return returnData
 
     returnData = {"ok": False,
