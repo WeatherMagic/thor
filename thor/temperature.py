@@ -21,10 +21,10 @@ def handleRequest(arguments, ncFiles, log):
                                   "1",
                                   "%Y%m%d")
     lastDate = startDate + timedelta(days=90)
-    startLong = float(arguments["fromLongitude"])
-    startLat = float(arguments["fromLatitude"])
-    lastLat = float(arguments["toLatitude"])
-    lastLong = float(arguments["toLongitude"])
+    startLong = float(arguments["from-longitude"])
+    startLat = float(arguments["from-latitude"])
+    lastLat = float(arguments["to-latitude"])
+    lastLong = float(arguments["to-longitude"])
 
     for ncFile in ncFiles:
         # Make sure data is within range
