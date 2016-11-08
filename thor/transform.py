@@ -83,6 +83,7 @@ def cartToLonLat(cart):
 
 def toReg(rlon, rlat):
     """
+    rot2reg seams to be working
     Takes rotated coordinates and outputs regular coordinates.
 
     This function is ported from fortran by Gustav Strandberg from SMHI.
@@ -129,6 +130,7 @@ def toReg(rlon, rlat):
 
 def toRot(lon, lat):
     """
+    reg2rot
     Takes regular coordinates and outputs rotated coordinates.
 
     This function is also ported by Gustav Strandberg.
@@ -162,7 +164,7 @@ def toRot(lon, lat):
     zcxrot = min(zcxrot,+1.0)
     zsxrot = zcyreg*zsxmxc/zcyrot
 
-    pxrot = arctan(zcxrot)*zradi
+    pxrot = arccos(zcxrot)*zradi
 
     if (zsxrot < 0.0):
         pxrot = -pxrot
