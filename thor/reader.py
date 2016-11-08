@@ -17,6 +17,9 @@ class Reader():
         self.netCDF = netCDF4.Dataset(filename, 'r')
         self.filename = filename
 
+        # Number of Zoom levels
+        self.nmbZoomLevels = nmbZoomLevels
+
         # Last lonLat, the file seems to start backwards?
         lonLat = transform.regFromRot(
                 self.netCDF["rlon"][0],
@@ -123,16 +126,35 @@ class Reader():
                startTime,
                stopTime)
 
-    def getZoomLevel(self,
-                     rangeLat,
-                     rangeLong,
-                     zoomLevel):
+    def linnearTransform(self,
+                         k,
+                         x,
+                         m):
+        return k*x+m
 
+    def getStepLength(self,
+                      rangeLat,
+                      rangeLong,
+                      zoomLevel):
 
-        #vid 100
-        return 1,1
+        # Linnear y = kx + m transform between nmbZoomLevels and ncFile range
 
+        kLat = (1 - rangeLat)/(1 - self.nmbZoomLevels)
+        kLong = (1 - rangeLong)/(1 - self.nmbZoomLevels)
 
+        mLat = 1 - kLat
+        mLong = 1 - kLong
+
+        stepLat = self.linnearTransform(kLat,
+                                        zoomLevel,
+                                        mLat)
+
+        stepLong = self.linnearTransform(kLong,
+                                         zoomLevel,
+                                         mLong)
+
+        return (round(stepLat),
+                round(stepLong))
 
     def getSurfaceTemp(self,
                        fromLong,
@@ -142,6 +164,7 @@ class Reader():
                        fromDate,
                        toDate,
                        zoomLevel):
+
         [startLong,
          stopLong,
          startLat,
@@ -154,38 +177,14 @@ class Reader():
                                   fromDate,
                                   toDate)
 
-        [zoomLat,
-         zoomLong] = getZoomLevel(startLat-stopLat,
-                                startLong-stopLong) #Should be stop-start but there is a bug now.
+        # Should be stop-start but there is a bug now change later!!!.
+        [stepLat,
+         stepLong] = self.getStepLength(startLat-stopLat,
+                                        startLong-stopLong,
+                                        zoomLevel)
 
         returnData = self.netCDF.variables['tas'][startTime:stopTime,
-                                                  stopLat:startLat:zoomLevel,
-                                                  stopLong:startLong:zoomLevel]
-
-        return returnData.tolist()
-
-    def getSurfacePersp(self,
-                        fromLong,
-                        toLong,
-                        fromLat,
-                        toLat,
-                        fromDate,
-                        toDate,
-                        zoomLevel):
-        [startLong,
-         stopLong,
-         startLat,
-         stopLat,
-         startTime,
-         stopTime] = self.getArea(fromLong,
-                                  toLong,
-                                  fromLat,
-                                  toLat,
-                                  fromDate,
-                                  toDate)
-
-        returnData = self.netCDF.variables['pr'][startTime:stopTime,
-                                                 stopLat:startLat:zoomLevel,
-                                                 stopLong:startLong:zoomLevel]
+                                                  stopLat:startLat:stepLat,
+                                                  stopLong:startLong:stepLong]
 
         return returnData.tolist()
