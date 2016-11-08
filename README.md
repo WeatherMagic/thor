@@ -88,7 +88,36 @@ cd thor
 sudo pip3 install -U -r requirements.txt
 sudo pip3 install .
 ```
+# Files 
+Before thor can be used weather data needs to be aquired. This is done by downloading data from www.earthsystemcog.org there are a lot of different files that can be downloaded, not all compatible with thor. To simplify the downloading process a wget scripts have been created. 
 
+
+## Account and permissions
+First create an OpenID acoount at ESCOG this is done by going to the following link
+
+https://esgf.esrl.noaa.gov/user/add/?next=http%253A%252F%252Fwww.earthsystemcog.org%252Fprojects%252Fcog%252F
+
+Once an account is created it needs to get the right permissions inorder to download the required files for thor. This can be done by trying to download files from two ESCOG projects. First try to download:
+
+http://aims3.llnl.gov/thredds/fileServer/cmip5_css02_data/cmip5/output1/LASG-CESS/FGOALS-g2/midHolocene/mon/ocean/Omon/r1i1p1/vsfsit/1/vsfsit_Omon_FGOALS-g2_midHolocene_r1i1p1_096001-096912.nc
+
+It will ask for your openID account and password once it notices that your account dosen't have permission it will ask if you want commercial or scientific access. Choose scientific.
+
+Once the first file is downloaded download the folloing file and repeat the procedure.
+
+http://esgf1.dkrz.de/thredds/fileServer/cordex/cordex/output/ARC-44/AWI/ECMWF-ERAINT/evaluation/r1i1p1/AWI-HIRHAM5/v1/day/snm/v20150409/snm_ARC-44_ECMWF-ERAINT_evaluation_r1i1p1_AWI-HIRHAM5_v1_day_20110101-20141231.nc
+
+Now you should have the necessary permissions to do the next step.
+
+## Downloading with wget
+To use the wget script to download all required files to use thor simply type the following commands while standing in the thor folder and then follow the instructions in your terminal.
+
+```bash
+cd scripts
+./get_ESCOG_files.sh
+```
+
+Congratulation you should now have all the required files to start running the thor application.
 
 # Usage
 
