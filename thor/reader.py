@@ -12,7 +12,7 @@ import thor.transform as transform
 
 class Reader():
 
-    def __init__(self, filename):
+    def __init__(self, filename, nmbZoomLevels):
         # Open netCDF file for reading
         self.netCDF = netCDF4.Dataset(filename, 'r')
         self.filename = filename
@@ -123,6 +123,17 @@ class Reader():
                startTime,
                stopTime)
 
+    def getZoomLevel(self,
+                     rangeLat,
+                     rangeLong,
+                     zoomLevel):
+
+
+        #vid 100
+        return 1,1
+
+
+
     def getSurfaceTemp(self,
                        fromLong,
                        toLong,
@@ -142,6 +153,10 @@ class Reader():
                                   toLat,
                                   fromDate,
                                   toDate)
+
+        [zoomLat,
+         zoomLong] = getZoomLevel(startLat-stopLat,
+                                startLong-stopLong) #Should be stop-start but there is a bug now.
 
         returnData = self.netCDF.variables['tas'][startTime:stopTime,
                                                   stopLat:startLat:zoomLevel,

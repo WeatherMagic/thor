@@ -42,6 +42,9 @@ if __name__ == "__main__":
         fileHandler.setFormatter(formatter)
         const.log.addHandler(fileHandler)
 
+    # This defines nmb of zoom levels
+    const.nmbZoomLevels = nmbZoomLevels
+
     # Load ncFiles
     const.ncFiles = util.openFiles(ncFolder)
 
