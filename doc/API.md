@@ -54,16 +54,18 @@ All methods must be called using HTTP(S). Arguments can be passed as GET or POST
 
 The response contains a JSON object, which at the top level contains a boolean value indicating success status. A non successful request will contain an error message. 
 
-Example of successful request:
+**Example of successful request:**
 
 ```json
 {
     "ok": true
-    "other-stuff": [All the goodie simulations here]
+    "data": [All the goodie simulations here]
 }
 ```
 
-Example of a non successful request: 
+The returned data is three dimensional with the dimensions time, y and x (IN THAT ORDER). There's `12.231 km` between data points in each spatial direction when using zoom-level 1. The time resolution is one month.
+
+**Example of a non successful request:** 
 
 ```
 {
