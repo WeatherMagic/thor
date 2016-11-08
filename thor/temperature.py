@@ -7,7 +7,7 @@ import logging
 
 
 def handleRequest(arguments, ncFiles, log):
-    if "month" not in arguments:
+    if "from-month" not in arguments or "to-month" not in arguments:
         return {"ok": False,
                 "error": "Interpolation method not implemented yet!"}
     if int(arguments["zoom-level"]) != 1:
@@ -16,15 +16,18 @@ def handleRequest(arguments, ncFiles, log):
 
     # This info is supplied by client
     zoomLevel = int(arguments["zoom-level"])
-    startDate = datetime.strptime(str(arguments["year"]) +
-                                  str(arguments["month"]) +
+    startDate = datetime.strptime(str(arguments["from-year"]) +
+                                  str(arguments["from-month"]) +
                                   "1",
                                   "%Y%m%d")
-    lastDate = startDate + timedelta(days=90)
-    startLong = float(arguments["fromLongitude"])
-    startLat = float(arguments["fromLatitude"])
-    lastLat = float(arguments["toLatitude"])
-    lastLong = float(arguments["toLongitude"])
+    lastDate = datetime.strptime(str(arguments["to-year"]) +
+                                  str(int(arguments["to-month"]) + 1) +
+                                  "1",
+                                  "%Y%m%d")
+    startLong = float(arguments["from-longitude"])
+    startLat = float(arguments["from-latitude"])
+    lastLat = float(arguments["to-latitude"])
+    lastLong = float(arguments["to-longitude"])
 
     for ncFile in ncFiles:
         # Make sure data is within range

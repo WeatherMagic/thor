@@ -11,9 +11,10 @@ logFiles = ()
 ncFolder = "ncFiles"
 
 apiMustArgs = ("zoom-level",
-               "fromLongitude",
-               "fromLatitude",
-               "year",
-               "toLatitude",
-               "toLongitude")
-apiOptionalArgs = ("month")
+               "from-year",
+               "to-year",
+               "from-longitude",
+               "from-latitude",
+               "to-latitude",
+               "to-longitude")
+apiOptionalArgs = ("from-month", "to-month")
