@@ -10,7 +10,7 @@ def handleRequest(arguments, ncFiles, log):
     if "month" not in arguments:
         return {"ok": False,
                 "error": "Interpolation method not implemented yet!"}
-    if arguments["zoom-level"] != "1":
+    if int(arguments["zoom-level"]) != 1:
         return {"ok": False,
                 "error": "Only zoom-level 1 implemented as of now!"}
 
