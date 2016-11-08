@@ -16,15 +16,15 @@ def handleRequest(arguments, ncFiles, log):
 
     # This info is supplied by client
     zoomLevel = int(arguments["zoom-level"])
-    startDate = datetime.strptime(arguments["year"] +
-                                  arguments["month"] +
+    startDate = datetime.strptime(str(arguments["year"]) +
+                                  str(arguments["month"]) +
                                   "1",
                                   "%Y%m%d")
     lastDate = startDate + timedelta(days=90)
-    startLong = int(arguments["fromLongitude"])
-    startLat = int(arguments["fromLatitude"])
-    lastLat = int(arguments["toLatitude"])
-    lastLong = int(arguments["toLongitude"])
+    startLong = float(arguments["fromLongitude"])
+    startLat = float(arguments["fromLatitude"])
+    lastLat = float(arguments["toLatitude"])
+    lastLong = float(arguments["toLongitude"])
 
     for ncFile in ncFiles:
         # Make sure data is within range
