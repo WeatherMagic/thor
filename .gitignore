@@ -6,8 +6,9 @@ include
 lib
 pip-selfcheck.json
 env
-__pychache__
+__pycache__
+ncFiles
 
 # Vim and Emacs swap file
-.swp
+*.swp
 *~
