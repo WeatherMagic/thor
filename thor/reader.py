@@ -59,8 +59,6 @@ class Reader():
 
         self.dateResolution = abs(self.netCDF.variables['time'][1] -
                                   self.netCDF.variables['time'][0])
-        #print(str(self.getStartLong()) + " " + str(self.getLastLong()))
-        #print(str(self.getStartLat()) + " " + str(self.getLastLat()))
 
     def getDimensionData(self, dimension):
         return self.netCDF.variables[dimension]
@@ -119,8 +117,6 @@ class Reader():
 
         startTime = floor((fromDate-self.startDate).days/self.dateResolution)
         stopTime = ceil((toDate-self.startDate).days/self.dateResolution)
-
-        print("startLong: " + str(startLong) + " stopLong: " + str(stopLong))
 
         return(startLong,
                stopLong,
