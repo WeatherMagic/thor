@@ -118,8 +118,6 @@ class Reader():
         startTime = floor((fromDate-self.startDate).days/self.dateResolution)
         stopTime = ceil((toDate-self.startDate).days/self.dateResolution)
 
-        print("startLong: " + str(startLong) + " stopLong: " + str(stopLong))
-
         return(startLong,
                stopLong,
                startLat,
