@@ -17,3 +17,4 @@ apiMustArgs = ("zoom-level",
                "toLatitude",
                "toLongitude")
 apiOptionalArgs = ("month")
+nmbZoomLevels = 100

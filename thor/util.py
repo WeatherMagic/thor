@@ -54,7 +54,8 @@ def openFiles(folder):
         if currentFile.endswith(".nc"):
             const.log.info("Loading netCDF file: " +
                            folder + os.sep + currentFile)
-            ncFiles.append(reader.Reader(folder + os.sep + currentFile))
+            ncFiles.append(reader.Reader(folder + os.sep + currentFile,
+                                         const.nmbZoomLevels))
 
     # Return touple since immutable
     return tuple(ncFiles)
