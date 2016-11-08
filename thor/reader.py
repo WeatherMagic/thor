@@ -96,19 +96,15 @@ class Reader():
 
         # Find where to start and stop in rotated coordinates
 
-        print(str(fromLong) + ", " + str(toLong) )
         rotFrom = transform.toRot(fromLong, fromLat)
         rotTo = transform.toRot(toLong, toLat)
-        print(rotFrom)
 
         startLong = 0
         while self.netCDF.variables['rlon'][startLong] < rotFrom.item(0, 0):
-            print("Current startLong: " + str(self.netCDF.variables['rlon'][startLong]) + ", rotFrom: " + str(rotFrom[0][0]))
             startLong = startLong + 1
 
         stopLong = startLong + 1
         while self.netCDF.variables['rlon'][stopLong] < rotTo.item(0, 0):
-            print(self.netCDF.variables['rlon'][stopLong])
             stopLong = stopLong + 1
 
         startLat = 0
@@ -121,6 +117,8 @@ class Reader():
 
         startTime = floor((fromDate-self.startDate).days/self.dateResolution)
         stopTime = ceil((toDate-self.startDate).days/self.dateResolution)
+
+        print("startLong: " + str(startLong) + " stopLong: " + str(stopLong))
 
         return(startLong,
                stopLong,
