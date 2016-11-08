@@ -17,20 +17,21 @@ class Reader():
         self.netCDF = netCDF4.Dataset(filename, 'r')
         self.filename = filename
 
-        # Last lonLat, the file seems to start backwards?
-        lonLat = transform.regFromRot(
+        # Start lonLat
+        lonLat = transform.toReg(
                 self.netCDF["rlon"][0],
                 self.netCDF["rlat"][0])
-        self.lastLong = lonLat.item(0, 0)
-        self.lastLat = lonLat.item(1, 0)
-        # start lonLat
-        lonLen = len(self.netCDF["rlon"])-1
-        latLen = len(self.netCDF["rlat"])-1
-        lonLat = transform.regFromRot(
-                self.netCDF["rlon"][lonLen],
-                self.netCDF["rlat"][latLen])
         self.startLong = lonLat.item(0, 0)
         self.startLat = lonLat.item(1, 0)
+        # Last lonLat
+        lonLen = len(self.netCDF["rlon"])-1
+        latLen = len(self.netCDF["rlat"])-1
+        lonLat = transform.toReg(
+                self.netCDF["rlon"][lonLen],
+                self.netCDF["rlat"][latLen])
+        self.lastLong = lonLat.item(0, 0)
+        self.lastLat = lonLat.item(1, 0)
+
 
         # NetCDF file contains a date string looking like:
         # days since YYYY-MM-DD HH:MM:SS
@@ -58,6 +59,8 @@ class Reader():
 
         self.dateResolution = abs(self.netCDF.variables['time'][1] -
                                   self.netCDF.variables['time'][0])
+        #print(str(self.getStartLong()) + " " + str(self.getLastLong()))
+        #print(str(self.getStartLat()) + " " + str(self.getLastLat()))
 
     def getDimensionData(self, dimension):
         return self.netCDF.variables[dimension]
@@ -94,24 +97,29 @@ class Reader():
                 toDate):
 
         # Find where to start and stop in rotated coordinates
-        rotFrom = transform.rotFromReg(fromLong, fromLat)
-        rotTo = transform.rotFromReg(toLong, toLat)
 
-        startLong = len(self.netCDF.variables['rlon']) - 1
-        while self.netCDF.variables['rlon'][startLong] > rotFrom[0]:
-            startLong = startLong - 1
+        print(str(fromLong) + ", " + str(toLong) )
+        rotFrom = transform.toRot(fromLong, fromLat)
+        rotTo = transform.toRot(toLong, toLat)
+        print(rotFrom)
 
-        stopLong = startLong - 1
-        while self.netCDF.variables['rlon'][stopLong] > rotTo[0]:
-            stopLong = stopLong - 1
+        startLong = 0
+        while self.netCDF.variables['rlon'][startLong] < rotFrom.item(0, 0):
+            print("Current startLong: " + str(self.netCDF.variables['rlon'][startLong]) + ", rotFrom: " + str(rotFrom[0][0]))
+            startLong = startLong + 1
 
-        startLat = len(self.netCDF.variables['rlat']) - 1
-        while self.netCDF.variables['rlat'][startLat] > rotFrom[1]:
-            startLat = startLat - 1
+        stopLong = startLong + 1
+        while self.netCDF.variables['rlon'][stopLong] < rotTo.item(0, 0):
+            print(self.netCDF.variables['rlon'][stopLong])
+            stopLong = stopLong + 1
+
+        startLat = 0
+        while self.netCDF.variables['rlat'][startLat] < rotFrom.item(1, 0):
+            startLat = startLat + 1
 
         stopLat = startLat
-        while self.netCDF.variables['rlat'][stopLat] > rotTo[1]:
-            stopLat = stopLat - 1
+        while self.netCDF.variables['rlat'][stopLat] < rotTo.item(1, 0):
+            stopLat = stopLat + 1
 
         startTime = floor((fromDate-self.startDate).days/self.dateResolution)
         stopTime = ceil((toDate-self.startDate).days/self.dateResolution)
