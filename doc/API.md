@@ -41,10 +41,10 @@ All methods must be called using HTTP(S). Arguments can be passed as GET or POST
 {
 	"year": "2012",
 	"month": "12",
-	"fromLongitude": "1",
-	"toLongitude": "5",
-	"fromLatitude": "37",
-	"toLatitude": "45",
+	"from-longitude": "1",
+	"to-longitude": "5",
+	"from-latitude": "37",
+	"to-latitude": "45",
 	"zoom-level": "1"
 }
 ```
