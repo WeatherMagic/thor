@@ -114,7 +114,7 @@ To use the wget script to download all required files to use thor simply type th
 
 ```bash
 cd scripts
-./Get_ESCOG_files.sh
+./get_ESCOG_files.sh
 ```
 
 Congratulation you should now have all the required files to start running the thor application.
