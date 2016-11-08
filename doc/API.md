@@ -31,7 +31,11 @@ Each request needs to provide parameters either in URL or as a json (OBS: Set th
 
 If month is omitted, data returned will be as filtered over a month. If month is specified, data points for each day will be returned. 
 
-**Zoom level is one of a predefined set of zoom levels, these are not yet specified.**
+**Zoom level is one of a predefined set of zoom levels, it can be any rational value between 1 and a 100**
+
+1 returns every data point that the server has in the area requested.
+
+100 returns four data point in the area requested.
 
 All methods must be called using HTTP(S). Arguments can be passed as GET or POST params, or a mix.
 
