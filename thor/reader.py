@@ -17,21 +17,8 @@ class Reader():
         self.netCDF = netCDF4.Dataset(filename, 'r')
         self.filename = filename
 
-        # Start lonLat
-        lonLat = transform.toReg(
-                self.netCDF["rlon"][0],
-                self.netCDF["rlat"][0])
-        self.startLong = lonLat.item(0, 0)
-        self.startLat = lonLat.item(1, 0)
-        # Last lonLat
-        lonLen = len(self.netCDF["rlon"])-1
-        latLen = len(self.netCDF["rlat"])-1
-        lonLat = transform.toReg(
-                self.netCDF["rlon"][lonLen],
-                self.netCDF["rlat"][latLen])
-        self.lastLong = lonLat.item(0, 0)
-        self.lastLat = lonLat.item(1, 0)
-
+        self.lonLen = len(self.netCDF["rlon"])-1
+        self.latLen = len(self.netCDF["rlat"])-1
 
         # NetCDF file contains a date string looking like:
         # days since YYYY-MM-DD HH:MM:SS
@@ -74,18 +61,6 @@ class Reader():
         return self.baseDate +\
             datetime.timedelta(days=self.netCDF.variables['time'][last])
 
-    def getStartLong(self):
-        return self.startLong
-
-    def getLastLong(self):
-        return self.lastLong
-
-    def getStartLat(self):
-        return self.startLat
-
-    def getLastLat(self):
-        return self.lastLat
-
     def getArea(self,
                 fromLong,
                 toLong,
@@ -101,18 +76,30 @@ class Reader():
 
         startLong = 0
         while self.netCDF.variables['rlon'][startLong] < rotFrom.item(0, 0):
+            if startLong == self.lonLen:
+                startLong = None
+                break
             startLong = startLong + 1
 
         stopLong = startLong + 1
         while self.netCDF.variables['rlon'][stopLong] < rotTo.item(0, 0):
+            if stopLong == self.lonLen:
+                stopLong = None
+                break
             stopLong = stopLong + 1
 
         startLat = 0
         while self.netCDF.variables['rlat'][startLat] < rotFrom.item(1, 0):
+            if startLat == self.lonLen:
+                startLat = None
+                break
             startLat = startLat + 1
 
         stopLat = startLat
         while self.netCDF.variables['rlat'][stopLat] < rotTo.item(1, 0):
+            if stopLat == self.lonLen:
+                stopLat = None
+                break
             stopLat = stopLat + 1
 
 
@@ -147,12 +134,16 @@ class Reader():
                                   toLat,
                                   fromDate,
                                   toDate)
-
-        returnData = self.netCDF.variables['tas'][startTime:stopTime,
+        returnData = None
+        if not None in [startLong,
+                        stopLong,
+                        startLat,
+                        stopLat]:
+            returnData = self.netCDF.variables['tas'][startTime:stopTime,
                                                   startLat:stopLat,
-                                                  startLong:stopLong]
+                                                  startLong:stopLong].tolist()
 
-        return returnData.tolist()
+        return returnData
 
     def getSurfacePersp(self,
                         fromLong,

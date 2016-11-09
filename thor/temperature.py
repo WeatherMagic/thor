@@ -29,26 +29,31 @@ def handleRequest(arguments, ncFiles, log):
     lastLat = float(arguments["to-latitude"])
     lastLong = float(arguments["to-longitude"])
 
+    print(lastLong)
+
     for ncFile in ncFiles:
         # Make sure data is within range
         # TODO: Enable fetching data from multiple files
         # if range is split between two files
         if startDate > ncFile.getStartDate()\
-                and lastDate < ncFile.getLastDate()\
-                and startLong > ncFile.getStartLong()\
-                and lastLong < ncFile.getLastLong()\
-                and startLat > ncFile.getStartLong()\
-                and lastLat < ncFile.getLastLat():
-                    returnData = {"ok": True,
-                                  "data": ncFile.getSurfaceTemp(startLong,
-                                                                lastLong,
-                                                                startLat,
-                                                                lastLat,
-                                                                startDate,
-                                                                lastDate)}
-                    return returnData
+                and lastDate < ncFile.getLastDate():
+                    # If returnArea is None, it is not within file
+                    returnArea = ncFile.getSurfaceTemp(startLong,
+                                                       lastLong,
+                                                       startLat,
+                                                       lastLat,
+                                                       startDate,
+                                                       lastDate)
+                    if returnArea is not None:
+                        return {"ok": True,
+                                      "data": returnArea}
+                    # Else lat/lon comb not in file
+                    return {"ok": False,
+                            "errorMessage":
+                            "Specified lat/lon combination not within server dataset."}
+
 
     returnData = {"ok": False,
                   "errorMessage":
-                  "Specified range not within server dataset."}
+                  "Specified date range not within server dataset."}
     return returnData
