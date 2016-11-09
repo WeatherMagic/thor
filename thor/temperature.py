@@ -49,7 +49,7 @@ def handleRequest(arguments, ncFiles, log):
                     return {"ok": False,
                             "errorMessage":
                             "Specified lat/lon combination not \
-                                    within server dataset."}
+within server dataset."}
 
     returnData = {"ok": False,
                   "errorMessage":
