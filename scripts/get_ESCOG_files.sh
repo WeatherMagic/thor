@@ -2,21 +2,18 @@
 
 #Checks if ncFiles exists, empties it if it does and creates it if it dosen't
 
-DIR="ncFiles" #Default folder dor net cdf files
+dir="ncFiles" #Default folder dor net cdf files
 
-if [ -n "$(find ../$DIR -prune -empty)" ]; then
-    echo "* Removing files in ncFiles."
-    rm ../$DIR/* #this is bugged goes here even if not empty.
-elif [ -d "../$DIR" ]; then
+if [ -d "../$dir" ]; then
     #Folder exists and is empty
     echo "*"
 else
     echo "* Creating directory ncFiles."
-    mkdir ../$DIR
+    mkdir ../$dir
 fi
 
 #Changeing folder to get the wget files in the right place
-cd ../$DIR
+cd ../$dir
 
 #Downloads the choosen amount of ncFiles to the ncFiles folder
 while true; do 
