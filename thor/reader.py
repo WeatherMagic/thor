@@ -70,26 +70,28 @@ class Reader():
                 toDate):
 
         # Find where to start and stop in rotated coordinates
-
         rotFrom = transform.toRot(fromLong, fromLat)
         rotTo = transform.toRot(toLong, toLat)
 
         startLong = 0
-        while self.netCDF.variables['rlon'][startLong] < rotFrom.item(0, 0):
+        while self.netCDF.variables['rlon'][
+                startLong] < rotFrom.item(0, 0):
             if startLong < self.lonLen:
                 startLong = startLong + 1
             else:
                 return {"ok": False}
 
         stopLong = startLong + 1
-        while self.netCDF.variables['rlon'][stopLong] < rotTo.item(0, 0):
+        while self.netCDF.variables['rlon'][
+              stopLong] < rotTo.item(0, 0):
             if stopLong < self.lonLen:
                 stopLong = stopLong + 1
             else:
                 return {"ok": False}
 
         startLat = 0
-        while self.netCDF.variables['rlat'][startLat] < rotFrom.item(1, 0):
+        while self.netCDF.variables['rlat'][
+                startLat] < rotFrom.item(1, 0):
             if startLat < self.latLen:
                 startLat = startLat + 1
             else:
@@ -102,20 +104,21 @@ class Reader():
             else:
                 return {"ok": False}
 
-
-        startTime = int(round((fromDate-self.startDate).days/self.dateResolution))
-        stopTime = int(round((toDate-self.startDate).days/self.dateResolution))
+        startTime = int(round((fromDate-self.startDate).days /
+                              self.dateResolution))
+        stopTime = int(round((toDate-self.startDate).days /
+                             self.dateResolution))
         # Due to how numpy range-indexing works, we need one more.
         if stopTime < len(self.netCDF.variables["time"]) - 1:
             stopTime = stopTime + 1
 
         return({"ok": True,
-                    "data": [startLong,
-                             stopLong,
-                             startLat,
-                             stopLat,
-                             startTime,
-                             stopTime]})
+                "data": [startLong,
+                         stopLong,
+                         startLat,
+                         stopLat,
+                         startTime,
+                         stopTime]})
 
     def getSurfaceTemp(self,
                        fromLong,
@@ -130,7 +133,7 @@ class Reader():
                                 toLat,
                                 fromDate,
                                 toDate)
-        if areaDict["ok"] == False:
+        if not areaDict["ok"]:
             return None
 
         [startLong,

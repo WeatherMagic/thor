@@ -107,26 +107,27 @@ def toReg(rlon, rlat):
     zsyrot = sin(zrad*pyrot)
     zcyrot = cos(zrad*pyrot)
     zsyreg = zcycen*zsyrot+zsycen*zcyrot*zcxrot
-    zsyreg = max(zsyreg,-1.0)
-    zsyreg = min(zsyreg,+1.0)
+    zsyreg = max(zsyreg, -1.0)
+    zsyreg = min(zsyreg, +1.0)
 
     pyreg = arcsin(zsyreg)*zradi
 
     zcyreg = cos(pyreg*zrad)
     zcxmxc = (zcycen*zcyrot*zcxrot-zsycen*zsyrot)/zcyreg
-    zcxmxc = max(zcxmxc,-1.0)
-    zcxmxc = min(zcxmxc,+1.0)
+    zcxmxc = max(zcxmxc, -1.0)
+    zcxmxc = min(zcxmxc, +1.0)
     zsxmxc = zcyrot*zsxrot/zcyreg
-    zxmxc  = arccos(zcxmxc)*zradi
+    zxmxc = arccos(zcxmxc)*zradi
 
-    #gs080207
-    #This is different from original regrot
+    # gs080207
+    # This is different from original regrot
     if (zsxmxc < 0.0):
         zxmxc = -zxmxc+360
 
     pxreg = zxmxc + pxcen
 
     return matrix(array([[pxreg], [pyreg]]))
+
 
 def toRot(lon, lat):
     """
@@ -147,21 +148,21 @@ def toRot(lon, lat):
     zsycen = sin(zrad*(pycen+90.0))
     zcycen = cos(zrad*(pycen+90.0))
 
-    zxmxc  = zrad*(pxreg - pxcen)
+    zxmxc = zrad*(pxreg - pxcen)
     zsxmxc = sin(zxmxc)
     zcxmxc = cos(zxmxc)
     zsyreg = sin(zrad*pyreg)
     zcyreg = cos(zrad*pyreg)
     zsyrot = zcycen*zsyreg - zsycen*zcyreg*zcxmxc
-    zsyrot = max(zsyrot,-1.0)
-    zsyrot = min(zsyrot,+1.0)
+    zsyrot = max(zsyrot, -1.0)
+    zsyrot = min(zsyrot, +1.0)
 
     pyrot = arcsin(zsyrot)*zradi
 
     zcyrot = cos(pyrot*zrad)
     zcxrot = (zcycen*zcyreg*zcxmxc+zsycen*zsyreg)/zcyrot
-    zcxrot = max(zcxrot,-1.0)
-    zcxrot = min(zcxrot,+1.0)
+    zcxrot = max(zcxrot, -1.0)
+    zcxrot = min(zcxrot, +1.0)
     zsxrot = zcyreg*zsxmxc/zcyrot
 
     pxrot = arccos(zcxrot)*zradi
@@ -175,7 +176,3 @@ def toRot(lon, lat):
     rlon = -pxrot
 
     return matrix(array([[rlon], [rlat]]))
-
-
-
-

@@ -21,9 +21,9 @@ def handleRequest(arguments, ncFiles, log):
                                   "1",
                                   "%Y%m%d")
     lastDate = datetime.strptime(str(arguments["to-year"]) +
-                                  str(int(arguments["to-month"])) +
-                                  "1",
-                                  "%Y%m%d")
+                                 str(int(arguments["to-month"])) +
+                                 "1",
+                                 "%Y%m%d")
     startLong = float(arguments["from-longitude"])
     startLat = float(arguments["from-latitude"])
     lastLat = float(arguments["to-latitude"])
@@ -44,12 +44,12 @@ def handleRequest(arguments, ncFiles, log):
                                                        lastDate)
                     if returnArea is not None:
                         return {"ok": True,
-                                      "data": returnArea}
+                                "data": returnArea}
                     # Else lat/lon comb not in file
                     return {"ok": False,
                             "errorMessage":
-                            "Specified lat/lon combination not within server dataset."}
-
+                            "Specified lat/lon combination not \
+                                    within server dataset."}
 
     returnData = {"ok": False,
                   "errorMessage":

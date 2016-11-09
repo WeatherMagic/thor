@@ -14,7 +14,9 @@ thorApp = Flask("thor")
 @thorApp.route('/')
 def hello_world():
     # Redirect to description of API
-    return redirect("https://github.com/WeatherMagic/thor/blob/master/doc/API.md", code=302)
+    return redirect(
+            "https://github.com/WeatherMagic/thor/blob/master/doc/API.md",
+            code=302)
 
 
 @thorApp.route('/api/<dimension>', methods=["GET", "POST"])
