@@ -56,11 +56,7 @@ rlons = nc_file.variables['rlon'][:]
 lats = nc_file.variables['lat'][:]
 rlats = nc_file.variables['rlat'][:]
 
-print("Lon: " + str(lons[0][0]))
-print("rlon: " + str(rlons[0]))
-print("")
-print("Lat: " + str(lats[0][0]))
-print("rlat: " + str(rlats[0]))
+print("Lon: " + str(lons[0]))
 
 #print(lons[1][0])
 

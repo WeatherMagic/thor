@@ -29,8 +29,6 @@ def handleRequest(arguments, ncFiles, log):
     lastLat = float(arguments["to-latitude"])
     lastLong = float(arguments["to-longitude"])
 
-    print(lastLong)
-
     for ncFile in ncFiles:
         # Make sure data is within range
         # TODO: Enable fetching data from multiple files

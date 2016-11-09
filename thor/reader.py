@@ -76,31 +76,31 @@ class Reader():
 
         startLong = 0
         while self.netCDF.variables['rlon'][startLong] < rotFrom.item(0, 0):
-            if startLong == self.lonLen:
-                startLong = None
-                break
-            startLong = startLong + 1
+            if startLong < self.lonLen:
+                startLong = startLong + 1
+            else:
+                return {"ok": False}
 
         stopLong = startLong + 1
         while self.netCDF.variables['rlon'][stopLong] < rotTo.item(0, 0):
-            if stopLong == self.lonLen:
-                stopLong = None
-                break
-            stopLong = stopLong + 1
+            if stopLong < self.lonLen:
+                stopLong = stopLong + 1
+            else:
+                return {"ok": False}
 
         startLat = 0
         while self.netCDF.variables['rlat'][startLat] < rotFrom.item(1, 0):
-            if startLat == self.lonLen:
-                startLat = None
-                break
-            startLat = startLat + 1
+            if startLat < self.latLen:
+                startLat = startLat + 1
+            else:
+                return {"ok": False}
 
         stopLat = startLat
         while self.netCDF.variables['rlat'][stopLat] < rotTo.item(1, 0):
-            if stopLat == self.lonLen:
-                stopLat = None
-                break
-            stopLat = stopLat + 1
+            if stopLat < self.latLen:
+                stopLat = stopLat + 1
+            else:
+                return {"ok": False}
 
 
         startTime = int(round((fromDate-self.startDate).days/self.dateResolution))
@@ -109,12 +109,13 @@ class Reader():
         if stopTime < len(self.netCDF.variables["time"]) - 1:
             stopTime = stopTime + 1
 
-        return(startLong,
-               stopLong,
-               startLat,
-               stopLat,
-               startTime,
-               stopTime)
+        return({"ok": True,
+                    "data": [startLong,
+                             stopLong,
+                             startLat,
+                             stopLat,
+                             startTime,
+                             stopTime]})
 
     def getSurfaceTemp(self,
                        fromLong,
@@ -123,27 +124,27 @@ class Reader():
                        toLat,
                        fromDate,
                        toDate):
+        areaDict = self.getArea(fromLong,
+                                toLong,
+                                fromLat,
+                                toLat,
+                                fromDate,
+                                toDate)
+        if areaDict["ok"] == False:
+            return None
+
         [startLong,
          stopLong,
          startLat,
          stopLat,
          startTime,
-         stopTime] = self.getArea(fromLong,
-                                  toLong,
-                                  fromLat,
-                                  toLat,
-                                  fromDate,
-                                  toDate)
-        returnData = None
-        if not None in [startLong,
-                        stopLong,
-                        startLat,
-                        stopLat]:
-            returnData = self.netCDF.variables['tas'][startTime:stopTime,
-                                                  startLat:stopLat,
-                                                  startLong:stopLong].tolist()
+         stopTime] = areaDict["data"]
 
-        return returnData
+        returnData = self.netCDF.variables['tas'][startTime:stopTime,
+                                                  startLat:stopLat,
+                                                  startLong:stopLong]
+
+        return returnData.tolist()
 
     def getSurfacePersp(self,
                         fromLong,
