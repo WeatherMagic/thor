@@ -119,7 +119,7 @@ class Reader():
         startTime = int(round((fromDate-self.startDate).days/self.dateResolution))
         stopTime = int(round((toDate-self.startDate).days/self.dateResolution))
         # Due to how numpy range-indexing works, we need one more.
-        if stopTime < len(self.netCDF.variables["time"]):
+        if stopTime < len(self.netCDF.variables["time"]) - 1:
             stopTime = stopTime + 1
 
         return(startLong,
