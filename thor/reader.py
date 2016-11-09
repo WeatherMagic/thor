@@ -115,8 +115,12 @@ class Reader():
         while self.netCDF.variables['rlat'][stopLat] < rotTo.item(1, 0):
             stopLat = stopLat + 1
 
-        startTime = floor((fromDate-self.startDate).days/self.dateResolution)
-        stopTime = ceil((toDate-self.startDate).days/self.dateResolution)
+
+        startTime = int(round((fromDate-self.startDate).days/self.dateResolution))
+        stopTime = int(round((toDate-self.startDate).days/self.dateResolution))
+        # Due to how numpy range-indexing works, we need one more.
+        if stopTime < len(self.netCDF.variables["time"]):
+            stopTime = stopTime + 1
 
         return(startLong,
                stopLong,

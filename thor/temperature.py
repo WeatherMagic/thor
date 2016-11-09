@@ -21,7 +21,7 @@ def handleRequest(arguments, ncFiles, log):
                                   "1",
                                   "%Y%m%d")
     lastDate = datetime.strptime(str(arguments["to-year"]) +
-                                  str(int(arguments["to-month"]) + 1) +
+                                  str(int(arguments["to-month"])) +
                                   "1",
                                   "%Y%m%d")
     startLong = float(arguments["from-longitude"])
