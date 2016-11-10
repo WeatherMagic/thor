@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 from numpy import *
+import math
 
 
 def getRotationMatrix(axis, degrees):
@@ -80,53 +81,98 @@ def cartToLonLat(cart):
     return matrix(array([[lon], [lat]]))
 
 
-def regFromRot(rlon, rlat):
+def toReg(rlon, rlat):
     """
-    Takes rotated coordinates and outputs regular coordinates
+    rot2reg seams to be working
+    Takes rotated coordinates and outputs regular coordinates.
+
+    This function is ported from fortran by Gustav Strandberg from SMHI.
+    This is totally un-documented - have no idea what we're doing.
     """
-    rotatedCoord = lonLatToCart(matrix(array([[rlon], [rlat]])))
+    # This is different from original regrot
+    pxrot = -rlon
+    pyrot = -rlat
 
-    # Axises to rotate around
-    xAxis = [1, 0, 0]
-    yAxis = [0, 1, 0]
-    # South Pole location in rotated coordinate system
-    spRotLon = -162
-    spRotLat = 39.25
-    # How far to rotate around Y
-    angleY = -spRotLon
-    # How far to rotate around X
-    angleX = 90+spRotLat
+    zrad = pi/180.0
+    zradi = 1.0/zrad
 
-    # Create rotation matrixes
-    Ry = getRotationMatrix(yAxis, angleY)
-    Rx = getRotationMatrix(xAxis, angleX)
+    pycen = 39.25
+    pxcen = -162
 
-    # Get regular cart coordinates
-    regCartCoord = Rx * Ry * rotatedCoord
+    zsycen = sin(zrad*(pycen+90.0))
+    zcycen = cos(zrad*(pycen+90.0))
 
-    return cartToLonLat(regCartCoord)
+    zsxrot = sin(zrad*pxrot)
+    zcxrot = cos(zrad*pxrot)
+    zsyrot = sin(zrad*pyrot)
+    zcyrot = cos(zrad*pyrot)
+    zsyreg = zcycen*zsyrot+zsycen*zcyrot*zcxrot
+    zsyreg = max(zsyreg, -1.0)
+    zsyreg = min(zsyreg, +1.0)
+
+    pyreg = arcsin(zsyreg)*zradi
+
+    zcyreg = cos(pyreg*zrad)
+    zcxmxc = (zcycen*zcyrot*zcxrot-zsycen*zsyrot)/zcyreg
+    zcxmxc = max(zcxmxc, -1.0)
+    zcxmxc = min(zcxmxc, +1.0)
+    zsxmxc = zcyrot*zsxrot/zcyreg
+    zxmxc = arccos(zcxmxc)*zradi
+
+    # gs080207
+    # This is different from original regrot
+    if (zsxmxc < 0.0):
+        zxmxc = -zxmxc+360
+
+    pxreg = zxmxc + pxcen
+
+    return matrix(array([[pxreg], [pyreg]]))
 
 
-def rotFromReg(lon, lat):
+def toRot(lon, lat):
     """
-    Takes regular coordinates and outputs rotated coordinates
+    reg2rot
+    Takes regular coordinates and outputs rotated coordinates.
+
+    This function is also ported by Gustav Strandberg.
     """
-    regCoord = lonLatToCart(matrix(array([[lon], [lat]])))
+    pxreg = lon
+    pyreg = lat
 
-    # Axises to rotate around
-    xAxis = [1, 0, 0]
-    yAxis = [0, 1, 0]
-    # South Pole location in rotated coordinate system
-    spRotLon = -162
-    spRotLat = 39.25
-    # How far to rotate around Y
-    angleY = spRotLon
-    # How far to rotate around X
-    angleX = -90-spRotLat
+    zrad = pi/180.0
+    zradi = 1.0/zrad
 
-    Ry = getRotationMatrix(yAxis, angleY)
-    Rx = getRotationMatrix(xAxis, angleX)
+    pycen = 39.25
+    pxcen = -162
 
-    rotCartCoord = Ry * Rx * regCoord
+    zsycen = sin(zrad*(pycen+90.0))
+    zcycen = cos(zrad*(pycen+90.0))
 
-    return cartToLonLat(rotCartCoord)
+    zxmxc = zrad*(pxreg - pxcen)
+    zsxmxc = sin(zxmxc)
+    zcxmxc = cos(zxmxc)
+    zsyreg = sin(zrad*pyreg)
+    zcyreg = cos(zrad*pyreg)
+    zsyrot = zcycen*zsyreg - zsycen*zcyreg*zcxmxc
+    zsyrot = max(zsyrot, -1.0)
+    zsyrot = min(zsyrot, +1.0)
+
+    pyrot = arcsin(zsyrot)*zradi
+
+    zcyrot = cos(pyrot*zrad)
+    zcxrot = (zcycen*zcyreg*zcxmxc+zsycen*zsyreg)/zcyrot
+    zcxrot = max(zcxrot, -1.0)
+    zcxrot = min(zcxrot, +1.0)
+    zsxrot = zcyreg*zsxmxc/zcyrot
+
+    pxrot = arccos(zcxrot)*zradi
+
+    if (zsxrot < 0.0):
+        pxrot = -pxrot
+
+    # gs080206
+    # This is different from original regrot
+    rlat = -pyrot
+    rlon = -pxrot
+
+    return matrix(array([[rlon], [rlat]]))

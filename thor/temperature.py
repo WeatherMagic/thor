@@ -7,7 +7,7 @@ import logging
 
 
 def handleRequest(arguments, ncFiles, log):
-    if "month" not in arguments:
+    if "from-month" not in arguments or "to-month" not in arguments:
         return {"ok": False,
                 "error": "Interpolation method not implemented yet!"}
     if int(arguments["zoom-level"]) != 1:
@@ -16,36 +16,42 @@ def handleRequest(arguments, ncFiles, log):
 
     # This info is supplied by client
     zoomLevel = int(arguments["zoom-level"])
-    startDate = datetime.strptime(str(arguments["year"]) +
-                                  str(arguments["month"]) +
+    fromDate = datetime.strptime(str(arguments["from-year"]) +
+                                  str(arguments["from-month"]) +
                                   "1",
                                   "%Y%m%d")
-    lastDate = startDate + timedelta(days=90)
-    startLong = float(arguments["from-longitude"])
-    startLat = float(arguments["from-latitude"])
-    lastLat = float(arguments["to-latitude"])
-    lastLong = float(arguments["to-longitude"])
+    toDate = datetime.strptime(str(arguments["to-year"]) +
+                                 str(int(arguments["to-month"])) +
+                                 "1",
+                                 "%Y%m%d")
+    fromLong = float(arguments["from-longitude"])
+    fromLat = float(arguments["from-latitude"])
+    toLat = float(arguments["to-latitude"])
+    toLong = float(arguments["to-longitude"])
 
     for ncFile in ncFiles:
         # Make sure data is within range
         # TODO: Enable fetching data from multiple files
         # if range is split between two files
-        if startDate > ncFile.getStartDate()\
-                and lastDate < ncFile.getLastDate()\
-                and startLong > ncFile.getStartLong()\
-                and lastLong < ncFile.getLastLong()\
-                and startLat > ncFile.getStartLong()\
-                and lastLat < ncFile.getLastLat():
-                    returnData = {"ok": True,
-                                  "data": ncFile.getSurfaceTemp(startLong,
-                                                                lastLong,
-                                                                startLat,
-                                                                lastLat,
-                                                                startDate,
-                                                                lastDate)}
-                    return returnData
+        if fromDate > ncFile.getStartDate()\
+                and toDate < ncFile.getLastDate():
+                    # If returnArea is None, it is not within file
+                    returnArea = ncFile.getSurfaceTemp(fromLong,
+                                                       toLong,
+                                                       fromLat,
+                                                       toLat,
+                                                       fromDate,
+                                                       toDate)
+                    if returnArea is not None:
+                        return {"ok": True,
+                                "data": returnArea}
+                    # Else lat/lon comb not in file
+                    return {"ok": False,
+                            "errorMessage":
+                            "Specified lat/lon combination not \
+within server dataset."}
 
     returnData = {"ok": False,
                   "errorMessage":
-                  "Specified range not within server dataset."}
+                  "Specified date range not within server dataset."}
     return returnData

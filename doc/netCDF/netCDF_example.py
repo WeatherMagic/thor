@@ -14,49 +14,59 @@ if len(sys.argv) != 2:
 file_path = sys.argv[1]
 nc_file = netCDF4.Dataset(file_path, 'r') # Open netCDF file for reading
 
-print(" -------------- GLOBAL ATTRIBUTES  ")
-# Get all attributes of file
-attributes = nc_file.ncattrs()
-# Print attributes
-for attribute in attributes:
-    print(attribute + ": " + repr(nc_file.getncattr(attribute)))
-    # Repr converts objects to a string representation
-print("")
-
-print(" -------------- VARIABLE ATTRIBUTES")
-for var in nc_file.variables:
-    print("Name: " + var)
-    print("Dimensions: ", nc_file.variables[var].dimensions)
-    print("Size: ", nc_file.variables[var].size) # Can't print touple
-    print("")
-
-print(" -------------- DIMENSION ATTRIBUTES")
-# Gets available dimensions in file, which is a dict
-dimensions = nc_file.dimensions
-# This prints all dimensions and info
-for dim in dimensions:
-    print("Name: " + dim)
-    print("Size: " + str(len(dimensions[dim])))
-    
-    try:
-        print("Datatype:", repr(nc_file.variables[dim].dtype))
-        for netcdf_attribute in nc_file.variables[dim].ncattrs(): # Throws error
-            print('%s:' % netcdf_attribute, repr(nc_file.variables[dim].getncattr(netcdf_attribute)))
-        print("")
-    except KeyError:
-        # If variable doesn't exist within the netCDF file, error is thrown so catch it
-        print("Dimension " + dim + " does not have a description!")
-        print("")
-
-# Extract data from NetCDF file dimensions
-# These dimensions are described by variable attributes
-lats = nc_file.variables['lat'][:] 
+#print(" -------------- GLOBAL ATTRIBUTES  ")
+## Get all attributes of file
+#attributes = nc_file.ncattrs()
+## Print attributes
+#for attribute in attributes:
+#    print(attribute + ": " + repr(nc_file.getncattr(attribute)))
+#    # Repr converts objects to a string representation
+#print("")
+#
+#print(" -------------- VARIABLE ATTRIBUTES")
+#for var in nc_file.variables:
+#    print("Name: " + var)
+#    print("Dimensions: ", nc_file.variables[var].dimensions)
+#    print("Size: ", nc_file.variables[var].size) # Can't print touple
+#    print("")
+#
+#print(" -------------- DIMENSION ATTRIBUTES")
+## Gets available dimensions in file, which is a dict
+#dimensions = nc_file.dimensions
+## This prints all dimensions and info
+#for dim in dimensions:
+#    print("Name: " + dim)
+#    print("Size: " + str(len(dimensions[dim])))
+#
+#    try:
+#        print("Datatype:", repr(nc_file.variables[dim].dtype))
+#        for netcdf_attribute in nc_file.variables[dim].ncattrs(): # Throws error
+#            print('%s:' % netcdf_attribute, repr(nc_file.variables[dim].getncattr(netcdf_attribute)))
+#        print("")
+#    except KeyError:
+#        # If variable doesn't exist within the netCDF file, error is thrown so catch it
+#        print("Dimension " + dim + " does not have a description!")
+#        print("")
+#
+## Extract data from NetCDF file dimensions
+## These dimensions are described by variable attributes
 lons = nc_file.variables['lon'][:]
-time = nc_file.variables['time'][:]
-air = nc_file.variables['tas'][:] #Exchange level with info from file
-# air[time][longitude][latitude]
+rlons = nc_file.variables['rlon'][:]
 
-print(air[0][0][0])
+lats = nc_file.variables['lat'][:]
+rlats = nc_file.variables['rlat'][:]
 
+print("Lon: " + str(lons[0]))
+
+#print(lons[1][0])
+
+#print(lons[len(lons)-1][len(lons[len(lons)])-1])
+#print(lons[len(lons)-1][0])
+#print(lons[409][423])
+#print(lons[0][423])
+
+# X wise is second, Y-wise is first
+
+#air = nc_file.variables['taLEVEL'][:] #Exchange level with info from file
 # three dimensional array
 

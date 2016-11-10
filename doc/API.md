@@ -22,12 +22,14 @@ Where the two schemes gives different resolution on data. The first returns inte
 Each request needs to provide parameters either in URL or as a json (OBS: Set the HTTP header "Content-type" to "application/json") data object: 
 
 - zoom-level
-- fromLongitude
-- toLongitude
-- fromLatitude
-- toLatitude
-- year
-- month (optional)
+- from-longitude
+- to-longitude
+- from-latitude
+- to-latitude
+- from-year
+- to-year
+- from-month (optional)
+- to-month (optional)
 
 If month is omitted, data returned will be as filtered over a month. If month is specified, data points for each day will be returned. 
 
@@ -39,8 +41,10 @@ All methods must be called using HTTP(S). Arguments can be passed as GET or POST
 
 ```
 {
-	"year": "2012",
-	"month": "12",
+	"from-year": "2012",
+	"from-month": "6",
+	"to-year": "2012",
+	"to-month": "12",
 	"from-longitude": "1",
 	"to-longitude": "5",
 	"from-latitude": "37",
