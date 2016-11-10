@@ -143,8 +143,33 @@ class Reader():
          startLong,
          stopLong] = areaDict["data"]
 
-        returnData = self.netCDF.variables['tas'][startTime:stopTime,
+        maxTime = len(self.netCDF.variables["time"])
+        maxLat =  len(self.netCDF.variables["rlat"])
+        maxLong =  len(self.netCDF.variables["rlon"])
+
+        interpolationBorder = 3
+        borderFlag = 0
+
+        if (stopTime < maxTime - interpolationBorder):
+#        and (stopLat < maxLat - interpolationBorder)
+#        and (stopLong < maxLong - interpolationBorder)
+#        and (startTime > interpolationBorder - 1)
+#        and (startLat > interpolationBorder - 1)
+#        and (startLong > interpolationBorder - 1)):
+            boderFlag = 1
+
+        print("borderFlag: " + str(borderFlag))
+        print("startTime: " + str(startTime) + " ,stopTime: " + str(stopTime))
+        print("maxTime: " + str(maxTime))
+        print("startLat: " + str(startLat) + " ,stopLat: " + str(stopLat))
+        print("maxLat: " + str(maxLat))
+        print("startLong: " + str(startLong) + " ,stopLong: " + str(stopLong))
+        print("maxLong: " + str(maxLong))
+
+        weatherData3D = self.netCDF.variables['tas'][startTime:stopTime,
                                                   startLat:stopLat,
                                                   startLong:stopLong]
 
-        return returnData.tolist()
+
+
+        return weatherData3D.tolist()
