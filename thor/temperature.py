@@ -16,32 +16,32 @@ def handleRequest(arguments, ncFiles, log):
 
     # This info is supplied by client
     zoomLevel = int(arguments["zoom-level"])
-    startDate = datetime.strptime(str(arguments["from-year"]) +
+    fromDate = datetime.strptime(str(arguments["from-year"]) +
                                   str(arguments["from-month"]) +
                                   "1",
                                   "%Y%m%d")
-    lastDate = datetime.strptime(str(arguments["to-year"]) +
+    toDate = datetime.strptime(str(arguments["to-year"]) +
                                  str(int(arguments["to-month"])) +
                                  "1",
                                  "%Y%m%d")
-    startLong = float(arguments["from-longitude"])
-    startLat = float(arguments["from-latitude"])
-    lastLat = float(arguments["to-latitude"])
-    lastLong = float(arguments["to-longitude"])
+    fromLong = float(arguments["from-longitude"])
+    fromLat = float(arguments["from-latitude"])
+    toLat = float(arguments["to-latitude"])
+    toLong = float(arguments["to-longitude"])
 
     for ncFile in ncFiles:
         # Make sure data is within range
         # TODO: Enable fetching data from multiple files
         # if range is split between two files
-        if startDate > ncFile.getStartDate()\
-                and lastDate < ncFile.getLastDate():
+        if fromDate > ncFile.getStartDate()\
+                and toDate < ncFile.getLastDate():
                     # If returnArea is None, it is not within file
-                    returnArea = ncFile.getSurfaceTemp(startLong,
-                                                       lastLong,
-                                                       startLat,
-                                                       lastLat,
-                                                       startDate,
-                                                       lastDate)
+                    returnArea = ncFile.getSurfaceTemp(fromLong,
+                                                       toLong,
+                                                       fromLat,
+                                                       toLat,
+                                                       fromDate,
+                                                       toDate)
                     if returnArea is not None:
                         return {"ok": True,
                                 "data": returnArea}
