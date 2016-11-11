@@ -33,7 +33,7 @@ Each request needs to provide parameters either in URL or as a json (OBS: Set th
 
 If month is omitted, data returned will be as filtered over a month. If month is specified, data points for each day will be returned. 
 
-**return-dimension is a 3D dimensional list that should contatin [time-dimension, lat-dimension, long-dimension]**
+Return-dimension is a 3D dimensional list that should contatin [time-dimension, lat-dimension, long-dimension].
 
 All methods must be called using HTTP(S). Arguments can be passed as GET or POST params, or a mix.
 
@@ -41,15 +41,15 @@ All methods must be called using HTTP(S). Arguments can be passed as GET or POST
 
 ```
 {
-	"from-year": "2012",
+	"from-year": "2082",
 	"from-month": "6",
-	"to-year": "2012",
+	"to-year": "2082",
 	"to-month": "12",
 	"from-longitude": "1",
 	"to-longitude": "5",
 	"from-latitude": "37",
 	"to-latitude": "45",
-	"zoom-level": "1"
+	"return-dimension": [2,4,3]
 }
 ```
 
