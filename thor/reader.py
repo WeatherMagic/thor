@@ -145,7 +145,8 @@ class Reader():
 
         weatherInterpolationFunc = scipy.interpolate.RegularGridInterpolator(
             points,
-            values)
+            values,
+        )
 
         returnData3D = np.ndarray(returnDimension,
                                   dtype=float)
@@ -166,7 +167,7 @@ class Reader():
             j = 0
             i += 1
 
-            return returnData3D
+        return returnData3D
 
     # -------------------------------------
     def getSurfaceTemp(self,
