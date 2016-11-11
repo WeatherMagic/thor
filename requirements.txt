@@ -2,3 +2,4 @@ numpy
 netCDF4
 cython
 flask
+scipy
