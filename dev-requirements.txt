@@ -4,3 +4,4 @@ git-lint
 pylint
 pep8
 flask
+scipy
