@@ -49,25 +49,25 @@ class Reader():
         self.dateResolution = abs(self.netCDF.variables['time'][1] -
                                   self.netCDF.variables['time'][0])
 
-    #-------------------------------------
+    # -------------------------------------
     def getDimensionData(self, dimension):
         return self.netCDF.variables[dimension]
 
-    #-------------------------------------
+    # -------------------------------------
     def getFileName(self):
         return self.filename
 
-    #-------------------------------------
+    # -------------------------------------
     def getStartDate(self):
         return self.startDate
 
-    #-------------------------------------
+    # -------------------------------------
     def getLastDate(self):
         last = len(self.netCDF.variables['time']) - 1
         return self.baseDate +\
             datetime.timedelta(days=self.netCDF.variables['time'][last])
 
-    #-------------------------------------
+    # -------------------------------------
     def getArea(self,
                 fromLong,
                 toLong,
@@ -127,39 +127,48 @@ class Reader():
                          startTime,
                          stopTime]})
 
-    #-------------------------------------
+    # -------------------------------------
     def interpolate(self,
                     values,
+                    maxTime,
                     maxLat,
                     maxLong,
-                    maxTime,
                     returnDimension):
 
-        latCoord1D = np.linspace(0,maxLat-1,maxLat)
-        longCoord1D = np.linspace(0,maxLong-1,maxLong)
-        timeCoord1D =  np.linspace(0,maxTime-1,maxTime)
+        timeCoord1D = np.linspace(0, maxTime-1, maxTime)
+        latCoord1D = np.linspace(0, maxLat-1, maxLat)
+        longCoord1D = np.linspace(0, maxLong-1, maxLong)
 
         points = (timeCoord1D,
                   latCoord1D,
                   longCoord1D)
 
-        weatherInterpolationFunc = scipy.interpolate.RegularGridInterpolator(points,values)
+        weatherInterpolationFunc = scipy.interpolate.RegularGridInterpolator(
+            points,
+            values)
 
         returnData3D = np.ndarray(returnDimension,
                                   dtype=float)
 
-        i = 0; j = 0; k = 0;
-        for time in np.linspace(0,maxTime-1,returnDimension[0]):
-            for lat in  np.linspace(0,maxLat-1,returnDimension[1]):
-                for long in np.linspace(0,maxLong-1,returnDimension[2]):
-                        returnData3D[i,j,k] = weatherInterpolationFunc((time,lat,long))
+        i = 0
+        j = 0
+        k = 0
+        for time in np.linspace(0, maxTime-1, returnDimension[0]):
+            for lat in np.linspace(0, maxLat-1, returnDimension[1]):
+                for long in np.linspace(0, maxLong-1, returnDimension[2]):
+                        returnData3D[i, j, k] = weatherInterpolationFunc((
+                            time,
+                            lat,
+                            long))
                         k += 1
-                k=0 ; j += 1
-            j=0; i += 1
+                k = 0
+                j += 1
+            j = 0
+            i += 1
 
             return returnData3D
 
-    #-------------------------------------
+    # -------------------------------------
     def getSurfaceTemp(self,
                        fromLong,
                        toLong,
@@ -190,9 +199,9 @@ class Reader():
                                                      startLong:stopLong]
 
         returnData3D = self.interpolate(weatherData3D,
-                                   stopLat-startLat,
-                                   stopLong-startLong,
-                                    stopTime-startTime,
-                                    returnDimension)
+                                        stopTime-startTime,
+                                        stopLat-startLat,
+                                        stopLong-startLong,
+                                        returnDimension)
 
         return returnData3D.tolist()
