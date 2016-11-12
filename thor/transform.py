@@ -81,7 +81,7 @@ def cartToLonLat(cart):
     return matrix(array([[lon], [lat]]))
 
 
-def toReg(rlon, rlat):
+def toReg(rlat, rlong):
     """
     rot2reg seams to be working
     Takes rotated coordinates and outputs regular coordinates.
@@ -129,7 +129,7 @@ def toReg(rlon, rlat):
     return matrix(array([[pxreg], [pyreg]]))
 
 
-def toRot(lon, lat):
+def toRot(lat, lon):
     """
     reg2rot
     Takes regular coordinates and outputs rotated coordinates.

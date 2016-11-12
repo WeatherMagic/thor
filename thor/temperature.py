@@ -24,8 +24,9 @@ def handleRequest(arguments, ncFiles, log):
                                  str(int(arguments["to-month"])) +
                                  "1",
                                  "%Y%m%d")
-    fromLong = float(arguments["from-longitude"])
     fromLat = float(arguments["from-latitude"])
+    fromLong = float(arguments["from-longitude"])
+
     toLat = float(arguments["to-latitude"])
     toLong = float(arguments["to-longitude"])
 
@@ -36,12 +37,12 @@ def handleRequest(arguments, ncFiles, log):
         if fromDate > ncFile.getStartDate()\
                 and toDate < ncFile.getLastDate():
                     # If returnArea is None, it is not within file
-                    returnArea = ncFile.getSurfaceTemp(fromLong,
-                                                       toLong,
+                    returnArea = ncFile.getSurfaceTemp(fromDate,
+                                                       toDate,
                                                        fromLat,
                                                        toLat,
-                                                       fromDate,
-                                                       toDate)
+                                                       fromLong,
+                                                       toLong)
                     if returnArea is not None:
                         return {"ok": True,
                                 "data": returnArea}

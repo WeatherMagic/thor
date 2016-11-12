@@ -62,16 +62,39 @@ class Reader():
             datetime.timedelta(days=self.netCDF.variables['time'][last])
 
     def getArea(self,
-                fromLong,
-                toLong,
+                fromDate,
+                toDate,
                 fromLat,
                 toLat,
-                fromDate,
-                toDate):
+                fromLong,
+                toLong):
+
+        startTime = int(round((fromDate-self.startDate).days /
+                              self.dateResolution))
+        stopTime = int(round((toDate-self.startDate).days /
+                             self.dateResolution))
+        # Due to how numpy range-indexing works, we need one more.
+        if stopTime < len(self.netCDF.variables["time"]) - 1:
+            stopTime = stopTime + 1
 
         # Find where to start and stop in rotated coordinates
-        rotFrom = transform.toRot(fromLong, fromLat)
-        rotTo = transform.toRot(toLong, toLat)
+        rotFrom = transform.toRot(fromLat, fromLong)
+        rotTo = transform.toRot(toLat, toLong)
+
+        startLat = 0
+        while self.netCDF.variables['rlat'][
+                startLat] < rotFrom.item(1, 0):
+            if startLat < self.latLen:
+                startLat = startLat + 1
+            else:
+                return {"ok": False}
+
+        stopLat = startLat
+        while self.netCDF.variables['rlat'][stopLat] < rotTo.item(1, 0):
+            if stopLat < self.latLen:
+                stopLat = stopLat + 1
+            else:
+                return {"ok": False}
 
         startLong = 0
         while self.netCDF.variables['rlon'][
@@ -89,87 +112,39 @@ class Reader():
             else:
                 return {"ok": False}
 
-        startLat = 0
-        while self.netCDF.variables['rlat'][
-                startLat] < rotFrom.item(1, 0):
-            if startLat < self.latLen:
-                startLat = startLat + 1
-            else:
-                return {"ok": False}
-
-        stopLat = startLat
-        while self.netCDF.variables['rlat'][stopLat] < rotTo.item(1, 0):
-            if stopLat < self.latLen:
-                stopLat = stopLat + 1
-            else:
-                return {"ok": False}
-
-        startTime = int(round((fromDate-self.startDate).days /
-                              self.dateResolution))
-        stopTime = int(round((toDate-self.startDate).days /
-                             self.dateResolution))
-        # Due to how numpy range-indexing works, we need one more.
-        if stopTime < len(self.netCDF.variables["time"]) - 1:
-            stopTime = stopTime + 1
-
         return({"ok": True,
-                "data": [startLong,
-                         stopLong,
+                "data": [startTime,
+                         stopTime,
                          startLat,
                          stopLat,
-                         startTime,
-                         stopTime]})
+                         startLong,
+                         stopLong]})
 
     def getSurfaceTemp(self,
-                       fromLong,
-                       toLong,
+                       fromDate,
+                       toDate,
                        fromLat,
                        toLat,
-                       fromDate,
-                       toDate):
-        areaDict = self.getArea(fromLong,
-                                toLong,
+                       fromLong,
+                       toLong):
+        areaDict = self.getArea(fromDate,
+                                toDate,
                                 fromLat,
                                 toLat,
-                                fromDate,
-                                toDate)
+                                fromLong,
+                                toLong)
         if not areaDict["ok"]:
             return None
 
-        [startLong,
-         stopLong,
+        [startTime,
+         stopTime,
          startLat,
          stopLat,
-         startTime,
-         stopTime] = areaDict["data"]
+         startLong,
+         stopLong] = areaDict["data"]
 
         returnData = self.netCDF.variables['tas'][startTime:stopTime,
                                                   startLat:stopLat,
                                                   startLong:stopLong]
-
-        return returnData.tolist()
-
-    def getSurfacePersp(self,
-                        fromLong,
-                        toLong,
-                        fromLat,
-                        toLat,
-                        fromDate,
-                        toDate):
-        [startLong,
-         stopLong,
-         startLat,
-         stopLat,
-         startTime,
-         stopTime] = self.getArea(fromLong,
-                                  toLong,
-                                  fromLat,
-                                  toLat,
-                                  fromDate,
-                                  toDate)
-
-        returnData = self.netCDF.variables['pr'][startTime:stopTime,
-                                                 stopLat:startLat,
-                                                 stopLong:startLong]
 
         return returnData.tolist()
