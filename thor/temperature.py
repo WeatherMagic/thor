@@ -17,13 +17,13 @@ def handleRequest(arguments, ncFiles, log):
     # This info is supplied by client
     zoomLevel = int(arguments["zoom-level"])
     fromDate = datetime.strptime(str(arguments["from-year"]) +
-                                  str(arguments["from-month"]) +
-                                  "1",
-                                  "%Y%m%d")
-    toDate = datetime.strptime(str(arguments["to-year"]) +
-                                 str(int(arguments["to-month"])) +
+                                 str(arguments["from-month"]) +
                                  "1",
                                  "%Y%m%d")
+    toDate = datetime.strptime(str(arguments["to-year"]) +
+                               str(int(arguments["to-month"])) +
+                               "1",
+                               "%Y%m%d")
     fromLat = float(arguments["from-latitude"])
     fromLong = float(arguments["from-longitude"])
 
