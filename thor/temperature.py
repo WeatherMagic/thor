@@ -17,15 +17,16 @@ def handleRequest(arguments, ncFiles, log):
     # This info is supplied by client
     zoomLevel = int(arguments["zoom-level"])
     fromDate = datetime.strptime(str(arguments["from-year"]) +
-                                  str(arguments["from-month"]) +
-                                  "1",
-                                  "%Y%m%d")
-    toDate = datetime.strptime(str(arguments["to-year"]) +
-                                 str(int(arguments["to-month"])) +
+                                 str(arguments["from-month"]) +
                                  "1",
                                  "%Y%m%d")
-    fromLong = float(arguments["from-longitude"])
+    toDate = datetime.strptime(str(arguments["to-year"]) +
+                               str(int(arguments["to-month"])) +
+                               "1",
+                               "%Y%m%d")
     fromLat = float(arguments["from-latitude"])
+    fromLong = float(arguments["from-longitude"])
+
     toLat = float(arguments["to-latitude"])
     toLong = float(arguments["to-longitude"])
 
@@ -36,12 +37,12 @@ def handleRequest(arguments, ncFiles, log):
         if fromDate > ncFile.getStartDate()\
                 and toDate < ncFile.getLastDate():
                     # If returnArea is None, it is not within file
-                    returnArea = ncFile.getSurfaceTemp(fromLong,
-                                                       toLong,
+                    returnArea = ncFile.getSurfaceTemp(fromDate,
+                                                       toDate,
                                                        fromLat,
                                                        toLat,
-                                                       fromDate,
-                                                       toDate)
+                                                       fromLong,
+                                                       toLong)
                     if returnArea is not None:
                         return {"ok": True,
                                 "data": returnArea}
