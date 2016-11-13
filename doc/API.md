@@ -33,7 +33,7 @@ Each request needs to provide parameters either in URL or as a json (OBS: Set th
 
 If month is omitted, data returned will be as filtered over a month. If month is specified, data points for each day will be returned. 
 
-Return-dimension is a 3D dimensional list that should contatin [time-dimension, lat-dimension, long-dimension].
+Return-dimension is a 3D dimensional list that should contatin integers telling how many steps in each direction to return [time-dimension, lat-dimension, long-dimension].
 
 All methods must be called using HTTP(S). Arguments can be passed as GET or POST params, or a mix.
 
