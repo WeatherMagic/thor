@@ -41,7 +41,8 @@ def handleRequest(arguments, ncFiles, log):
                                                        toLat,
                                                        fromLong,
                                                        toLong,
-						       returnDimension)
+                                                       returnDimension)
+
                     if returnArea is not None:
                         return {"ok": True,
                                 "data": returnArea}

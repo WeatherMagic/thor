@@ -145,8 +145,7 @@ class Reader():
 
         weatherInterpolationFunc = scipy.interpolate.RegularGridInterpolator(
             points,
-            values,
-        )
+            values)
 
         returnData3D = np.ndarray(returnDimension,
                                   dtype=float)
@@ -176,7 +175,8 @@ class Reader():
                        fromLat,
                        toLat,
                        fromLong,
-                       toLong):
+                       toLong,
+                       returnDimension):
         areaDict = self.getArea(fromDate,
                                 toDate,
                                 fromLat,
