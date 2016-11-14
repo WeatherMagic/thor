@@ -141,8 +141,8 @@ class Reader():
         longCoord1D = np.linspace(0, maxLong-1, maxLong)
 
         grid = (timeCoord1D,
-                  latCoord1D,
-                  longCoord1D)
+                latCoord1D,
+                longCoord1D)
 
         # Creates an interpolation function that can return any
         # interpolated value to any 3D-point the climateData
