@@ -140,14 +140,14 @@ class Reader():
         latCoord1D = np.linspace(0, maxLat-1, maxLat)
         longCoord1D = np.linspace(0, maxLong-1, maxLong)
 
-        points = (timeCoord1D,
+        grid = (timeCoord1D,
                   latCoord1D,
                   longCoord1D)
 
         # Creates an interpolation function that can return any
         # interpolated value to any 3D-point the climateData
         weatherInterpolationFunc = scipy.interpolate.RegularGridInterpolator(
-            points,
+            grid,
             climateData)
 
         # Interpolation coordinates
