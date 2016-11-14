@@ -147,9 +147,6 @@ class Reader():
             points,
             values)
 
-        returnPoints = np.ndarray(returnDimension,
-                                  dtype=float)
-
         interTimeCoord1D = np.linspace(0, maxTime-1, returnDimension[0])
         interLatCoord1D = np.linspace(0, maxLat-1, returnDimension[1])
         interLongCoord1D = np.linspace(0, maxLong-1, returnDimension[2])
