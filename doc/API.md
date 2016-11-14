@@ -21,7 +21,7 @@ Where the two schemes gives different resolution on data. The first returns inte
 
 Each request needs to provide parameters either in URL or as a json (OBS: Set the HTTP header "Content-type" to "application/json") data object: 
 
-- zoom-level
+- return-dimension
 - from-longitude
 - to-longitude
 - from-latitude
@@ -33,7 +33,7 @@ Each request needs to provide parameters either in URL or as a json (OBS: Set th
 
 If month is omitted, data returned will be as filtered over a month. If month is specified, data points for each day will be returned. 
 
-**Zoom level is one of a predefined set of zoom levels, these are not yet specified.**
+Return-dimension is a 3D dimensional list that should contatin integers telling how many steps in each direction to return [time-dimension, lat-dimension, long-dimension].
 
 All methods must be called using HTTP(S). Arguments can be passed as GET or POST params, or a mix.
 
@@ -41,15 +41,15 @@ All methods must be called using HTTP(S). Arguments can be passed as GET or POST
 
 ```
 {
-	"from-year": "2012",
+	"from-year": "2082",
 	"from-month": "6",
-	"to-year": "2012",
+	"to-year": "2082",
 	"to-month": "12",
 	"from-longitude": "1",
 	"to-longitude": "5",
 	"from-latitude": "37",
 	"to-latitude": "45",
-	"zoom-level": "1"
+	"return-dimension": [2,4,3]
 }
 ```
 

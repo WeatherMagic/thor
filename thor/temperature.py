@@ -3,6 +3,7 @@
 import thor.reader as reader
 from datetime import datetime
 from datetime import timedelta
+import numpy as np
 import logging
 
 
@@ -10,12 +11,9 @@ def handleRequest(arguments, ncFiles, log):
     if "from-month" not in arguments or "to-month" not in arguments:
         return {"ok": False,
                 "error": "Interpolation method not implemented yet!"}
-    if int(arguments["zoom-level"]) != 1:
-        return {"ok": False,
-                "error": "Only zoom-level 1 implemented as of now!"}
 
     # This info is supplied by client
-    zoomLevel = int(arguments["zoom-level"])
+    returnDimension = np.array(arguments["return-dimension"])
     fromDate = datetime.strptime(str(arguments["from-year"]) +
                                  str(arguments["from-month"]) +
                                  "1",
@@ -42,7 +40,9 @@ def handleRequest(arguments, ncFiles, log):
                                                        fromLat,
                                                        toLat,
                                                        fromLong,
-                                                       toLong)
+                                                       toLong,
+                                                       returnDimension)
+
                     if returnArea is not None:
                         return {"ok": True,
                                 "data": returnArea}
