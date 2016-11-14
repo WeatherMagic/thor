@@ -129,12 +129,13 @@ class Reader():
 
     # -------------------------------------
     def interpolate(self,
-                    values,
+                    climateData,
                     maxTime,
                     maxLat,
                     maxLong,
                     returnDimension):
 
+        # Coordinates to the climateData
         timeCoord1D = np.linspace(0, maxTime-1, maxTime)
         latCoord1D = np.linspace(0, maxLat-1, maxLat)
         longCoord1D = np.linspace(0, maxLong-1, maxLong)
@@ -143,19 +144,24 @@ class Reader():
                   latCoord1D,
                   longCoord1D)
 
+        # Creates an interpolation function that can return any
+        # interpolated value to any 3D-point the climateData
         weatherInterpolationFunc = scipy.interpolate.RegularGridInterpolator(
             points,
-            values)
+            climateData)
 
+        # Interpolation coordinates
         interTimeCoord1D = np.linspace(0, maxTime-1, returnDimension[0])
         interLatCoord1D = np.linspace(0, maxLat-1, returnDimension[1])
         interLongCoord1D = np.linspace(0, maxLong-1, returnDimension[2])
 
+        # Interpolation 3D points
         interPoints = np.vstack(np.meshgrid(
             interTimeCoord1D,
             interLatCoord1D,
             interLongCoord1D)).reshape(3, -1).T
 
+        # Interpolation from the interpolation 3D points
         returnData3D = (weatherInterpolationFunc(
             interPoints)).reshape(returnDimension)
 
