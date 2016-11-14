@@ -188,7 +188,10 @@ class Reader():
                    climateData[corner[0],
                                corner[1],
                                corner[2]]) > eps):
-                return {"ok": False}
+                return {"ok": False,
+                        "error":
+                        "Interpolated corner data not the\
+same as regular data! This is bad!"}
 
         return({"ok": True,
                 "data": interpolatedClimateData})
