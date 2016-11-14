@@ -147,24 +147,20 @@ class Reader():
             points,
             values)
 
-        returnData3D = np.ndarray(returnDimension,
+        returnPoints = np.ndarray(returnDimension,
                                   dtype=float)
 
-        i = 0
-        j = 0
-        k = 0
-        for time in np.linspace(0, maxTime-1, returnDimension[0]):
-            for lat in np.linspace(0, maxLat-1, returnDimension[1]):
-                for long in np.linspace(0, maxLong-1, returnDimension[2]):
-                        returnData3D[i, j, k] = weatherInterpolationFunc((
-                            time,
-                            lat,
-                            long))
-                        k += 1
-                k = 0
-                j += 1
-            j = 0
-            i += 1
+        interTimeCoord1D = np.linspace(0, maxTime-1, returnDimension[0])
+        interLatCoord1D = np.linspace(0, maxLat-1, returnDimension[1])
+        interLongCoord1D = np.linspace(0, maxLong-1, returnDimension[2])
+
+        interPoints = np.vstack(np.meshgrid(
+            interTimeCoord1D,
+            interLatCoord1D,
+            interLongCoord1D)).reshape(3, -1).T
+
+        returnData3D = (weatherInterpolationFunc(
+            interPoints)).reshape(returnDimension)
 
         return returnData3D
 
