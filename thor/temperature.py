@@ -37,8 +37,11 @@ def handleRequest(arguments, ncFileDictTree, log):
     toLat = float(arguments["to-latitude"])
     toLong = float(arguments["to-longitude"])
 
-    variable = "tas"
 
+    # ---------------
+    """ TODO: Until we expose different climate models within the API
+     - we just set default values for them """
+    variable = "tas"
     if "domain" not in arguments:
         domain = list(ncFileDictTree.keys())[0]
     else:
@@ -51,6 +54,7 @@ def handleRequest(arguments, ncFileDictTree, log):
         experiment = list(ncFileDictTree[domain][variable][model].keys())[0]
     else:
         experiment = str(arguments["exhaust-level"])
+    # ---------------
 
     requestedFiles = getList(ncFileDictTree,
                              domain,
