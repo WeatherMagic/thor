@@ -37,10 +37,20 @@ def handleRequest(arguments, ncFileDictTree, log):
     toLat = float(arguments["to-latitude"])
     toLong = float(arguments["to-longitude"])
 
-    domain = "EUR-11"
+    if "domain" not in arguments:
+        domain = "EUR-11"
+    else:
+        domain = str(arguments["domain"])
+    if "model" not in arguments:
+        model = "IPSL-IPSL-CM5A-MR"
+    else:
+        model = str(arguments["model"])
+    if "exhaust-level" not in arguments:
+        experiament = "rcp45"
+    else:
+        experiament = str(arguments["exhaust-level"])
+
     variable = "tas"
-    model = "IPSL-IPSL-CM5A-MR"
-    experiament = "rcp45"
 
     requestedFiles = getList(ncFileDictTree,
                              domain,
@@ -49,7 +59,6 @@ def handleRequest(arguments, ncFileDictTree, log):
                              experiament)
 
     for ncFile in requestedFiles:
-
         if fromDate > ncFile.getStartDate()\
                 and toDate < ncFile.getLastDate():
                     # If returnArea is None, it is not within file
