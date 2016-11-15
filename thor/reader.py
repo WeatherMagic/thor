@@ -22,6 +22,26 @@ class Reader():
         self.lonLen = len(self.netCDF["rlon"])-1
         self.latLen = len(self.netCDF["rlat"])-1
 
+        # Getting meta data from the netCDF file
+        for key in self.netCDF.variables.keys():
+            if key in filename:
+                self.variable = key
+                break
+
+        metaData = str(self.netCDF)
+
+        for line in metaData.split("\n"):
+            temp = line.split(": ")
+            if len(temp) > 1:
+                key = temp[0]
+                value = temp[1]
+                if "experiment" in key:
+                    self.experiment = value
+                elif "driving_model_id" in key:
+                    self.model = value
+                elif "CORDEX_domain" in key:
+                    self.domain = value
+
         # NetCDF file contains a date string looking like:
         # days since YYYY-MM-DD HH:MM:SS
         # or
@@ -48,6 +68,22 @@ class Reader():
 
         self.dateResolution = abs(self.netCDF.variables['time'][1] -
                                   self.netCDF.variables['time'][0])
+
+    # -------------------------------------
+    def getVariable(self):
+        return self.variable
+
+    # -------------------------------------
+    def getExperiment(self):
+        return self.experiment
+
+    # -------------------------------------
+    def getModel(self):
+        return self.model
+
+    # -------------------------------------
+    def getDomain(self):
+        return self.domain
 
     # -------------------------------------
     def getDimensionData(self, dimension):

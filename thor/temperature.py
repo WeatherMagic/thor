@@ -6,8 +6,15 @@ from datetime import timedelta
 import numpy as np
 import logging
 
+def getList(dictTree,
+            domain,
+            variable,
+            model,
+            experiament):
+    return dictTree[domain][variable][model][experiament]
 
-def handleRequest(arguments, ncFiles, log):
+
+def handleRequest(arguments, ncFileDictTree, log):
     if "from-month" not in arguments or "to-month" not in arguments:
         return {"ok": False,
                 "error": "Interpolation method not implemented yet!"}
@@ -28,10 +35,19 @@ def handleRequest(arguments, ncFiles, log):
     toLat = float(arguments["to-latitude"])
     toLong = float(arguments["to-longitude"])
 
-    for ncFile in ncFiles:
-        # Make sure data is within range
-        # TODO: Enable fetching data from multiple files
-        # if range is split between two files
+    domain = "EUR-11"
+    variable = "tas"
+    model = "IPSL-IPSL-CM5A-MR"
+    experiament = "rcp45"
+
+    requestedFiles = getList(ncFileDictTree,
+                             domain,
+                             variable,
+                             model,
+                             experiament)
+
+    for ncFile in requestedFiles:
+
         if fromDate > ncFile.getStartDate()\
                 and toDate < ncFile.getLastDate():
                     # If returnArea is None, it is not within file
