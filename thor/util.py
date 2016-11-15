@@ -3,6 +3,7 @@
 import thor.reader as reader
 import thor.const as const
 import os
+import thor.frozendict as frozendict
 
 
 def printHelp(execName):
@@ -118,4 +119,4 @@ def openFiles(folder):
                                 currentFile.getExperiment()].append(
                                     currentFile)
 
-    return domainDict
+    return frozendict.FrozenDict(domainDict)
