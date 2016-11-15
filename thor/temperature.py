@@ -11,9 +11,9 @@ def getList(dictTree,
             domain,
             variable,
             model,
-            experiament):
+            experiment):
 
-    return dictTree[domain][variable][model][experiament]
+    return dictTree[domain][variable][model][experiment]
 
 
 def handleRequest(arguments, ncFileDictTree, log):
@@ -48,15 +48,15 @@ def handleRequest(arguments, ncFileDictTree, log):
     else:
         model = str(arguments["model"])
     if "exhaust-level" not in arguments:
-        experiament = list(ncFileDictTree[domain][variable][model].keys())[0]
+        experiment = list(ncFileDictTree[domain][variable][model].keys())[0]
     else:
-        experiament = str(arguments["exhaust-level"])
+        experiment = str(arguments["exhaust-level"])
 
     requestedFiles = getList(ncFileDictTree,
                              domain,
                              variable,
                              model,
-                             experiament)
+                             experiment)
 
     for ncFile in requestedFiles:
         if fromDate > ncFile.getStartDate()\

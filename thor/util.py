@@ -62,8 +62,8 @@ def openFiles(folder):
             if currentFile.getDomain() not in domainDict.keys():
 
                 readerList = [currentFile]
-                experiamentDict = {currentFile.getExperiment(): readerList}
-                modelDict = {currentFile.getModel(): experiamentDict}
+                experimentDict = {currentFile.getExperiment(): readerList}
+                modelDict = {currentFile.getModel(): experimentDict}
                 variableDict = {currentFile.getVariable(): modelDict}
                 domainDict[currentFile.getDomain()] = variableDict
 
@@ -74,29 +74,29 @@ def openFiles(folder):
                     currentFile.getDomain()].keys():
 
                 readerList = [currentFile]
-                experiamentDict = {currentFile.getExperiment(): readerList}
-                modelDict = {currentFile.getModel(): experiamentDict}
+                experimentDict = {currentFile.getExperiment(): readerList}
+                modelDict = {currentFile.getModel(): experimentDict}
                 domainDict[
                     currentFile.getDomain()][
                         currentFile.getVariable()] = modelDict
 
             # Can't find model in the modelDict
             # therefore I add the model as key
-            # and the experiamentDict as value in the modelDict
+            # and the experimentDict as value in the modelDict
             elif currentFile.getModel() not in domainDict[
                     currentFile.getDomain()][
                         currentFile.getVariable()].keys():
 
                 readerList = [currentFile]
-                experiamentDict = {currentFile.getExperiment(): readerList}
+                experimentDict = {currentFile.getExperiment(): readerList}
                 domainDict[
                     currentFile.getDomain()][
                         currentFile.getVariable()][
-                            currentFile.getModel()] = experiamentDict
+                            currentFile.getModel()] = experimentDict
 
-            # Can't find the experiament in the experiamentDict
-            # therefore I add the experiament as key
-            # and the readerList as value in the experiamentDict
+            # Can't find the experiment in the experimentDict
+            # therefore I add the experiment as key
+            # and the readerList as value in the experimentDict
             elif currentFile.getExperiment() not in domainDict[
                     currentFile.getDomain()][
                         currentFile.getVariable()][
