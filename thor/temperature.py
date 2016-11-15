@@ -6,11 +6,13 @@ from datetime import timedelta
 import numpy as np
 import logging
 
+
 def getList(dictTree,
             domain,
             variable,
             model,
             experiament):
+
     return dictTree[domain][variable][model][experiament]
 
 
