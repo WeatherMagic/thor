@@ -118,5 +118,11 @@ def openFiles(folder):
                             currentFile.getModel()][
                                 currentFile.getExperiment()].append(
                                     currentFile)
-
+    # Create tuples of all lists, making them immutable
+    for domain, varDict in domainDict.items():
+        for variable, modDict in varDict.items():
+            for model, expDict in modDict.items():
+                for experiment in expDict.keys():
+                    expDict[experiment] = tuple(expDict[experiment])
+    # Return a froxen dict structure
     return frozendict.FrozenDict(domainDict)
