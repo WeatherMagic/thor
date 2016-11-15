@@ -37,20 +37,20 @@ def handleRequest(arguments, ncFileDictTree, log):
     toLat = float(arguments["to-latitude"])
     toLong = float(arguments["to-longitude"])
 
+    variable = "tas"
+
     if "domain" not in arguments:
-        domain = "EUR-11"
+        domain = list(ncFileDictTree.keys())[0]
     else:
         domain = str(arguments["domain"])
     if "model" not in arguments:
-        model = "IPSL-IPSL-CM5A-MR"
+        model = list(ncFileDictTree[domain][variable].keys())[0]
     else:
         model = str(arguments["model"])
     if "exhaust-level" not in arguments:
-        experiament = "rcp45"
+        experiament = list(ncFileDictTree[domain][variable][model].keys())[0]
     else:
         experiament = str(arguments["exhaust-level"])
-
-    variable = "tas"
 
     requestedFiles = getList(ncFileDictTree,
                              domain,
