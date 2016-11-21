@@ -120,15 +120,16 @@ def openFiles(folder):
                             currentFile.getExperiment()][
                                 currentFile.getVariable()].append(
                                     currentFile)
-
+    # TODO: This sometimes works, sometimes does not. Might be a bug in Python or FrozenDict
     # Create tuples of all lists, making them immutable
-    for domain, modelDict in domainDict.items():
-        for model, expDict in modelDict.items():
-            for experiment, variableDict in expDict.items():
-                for variable, readerList in variableDict.items():
-                    variableDict[variable] = tuple(readerList)
-                experimentDict[experiment] = frozendict.FrozenDict(variableDict)
-            modelDict[model] = frozendict.FrozenDict(experimentDict)
-        domainDict[domain] = frozendict.FrozenDict(modelDict)
+#    for domain, modelDict in domainDict.items():
+#        for model, expDict in modelDict.items():
+#            for experiment, variableDict in expDict.items():
+#                for variable, readerList in variableDict.items():
+#                    variableDict[variable] = tuple(readerList)
+#                experimentDict[experiment] = frozendict.FrozenDict(variableDict)
+#            modelDict[model] = frozendict.FrozenDict(experimentDict)
+#        domainDict[domain] = frozendict.FrozenDict(modelDict)
+
     # Return a froxen dict structure
     return frozendict.FrozenDict(domainDict)
