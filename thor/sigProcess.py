@@ -3,7 +3,6 @@
 import numpy as np
 import scipy.interpolate
 import numpy.matlib
-from enum import Enum
 
 
 # -------------------------------------
