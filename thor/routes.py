@@ -1,20 +1,20 @@
 #!/usr/bin/env python3
 
-from flask import Flask, request, g, redirect
+import flask
 import json
 import os
 import thor.util as util
-import thor.temperature as temperature
+import thor.request as request
 import thor.const as const
 
 
-thorApp = Flask("thor")
+thorApp = flask.Flask("thor")
 
 
 @thorApp.route('/')
 def hello_world():
     # Redirect to description of API
-    return redirect(
+    return flask.redirect(
             "https://github.com/WeatherMagic/thor/blob/master/doc/API.md",
             code=302)
 
@@ -22,10 +22,10 @@ def hello_world():
 @thorApp.route('/api/<dimension>', methods=["GET", "POST"])
 def api(dimension):
     # None if args not given as json
-    arguments = request.get_json()
+    arguments = flask.request.get_json()
     # Set arguments from URL if not from json
     if arguments is None:
-        arguments = request.args.to_dict(flat=False)
+        arguments = flask.request.args.to_dict(flat=False)
 
     # Check arguments given by client
     argCheck = util.checkArguments(arguments)
@@ -33,16 +33,19 @@ def api(dimension):
         return json.dumps(argCheck)
 
     if dimension == "temperature":
-        return json.dumps(temperature.handleRequest(arguments,
-                          const.ncFiles,
-                          const.log))
+        arguments["dimension"] = "tas"
     elif dimension == "air-pressure":
         pass
     elif dimension == "precipitation":
-        pass
+        arguments["dimension"] = "pr"
     elif dimension == "water-level":
         pass
-    else:
+
+    if "dimension" not in arguments.keys():
         return json.dumps({"ok": False,
                            "error":
                            "Client sent incorrect dimension: " + dimension})
+
+    return json.dumps(request.handleRequest(arguments,
+                      const.ncFiles,
+                      const.log))

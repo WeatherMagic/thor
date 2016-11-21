@@ -36,12 +36,13 @@ def handleRequest(arguments, ncFileDictTree, log):
 
     toLat = float(arguments["to-latitude"])
     toLong = float(arguments["to-longitude"])
+    dimension = arguments["dimension"]
 
 
     # ---------------
     """ TODO: Until we expose different climate models within the API
      - we just set default values for them """
-    variable = "tas"
+    variable = arguments["dimension"]
     if "domain" not in arguments:
         domain = list(ncFileDictTree.keys())[0]
     else:
@@ -66,13 +67,14 @@ def handleRequest(arguments, ncFileDictTree, log):
         if fromDate > ncFile.getStartDate()\
                 and toDate < ncFile.getLastDate():
                     # If returnArea is None, it is not within file
-                    returnArea = ncFile.getSurfaceTemp(fromDate,
-                                                       toDate,
-                                                       fromLat,
-                                                       toLat,
-                                                       fromLong,
-                                                       toLong,
-                                                       returnDimension)
+                    returnArea = ncFile.getData(dimension,
+                                                fromDate,
+                                                toDate,
+                                                fromLat,
+                                                toLat,
+                                                fromLong,
+                                                toLong,
+                                                returnDimension)
 
                     if returnArea is not None:
                         return {"ok": True,

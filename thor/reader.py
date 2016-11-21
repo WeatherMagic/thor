@@ -233,14 +233,15 @@ same as regular data! This is bad!"}
                 "data": interpolatedClimateData})
 
     # -------------------------------------
-    def getSurfaceTemp(self,
-                       fromDate,
-                       toDate,
-                       fromLat,
-                       toLat,
-                       fromLong,
-                       toLong,
-                       returnDimension):
+    def getData(self,
+                dimension,
+                fromDate,
+                toDate,
+                fromLat,
+                toLat,
+                fromLong,
+                toLong,
+                returnDimension):
         areaDict = self.getArea(fromDate,
                                 toDate,
                                 fromLat,
@@ -257,7 +258,7 @@ same as regular data! This is bad!"}
          startLong,
          stopLong] = areaDict["data"]
 
-        weatherData3D = self.netCDF.variables['tas'][startTime:stopTime,
+        weatherData3D = self.netCDF.variables[dimension][startTime:stopTime,
                                                      startLat:stopLat,
                                                      startLong:stopLong]
 
