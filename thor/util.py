@@ -66,6 +66,7 @@ def openFiles(folder):
                 variableDict = {currentFile.getVariable(): readerList}
                 experimentDict = {currentFile.getExperiment(): variableDict}
                 modelDict = {currentFile.getModel(): experimentDict}
+
                 domainDict[currentFile.getDomain()] = modelDict
 
             # Can't find model in the modelDict
@@ -77,9 +78,8 @@ def openFiles(folder):
                 readerList = [currentFile]
                 variableDict = {currentFile.getVariable(): readerList}
                 experimentDict = {currentFile.getExperiment(): variableDict}
-                modelDict = {currentFile.getModel(): experimentDict}
 
-                domainDict[currentFile.getDomain()] = modelDict
+                domainDict[currentFile.getDomain()][currentFile.getModel()] = experimentDict
 
             # Can't find the experiment in the experimentDict
             # therefore I add the experiment as key
@@ -90,9 +90,10 @@ def openFiles(folder):
 
                 readerList = [currentFile]
                 variableDict = {currentFile.getVariable(): readerList}
-                experimentDict = {currentFile.getExperiment(): variableDict}
+
                 domainDict[currentFile.getDomain()][
-                        currentFile.getModel()] = experimentDict
+                        currentFile.getModel()][
+                                currentFile.getExperiment()] = variableDict
 
             # Can't find variable in the variableDict
             # therefore I add the variable as key
@@ -103,6 +104,7 @@ def openFiles(folder):
                             currentFile.getExperiment()].keys():
 
                 readerList = [currentFile]
+
                 domainDict[
                     currentFile.getDomain()][
                         currentFile.getModel()][
@@ -118,11 +120,15 @@ def openFiles(folder):
                             currentFile.getExperiment()][
                                 currentFile.getVariable()].append(
                                     currentFile)
+
     # Create tuples of all lists, making them immutable
-    for domain, varDict in domainDict.items():
-        for variable, modDict in varDict.items():
-            for model, expDict in modDict.items():
-                for experiment in expDict.keys():
-                    expDict[experiment] = tuple(expDict[experiment])
+    for domain, modelDict in domainDict.items():
+        for model, expDict in modelDict.items():
+            for experiment, variableDict in expDict.items():
+                for variable, readerList in variableDict.items():
+                    variableDict[variable] = tuple(readerList)
+                experimentDict[experiment] = frozendict.FrozenDict(variableDict)
+            modelDict[model] = frozendict.FrozenDict(experimentDict)
+        domainDict[domain] = frozendict.FrozenDict(modelDict)
     # Return a froxen dict structure
     return frozendict.FrozenDict(domainDict)
