@@ -234,22 +234,25 @@ same as regular data! This is bad!"}
 
     # -------------------------------------
     def getData(self,
-                dimension,
                 fromDate,
                 toDate,
                 fromLat,
                 toLat,
                 fromLong,
-                toLong,
-                returnDimension):
+                toLong):
+
         areaDict = self.getArea(fromDate,
                                 toDate,
                                 fromLat,
                                 toLat,
                                 fromLong,
                                 toLong)
+
         if not areaDict["ok"]:
-            return None
+            return {"ok": False,
+                    "errorMessage":
+                    "Specified lat/lon combination not \
+                    within server dataset."}
 
         [startTime,
          stopTime,
@@ -258,17 +261,11 @@ same as regular data! This is bad!"}
          startLong,
          stopLong] = areaDict["data"]
 
-        weatherData3D = self.netCDF.variables[dimension][startTime:stopTime,
-                                                     startLat:stopLat,
-                                                     startLong:stopLong]
+        weatherData3D = self.netCDF.variables[self.variable][startTime:stopTime,
+                                                             startLat:stopLat,
+                                                             startLong:stopLong]
 
-        returnDataDict = self.interpolate(weatherData3D,
-                                          stopTime-startTime,
-                                          stopLat-startLat,
-                                          stopLong-startLong,
-                                          returnDimension)
+        return {"ok": True,
+                    "data":
+                    weatherData3D}
 
-        if not returnDataDict["ok"]:
-            return None
-
-        return (returnDataDict["data"]).tolist()

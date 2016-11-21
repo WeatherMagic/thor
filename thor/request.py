@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import thor.reader as reader
+import thor.sigProcess as sigProcess
 from datetime import datetime
 from datetime import timedelta
 import numpy as np
@@ -66,26 +67,28 @@ def handleRequest(arguments, ncFileDictTree, log):
     for ncFile in requestedFiles:
         if fromDate > ncFile.getStartDate()\
                 and toDate < ncFile.getLastDate():
-                    # If returnArea is None, it is not within file
-                    returnArea = ncFile.getData(dimension,
-                                                fromDate,
-                                                toDate,
-                                                fromLat,
-                                                toLat,
-                                                fromLong,
-                                                toLong,
-                                                returnDimension)
+                    # If climateArea is false, it is not within file
+                    climateAreaDict = ncFile.getData(fromDate,
+                                                     toDate,
+                                                     fromLat,
+                                                     toLat,
+                                                     fromLong,
+                                                     toLong)
 
-                    if returnArea is not None:
-                        return {"ok": True,
-                                "data": returnArea}
-                    # Else lat/lon comb not in file
-                    return {"ok": False,
-                            "errorMessage":
-                            "Specified lat/lon combination not \
-within server dataset."}
+                    if not climateAreaDict["ok"]:
+                        return climateAreaDict
 
-    returnData = {"ok": False,
+                    returnAreaDict = sigProcess.interpolate(
+                        climateAreaDict["data"],
+                        returnDimension)
+
+                    if not returnAreaDict["ok"]:
+                        return returnAreaDict
+
+                    return {"ok": True,
+                            "data": returnAreaDict["data"].tolist()}
+
+    returnDataDict = {"ok": False,
                   "errorMessage":
                   "Specified date range not within server dataset."}
-    return returnData
+    return returnDataDict
