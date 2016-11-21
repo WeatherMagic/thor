@@ -17,4 +17,8 @@ apiMustArgs = ("from-year",
                "to-latitude",
                "to-longitude",
                "return-dimension")
-apiOptionalArgs = ("from-month", "to-month")
+apiOptionalArgs = ("from-month",
+                   "to-month",
+                   "domain",
+                   "model"
+                   "exhaust-level")

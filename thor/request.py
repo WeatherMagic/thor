@@ -7,7 +7,16 @@ import numpy as np
 import logging
 
 
-def handleRequest(arguments, ncFiles, log):
+def getList(dictTree,
+            domain,
+            model,
+            experiment,
+            variable):
+
+    return dictTree[domain][model][experiment][variable]
+
+
+def handleRequest(arguments, ncFileDictTree, log):
     if "from-month" not in arguments or "to-month" not in arguments:
         return {"ok": False,
                 "error": "Interpolation method not implemented yet!"}
@@ -27,21 +36,45 @@ def handleRequest(arguments, ncFiles, log):
 
     toLat = float(arguments["to-latitude"])
     toLong = float(arguments["to-longitude"])
+    dimension = arguments["dimension"]
 
-    for ncFile in ncFiles:
-        # Make sure data is within range
-        # TODO: Enable fetching data from multiple files
-        # if range is split between two files
+
+    # ---------------
+    """ TODO: Until we expose different climate models within the API
+     - we just set default values for them """
+    variable = arguments["dimension"]
+    if "domain" not in arguments:
+        domain = list(ncFileDictTree.keys())[0]
+    else:
+        domain = str(arguments["domain"])
+    if "model" not in arguments:
+        model = list(ncFileDictTree[domain].keys())[0]
+    else:
+        model = str(arguments["model"])
+    if "exhaust-level" not in arguments:
+        experiment = list(ncFileDictTree[domain][model].keys())[0]
+    else:
+        experiment = str(arguments["exhaust-level"])
+    # ---------------
+
+    requestedFiles = getList(ncFileDictTree,
+                             domain,
+                             model,
+                             experiment,
+                             variable)
+
+    for ncFile in requestedFiles:
         if fromDate > ncFile.getStartDate()\
                 and toDate < ncFile.getLastDate():
                     # If returnArea is None, it is not within file
-                    returnArea = ncFile.getSurfaceTemp(fromDate,
-                                                       toDate,
-                                                       fromLat,
-                                                       toLat,
-                                                       fromLong,
-                                                       toLong,
-                                                       returnDimension)
+                    returnArea = ncFile.getData(dimension,
+                                                fromDate,
+                                                toDate,
+                                                fromLat,
+                                                toLat,
+                                                fromLong,
+                                                toLong,
+                                                returnDimension)
 
                     if returnArea is not None:
                         return {"ok": True,
