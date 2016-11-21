@@ -9,11 +9,11 @@ import logging
 
 def getList(dictTree,
             domain,
-            variable,
             model,
-            experiment):
+            experiment,
+            variable):
 
-    return dictTree[domain][variable][model][experiment]
+    return dictTree[domain][model][experiment][variable]
 
 
 def handleRequest(arguments, ncFileDictTree, log):
@@ -48,20 +48,20 @@ def handleRequest(arguments, ncFileDictTree, log):
     else:
         domain = str(arguments["domain"])
     if "model" not in arguments:
-        model = list(ncFileDictTree[domain][variable].keys())[0]
+        model = list(ncFileDictTree[domain].keys())[0]
     else:
         model = str(arguments["model"])
     if "exhaust-level" not in arguments:
-        experiment = list(ncFileDictTree[domain][variable][model].keys())[0]
+        experiment = list(ncFileDictTree[domain][model].keys())[0]
     else:
         experiment = str(arguments["exhaust-level"])
     # ---------------
 
     requestedFiles = getList(ncFileDictTree,
                              domain,
-                             variable,
                              model,
-                             experiment)
+                             experiment,
+                             variable)
 
     for ncFile in requestedFiles:
         if fromDate > ncFile.getStartDate()\

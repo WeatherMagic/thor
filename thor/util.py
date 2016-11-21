@@ -63,60 +63,60 @@ def openFiles(folder):
             if currentFile.getDomain() not in domainDict.keys():
 
                 readerList = [currentFile]
-                experimentDict = {currentFile.getExperiment(): readerList}
+                variableDict = {currentFile.getVariable(): readerList}
+                experimentDict = {currentFile.getExperiment(): variableDict}
                 modelDict = {currentFile.getModel(): experimentDict}
-                variableDict = {currentFile.getVariable(): modelDict}
-                domainDict[currentFile.getDomain()] = variableDict
-
-            # Can't find variable in the variableDict
-            # therefore I add the variable as key
-            # and the modelDict as value in the variableDict
-            elif currentFile.getVariable() not in domainDict[
-                    currentFile.getDomain()].keys():
-
-                readerList = [currentFile]
-                experimentDict = {currentFile.getExperiment(): readerList}
-                modelDict = {currentFile.getModel(): experimentDict}
-                domainDict[
-                    currentFile.getDomain()][
-                        currentFile.getVariable()] = modelDict
+                domainDict[currentFile.getDomain()] = modelDict
 
             # Can't find model in the modelDict
             # therefore I add the model as key
             # and the experimentDict as value in the modelDict
             elif currentFile.getModel() not in domainDict[
-                    currentFile.getDomain()][
-                        currentFile.getVariable()].keys():
+                    currentFile.getDomain()].keys():
 
                 readerList = [currentFile]
-                experimentDict = {currentFile.getExperiment(): readerList}
-                domainDict[
-                    currentFile.getDomain()][
-                        currentFile.getVariable()][
-                            currentFile.getModel()] = experimentDict
+                variableDict = {currentFile.getVariable(): readerList}
+                experimentDict = {currentFile.getExperiment(): variableDict}
+                modelDict = {currentFile.getModel(): experimentDict}
+
+                domainDict[currentFile.getDomain()] = modelDict
 
             # Can't find the experiment in the experimentDict
             # therefore I add the experiment as key
             # and the readerList as value in the experimentDict
             elif currentFile.getExperiment() not in domainDict[
                     currentFile.getDomain()][
-                        currentFile.getVariable()][
-                            currentFile.getModel()].keys():
+                        currentFile.getModel()].keys():
 
                 readerList = [currentFile]
+                variableDict = {currentFile.getVariable(): readerList}
+                experimentDict = {currentFile.getExperiment(): variableDict}
                 domainDict[currentFile.getDomain()][
-                    currentFile.getVariable()][
+                        currentFile.getModel()] = experimentDict
+
+            # Can't find variable in the variableDict
+            # therefore I add the variable as key
+            # and the modelDict as value in the variableDict
+            elif currentFile.getVariable() not in domainDict[
+                    currentFile.getDomain()][
                         currentFile.getModel()][
-                            currentFile.getExperiment()] = readerList
+                            currentFile.getExperiment()].keys():
+
+                readerList = [currentFile]
+                domainDict[
+                    currentFile.getDomain()][
+                        currentFile.getModel()][
+                            currentFile.getExperiment()][
+                                currentFile.getVariable()] = readerList
 
             # I have found my way down to the leaf children and can append
             # the readerList with the currentFileReader
             else:
                 domainDict[
                     currentFile.getDomain()][
-                        currentFile.getVariable()][
-                            currentFile.getModel()][
-                                currentFile.getExperiment()].append(
+                        currentFile.getModel()][
+                            currentFile.getExperiment()][
+                                currentFile.getVariable()].append(
                                     currentFile)
     # Create tuples of all lists, making them immutable
     for domain, varDict in domainDict.items():
