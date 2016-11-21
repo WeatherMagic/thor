@@ -25,7 +25,7 @@ This project is built using Python 3. You need to insteall Python and its packag
 On Debian or Ubuntu:
 
 ```bash
-sudo apt-get install python3 python3-pip netcdf-bin libhdf5-serial-dev libnetcdf-dev
+sudo apt-get install python3 python3-pip netcdf-bin libhdf5-serial-dev libnetcdf-dev 
 ```
 
 On macOS:
@@ -43,7 +43,7 @@ Development requires a couple additional dependencies (see also additional pip d
 On Debian/Ubuntu:
 
 ```bash
-sudo apt-get install python3-dev python-virtualenv
+sudo apt-get install python3-dev python-virtualenv liblapack-dev libatlas-dev gfortran
 ```
 
 It's recommended to use virtualenv for development which allows for setup and other possibly system damaging procedures without actually running the risk of doing so. To set up the virtual environment for the first time, stand in the source code folder and run:
@@ -61,7 +61,7 @@ source env/bin/activate
 You're now ready to install the additional python dependencies into your virtual environment using pip:
 
 ```bash
-pip3 install -U -r dev-requirements.txt
+USE_SETUPCFG=0 HDF5_INCDIR=/usr/include/hdf5/serial pip3 install -U -r dev-requirements.txt
 ```
 
 To keep everything nice and clean we should also lint our code before commiting it, still standing in the root of the source code folder:
