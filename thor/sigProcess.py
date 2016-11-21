@@ -48,9 +48,9 @@ def interpolate(climateData,
         newMaxAxis.append(maxAxis[2])
 
     if dimensions > 1:
-        interpolData = interpolateFunc(np.squeeze(climateData),
-                                       newMaxAxis,
-                                       interpolDim)
+        interpolData = np.squeeze(interpolateFunc(np.squeeze(climateData),
+                                                  newMaxAxis,
+                                                  interpolDim))
     else:
         return({"ok": False,
                 "errorMessage":
