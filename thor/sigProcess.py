@@ -2,103 +2,105 @@
 
 import numpy as np
 import scipy.interpolate
+import numpy.matlib
+from enum import Enum
+
 
 # -------------------------------------
 def interpolate(climateData,
                 returnDimension):
-    (maxTime,
-     maxLat,
-     maxLong) = climateData.shape
 
+    maxAxis = climateData.shape
+
+    removedDimensions = []
     dimensions = 3
-    for dimension in returnDimension:
-        if dimension == 1:
-            dimensions -= 1
 
-    if dimensions == 3:
-        return interpolate3D(climateData,
-                             maxTime,
-                             maxLat,
-                             maxLong,
-                             returnDimension)
-    elif dimensions == 2:
-        return interpolate2D(climateData,
-                             maxTime,
-                             maxLat,
-                             maxLong,
-                             returnDimension)
-    elif dimensions == 1:
-        return interpolate1D(climateData,
-                             maxTime,
-                             maxLat,
-                             maxLong,
-                             returnDimension)
+    for maxAxe, retDim in zip(maxAxis, returnDimension):
+        if maxAxe == 1 and retDim > 1:
+                return({"ok": False,
+                        "error":
+                        "Singular dimension is to be\
+                        interpolated, can't do that."})
+
+    # Checking dimensionality of requested data
+    if maxAxis[0] == 1:
+        dimensions -= 1
+        removedDimensions.append("time")
+    if maxAxis[1] == 1:
+        dimensions -= 1
+        removedDimensions.append("long")
+    if maxAxis[2] == 1:
+        dimensions -= 1
+        removedDimensions.append("lat")
+
+    # Depending on dimensionality in data do appropriate interpolation
+    interpolDim = []
+    newMaxAxis = []
+
+    if "time" not in removedDimensions:
+        interpolDim.append(returnDimension[0])
+        newMaxAxis.append(maxAxis[0])
+    if "lat" not in removedDimensions:
+        interpolDim.append(returnDimension[1])
+        newMaxAxis.append(maxAxis[1])
+    if "long" not in removedDimensions:
+        interpolDim.append(returnDimension[2])
+        newMaxAxis.append(maxAxis[2])
+
+    if dimensions > 1:
+        interpolData = interpolateFunc(np.squeeze(climateData),
+                                       newMaxAxis,
+                                       interpolDim)
     else:
         return({"ok": False,
                 "errorMessage":
-                "Requested zero dimensional interpolation"})
+                "Data less then 2d please increase search area"})
 
-# -------------------------------------
-def interpolate3D(climateData,
-                  maxTime,
-                  maxLat,
-                  maxLong,
-                  returnDimension):
-
-        # Coordinates to the climateData
-        timeCoord1D = np.linspace(0, maxTime-1, maxTime)
-        latCoord1D = np.linspace(0, maxLat-1, maxLat)
-        longCoord1D = np.linspace(0, maxLong-1, maxLong)
-
-        # Creares a euclidian grid from the 3 coordinate axels
-        grid = (timeCoord1D,
-                latCoord1D,
-                longCoord1D)
-
-        # From the climateData and coordinate axels to the data
-        # RegularGridInterpolator creates an interpolation function.
-        # The interpolation function outputs interpolation value for
-        # a given 3D point in the grid set.
-        weatherInterpolationFunc = scipy.interpolate.RegularGridInterpolator(
-            grid,
-            climateData)
-
-        # Create axis (area) where we want interpolated data returned
-        interTimeCoord = np.linspace(0, maxTime-1, returnDimension[0])
-        interLatCoord = np.linspace(0, maxLat-1, returnDimension[1])
-        interLongCoord = np.linspace(0, maxLong-1, returnDimension[2])
-
-        # Points (3D) created from a meshgrid of the
-        # interpolation coordinate axis
-        # (https://se.mathworks.com/help/matlab/ref/meshgrid.html).
-        # These points are wihin the area specified in former step.
-        interPoints = np.vstack(np.meshgrid(
-            interTimeCoord,
-            interLatCoord,
-            interLongCoord,
-            indexing='ij')).reshape(3, -1).T
-
-        # Interpolate data for the 3D points created earlier
-        interpolatedClimateData = (weatherInterpolationFunc(
-            interPoints)).reshape(returnDimension)
-
+    if dimensions < 3:
         return({"ok": True,
-                "data": interpolatedClimateData})
+                "data": interpolData})
+
+    return({"ok": True,
+            "data": interpolData})
+
 
 # -------------------------------------
-def interpolate2D(climateData,
-                  maxTime,
-                  maxLat,
-                  maxLong,
-                  returnDimension):
-    return({"ok": True,
-                "data": []})
+def interpolateFunc(climateData,
+                    maxAxis,
+                    returnDimension):
+
+    # Coordinates to the climateData
+    grid = []
+    interpolGrid = []
+
+    for axis, dimensions in zip(maxAxis, returnDimension):
+        grid.append(np.linspace(0, axis-1, axis))
+        interpolGrid.append(np.linspace(0, axis-1, dimensions))
+
+    weatherInterpolationFunc = scipy.interpolate.RegularGridInterpolator(
+        grid,
+        climateData)
+
+    interPoints = pointsFromGrid(interpolGrid)
+
+    # Interpolate data for the 3D points created earlier
+    return weatherInterpolationFunc(interPoints).reshape(returnDimension)
+
 
 # -------------------------------------
-def interpolate1D(climateData,
-                  maxTime,
-                  maxLat,
-                  maxLong,
-                  returnDimension):
-    return({"ok": True,
-                "data": []})
+def pointsFromGrid(gridList):
+    dim = len(gridList)
+
+    if dim == 3:
+        meshGrid = np.meshgrid(gridList[0],
+                               gridList[1],
+                               gridList[2],
+                               indexing='ij')
+    elif dim == 2:
+        meshGrid = np.meshgrid(gridList[0],
+                               gridList[1],
+                               indexing='ij')
+    elif dim == 1:
+        meshGrid = np.meshgrid(gridList[0],
+                               indexing='ij')
+    return np.vstack(meshGrid).reshape(dim, -1).T

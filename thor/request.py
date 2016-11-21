@@ -39,7 +39,6 @@ def handleRequest(arguments, ncFileDictTree, log):
     toLong = float(arguments["to-longitude"])
     dimension = arguments["dimension"]
 
-
     # ---------------
     """ TODO: Until we expose different climate models within the API
      - we just set default values for them """
@@ -78,6 +77,7 @@ def handleRequest(arguments, ncFileDictTree, log):
                     if not climateAreaDict["ok"]:
                         return climateAreaDict
 
+                    # Interpolating the data
                     returnAreaDict = sigProcess.interpolate(
                         climateAreaDict["data"],
                         returnDimension)
@@ -89,6 +89,7 @@ def handleRequest(arguments, ncFileDictTree, log):
                             "data": returnAreaDict["data"].tolist()}
 
     returnDataDict = {"ok": False,
-                  "errorMessage":
-                  "Specified date range not within server dataset."}
+                      "errorMessage":
+                      "Specified date range not within server dataset."}
+
     return returnDataDict

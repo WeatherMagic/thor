@@ -79,7 +79,9 @@ def openFiles(folder):
                 variableDict = {currentFile.getVariable(): readerList}
                 experimentDict = {currentFile.getExperiment(): variableDict}
 
-                domainDict[currentFile.getDomain()][currentFile.getModel()] = experimentDict
+                domainDict[
+                    currentFile.getDomain()][
+                        currentFile.getModel()] = experimentDict
 
             # Can't find the experiment in the experimentDict
             # therefore I add the experiment as key
@@ -120,14 +122,17 @@ def openFiles(folder):
                             currentFile.getExperiment()][
                                 currentFile.getVariable()].append(
                                     currentFile)
-    # TODO: This sometimes works, sometimes does not. Might be a bug in Python or FrozenDict
+
+    # TODO: This sometimes works, sometimes does not.
+    # Might be a bug in Python or FrozenDict
     # Create tuples of all lists, making them immutable
 #    for domain, modelDict in domainDict.items():
 #        for model, expDict in modelDict.items():
 #            for experiment, variableDict in expDict.items():
 #                for variable, readerList in variableDict.items():
 #                    variableDict[variable] = tuple(readerList)
-#                experimentDict[experiment] = frozendict.FrozenDict(variableDict)
+#                experimentDict[
+#                    experiment] = frozendict.FrozenDict(variableDict)
 #            modelDict[model] = frozendict.FrozenDict(experimentDict)
 #        domainDict[domain] = frozendict.FrozenDict(modelDict)
 

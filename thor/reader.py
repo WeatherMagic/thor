@@ -261,11 +261,11 @@ same as regular data! This is bad!"}
          startLong,
          stopLong] = areaDict["data"]
 
-        weatherData3D = self.netCDF.variables[self.variable][startTime:stopTime,
-                                                             startLat:stopLat,
-                                                             startLong:stopLong]
+        weatherData3D = self.netCDF.variables[self.variable][
+            startTime:stopTime,
+            startLat:stopLat,
+            startLong:stopLong]
 
         return {"ok": True,
-                    "data":
-                    weatherData3D}
-
+                "data":
+                weatherData3D}
