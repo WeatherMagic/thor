@@ -8,6 +8,7 @@ from datetime import datetime
 from datetime import timedelta
 import numpy as np
 
+
 def printHelp(execName):
     print("Thor - bringer of weather")
     print("")
@@ -19,6 +20,7 @@ def printHelp(execName):
     print("Default values for all arguments can \
 be found (and set) in the file defaults.py.")
     print("")
+
 
 def argumentsHandler(arguments):
     failure = False
@@ -115,6 +117,7 @@ def argumentsHandler(arguments):
 
     return {"ok": True,
             "arguments": arguments}
+
 
 def openFiles(folder):
     files = os.listdir(folder)
