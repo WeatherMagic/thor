@@ -43,8 +43,10 @@ def argumentsHandler(arguments):
                 errorMessage += " and "
         return {"ok":
                 False,
-                "errorMessage":
+                "error":
                 "Missing non-optional argument(s) " + errorMessage + "!"}
+
+    # ---------------------------------------
 
     # Handeling time
     elif "to-month" not in arguments:
@@ -66,22 +68,39 @@ def argumentsHandler(arguments):
     if arguments["from-date"] > arguments["to-date"]:
         return {"ok":
                 False,
-                "errorMessage":
+                "error":
                 "from-date larger than to-date."}
+
+    # ---------------------------------------
 
     # Handling returnDimension
     if len(arguments["return-dimension"]) < 2:
         return {"ok":
                 False,
-                "errorMessage":
+                "error":
                 "return-dimension contains to few dimensions."}
 
+    # We need this since we need integers in return dimension
+    intReturnDimension = []
     for arg in arguments["return-dimension"]:
-        if arg < 1:
+        int_arg = 0
+
+        try:
+            int_arg = int(arg)
+            intReturnDimension.append(int_arg)
+        except ValueError:
             return {"ok":
                     False,
-                    "errorMessage":
-                    "return-dimension contains negative dimensions."}
+                    "error":
+                    "return-dimension contains non-integers."}
+
+        if int_arg < 1:
+            return {"ok":
+                    False,
+                    "error":
+                    "return-dimension contains non-positive dimension count."}
+    # Save as integers
+    arguments["return-dimension"] = intReturnDimension
 
     if len(arguments["return-dimension"]) == 2:
         arguments["return-dimension"] = np.append(np.array(1),
@@ -90,24 +109,41 @@ def argumentsHandler(arguments):
     else:
         arguments["return-dimension"] = np.array(arguments["return-dimension"])
 
+    # ---------------------------------------
+
     # Handling latitude
-    arguments["from-latitude"] = float(arguments["from-latitude"])
-    arguments["to-latitude"] = float(arguments["to-latitude"])
+    try:
+        arguments["from-latitude"] = float(arguments["from-latitude"])
+        arguments["to-latitude"] = float(arguments["to-latitude"])
+    except ValueError:
+        return {"ok":
+                False,
+                "error":
+                "To or from latitude contains something that is not a number."}
+
 
     if arguments["to-latitude"] < arguments["from-latitude"]:
         return {"ok":
                 False,
-                "errorMessage":
+                "error":
                 "from-latitude larger than to-latitude."}
 
+    # ---------------------------------------
+
     # Handling longitude
-    arguments["from-longitude"] = float(arguments["from-longitude"])
-    arguments["to-longitude"] = float(arguments["to-longitude"])
+    try:
+        arguments["from-longitude"] = float(arguments["from-longitude"])
+        arguments["to-longitude"] = float(arguments["to-longitude"])
+    except ValueError:
+        return {"ok":
+                False,
+                "error":
+                "To or from longitude contains something that is not a number."}
 
     if arguments["to-longitude"] < arguments["from-longitude"]:
         return {"ok":
                 False,
-                "errorMessage":
+                "error":
                 "from-longitude larger than to-longitude."}
 
     return {"ok": True,
