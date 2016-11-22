@@ -16,7 +16,7 @@ class Axis(Enum):
 # -------------------------------------
 def interpolate(climateData,
                 returnDimensions):
-
+    
     maxAxes = climateData.shape
 
     removedDimensions = []
@@ -30,7 +30,7 @@ def interpolate(climateData,
             removedDimensions.append(axis)
             if retDim > 1:
                 return({"ok": False,
-                        "error":
+                        "errorMessage":
                         "Singular dimension is to be" +
                         " interpolated, can't do that."})
 
