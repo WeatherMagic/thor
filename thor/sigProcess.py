@@ -3,48 +3,45 @@
 import numpy as np
 import scipy.interpolate
 import numpy.matlib
+from enum import Enum
+
+
+# ------------------------------------
+class Axis(Enum):
+    time = 0
+    lat = 1
+    long = 2
 
 
 # -------------------------------------
 def interpolate(climateData,
-                returnDimension):
+                returnDimensions):
 
-    maxAxis = climateData.shape
+    maxAxes = climateData.shape
 
     removedDimensions = []
     dimensions = 3
 
-    for maxAxe, retDim in zip(maxAxis, returnDimension):
-        if maxAxe == 1 and retDim > 1:
+    # Checking dimensionality of requested data
+    # aborting if it is less than 2d
+    for maxAxis, axis, retDim in zip(maxAxes, Axis, returnDimensions):
+        if maxAxis == 1:
+            dimensions -= 1
+            removedDimensions.append(axis)
+            if retDim > 1:
                 return({"ok": False,
                         "error":
-                        "Singular dimension is to be\
-                        interpolated, can't do that."})
-
-    # Checking dimensionality of requested data
-    if maxAxis[0] == 1:
-        dimensions -= 1
-        removedDimensions.append("time")
-    if maxAxis[1] == 1:
-        dimensions -= 1
-        removedDimensions.append("long")
-    if maxAxis[2] == 1:
-        dimensions -= 1
-        removedDimensions.append("lat")
+                        "Singular dimension is to be" +
+                        " interpolated, can't do that."})
 
     # Depending on dimensionality in data do appropriate interpolation
     interpolDim = []
     newMaxAxis = []
 
-    if "time" not in removedDimensions:
-        interpolDim.append(returnDimension[0])
-        newMaxAxis.append(maxAxis[0])
-    if "lat" not in removedDimensions:
-        interpolDim.append(returnDimension[1])
-        newMaxAxis.append(maxAxis[1])
-    if "long" not in removedDimensions:
-        interpolDim.append(returnDimension[2])
-        newMaxAxis.append(maxAxis[2])
+    for axis in Axis:
+        if axis not in removedDimensions:
+            interpolDim.append(returnDimensions[axis.value])
+            newMaxAxis.append(maxAxes[axis.value])
 
     if dimensions > 1:
         interpolData = np.squeeze(interpolateFunc(np.squeeze(climateData),
@@ -53,7 +50,7 @@ def interpolate(climateData,
     else:
         return({"ok": False,
                 "errorMessage":
-                "Data less then 2d please increase search area"})
+                "Data less then 2d can't interpolate."})
 
     if dimensions < 3:
         return({"ok": True,
@@ -65,16 +62,16 @@ def interpolate(climateData,
 
 # -------------------------------------
 def interpolateFunc(climateData,
-                    maxAxis,
+                    maxAxes,
                     returnDimension):
 
     # Coordinates to the climateData
     grid = []
     interpolGrid = []
 
-    for axis, dimensions in zip(maxAxis, returnDimension):
-        grid.append(np.linspace(0, axis-1, axis))
-        interpolGrid.append(np.linspace(0, axis-1, dimensions))
+    for maxAxis, dimensions in zip(maxAxes, returnDimension):
+        grid.append(np.linspace(0, maxAxis-1, maxAxis))
+        interpolGrid.append(np.linspace(0, maxAxis-1, dimensions))
 
     weatherInterpolationFunc = scipy.interpolate.RegularGridInterpolator(
         grid,

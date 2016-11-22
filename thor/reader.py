@@ -251,8 +251,8 @@ same as regular data! This is bad!"}
         if not areaDict["ok"]:
             return {"ok": False,
                     "errorMessage":
-                    "Specified lat/lon combination not \
-                    within server dataset."}
+                    "Specified lat/lon combination not" +
+                    " within server dataset."}
 
         [startTime,
          stopTime,
