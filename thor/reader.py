@@ -266,7 +266,7 @@ same as regular data! This is bad!"}
             startLat:stopLat,
             startLong:stopLong]
 
-        if weatherData3D.size == 0:
+        if not weatherData3D.size:
             return {"ok": False,
                     "errorMessage":
                     "Specified area did not contain any data"}
