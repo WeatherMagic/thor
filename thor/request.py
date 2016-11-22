@@ -27,7 +27,7 @@ def handleRequest(arguments, ncFileDictTree, log):
         domain = list(ncFileDictTree.keys())[0]
     else:
         domain = str(arguments["domain"])
-    if "model" not in arguments:
+    if "climate-model" not in arguments:
         model = list(ncFileDictTree[domain].keys())[0]
     else:
         model = str(arguments["climate-model"])
