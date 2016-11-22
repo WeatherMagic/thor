@@ -53,8 +53,11 @@ def api(dimension):
                                        const.log)
 
     if not returnData["ok"]:
+        # Error message returned
         return json.dumps(returnData)
     elif len(returnData["data"].shape) != 2:
+        # If OK but not 2D weather-front doesn't want it
+        # We still think this is applicable so we will return this
         returnData["ok"] = False
         returnData["data"] = returnData["data"].tolist()
         return json.dumps(returnData)
