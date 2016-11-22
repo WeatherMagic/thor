@@ -64,7 +64,8 @@ def api(dimension):
     else:
         # Kelvin->Celsius and fit into PNG integer range (0 to 255)
         if dimension == "temperature":
-            returnData["data"] = returnData["data"] - 145 # -145 = -273 + 128
+            # -145 = -273 + 128
+            returnData["data"] = returnData["data"] - 145
         # Return a PNG as requested by weather-front
         output = io.BytesIO()
         image = scipy.misc.toimage(returnData["data"])
