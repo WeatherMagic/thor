@@ -4,6 +4,9 @@ import thor.reader as reader
 import thor.const as const
 import os
 import thor.frozendict as frozendict
+from datetime import datetime
+from datetime import timedelta
+import numpy as np
 
 
 def printHelp(execName):
@@ -19,7 +22,7 @@ be found (and set) in the file defaults.py.")
     print("")
 
 
-def checkArguments(arguments):
+def argumentsHandler(arguments):
     failure = False
     missingArgs = []
 
@@ -38,13 +41,113 @@ def checkArguments(arguments):
                 errorMessage += ", "
             elif len(missingArgs) != 1 and arg == missingArgs[-2]:
                 errorMessage += " and "
-        return {
-                "ok":
+        return {"ok":
                 False,
                 "error":
                 "Missing non-optional argument(s) " + errorMessage + "!"}
 
-    return {"ok": True}
+    # ---------------------------------------
+
+    # Handeling time
+    elif "to-month" not in arguments:
+        arguments["to-month"] = arguments["from-month"]
+
+    if "to-year" not in arguments:
+        arguments["to-year"] = arguments["from-year"]
+
+    arguments["from-date"] = datetime.strptime(str(arguments["from-year"]) +
+                                               str(arguments["from-month"]) +
+                                               "1",
+                                               "%Y%m%d")
+    arguments["to-date"] = datetime.strptime(str(arguments["to-year"]) +
+                                             str(int(arguments[
+                                                 "to-month"])) +
+                                             "1",
+                                             "%Y%m%d")
+
+    if arguments["from-date"] > arguments["to-date"]:
+        return {"ok":
+                False,
+                "error":
+                "from-date larger than to-date."}
+
+    # ---------------------------------------
+
+    # Handling returnDimension
+    if len(arguments["return-dimension"]) < 2:
+        return {"ok":
+                False,
+                "error":
+                "return-dimension contains to few dimensions."}
+
+    # We need this since we need integers in return dimension
+    intReturnDimension = []
+    for arg in arguments["return-dimension"]:
+        int_arg = 0
+
+        try:
+            int_arg = int(arg)
+            intReturnDimension.append(int_arg)
+        except ValueError:
+            return {"ok":
+                    False,
+                    "error":
+                    "return-dimension contains non-integers."}
+
+        if int_arg < 1:
+            return {"ok":
+                    False,
+                    "error":
+                    "return-dimension contains non-positive dimension count."}
+    # Save as integers
+    arguments["return-dimension"] = intReturnDimension
+
+    if len(arguments["return-dimension"]) == 2:
+        arguments["return-dimension"] = np.append(np.array(1),
+                                                  np.array(arguments[
+                                                      "return-dimension"]))
+    else:
+        arguments["return-dimension"] = np.array(arguments["return-dimension"])
+
+    # ---------------------------------------
+
+    # Handling latitude
+    try:
+        arguments["from-latitude"] = float(arguments["from-latitude"])
+        arguments["to-latitude"] = float(arguments["to-latitude"])
+    except ValueError:
+        return {"ok":
+                False,
+                "error":
+                "To or from latitude contains something that is not a number."}
+
+
+    if arguments["to-latitude"] < arguments["from-latitude"]:
+        return {"ok":
+                False,
+                "error":
+                "from-latitude larger than to-latitude."}
+
+    # ---------------------------------------
+
+    # Handling longitude
+    try:
+        arguments["from-longitude"] = float(arguments["from-longitude"])
+        arguments["to-longitude"] = float(arguments["to-longitude"])
+    except ValueError:
+        return {"ok":
+                False,
+                "error":
+                "To or from longitude contains something that is not a number."}
+
+    if arguments["to-longitude"] < arguments["from-longitude"]:
+        return {"ok":
+                False,
+                "error":
+                "from-longitude larger than to-longitude."}
+
+    return {"ok": True,
+            "arguments": arguments}
 
 
 def openFiles(folder):

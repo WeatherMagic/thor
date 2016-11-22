@@ -30,25 +30,25 @@ def api(dimension):
         arguments = flask.request.args.to_dict(flat=False)
 
     # Check arguments given by client
-    argCheck = util.checkArguments(arguments)
-    if argCheck["ok"] is False:
-        return json.dumps(argCheck)
+    argCheckDict = util.argumentsHandler(arguments)
+    if argCheckDict["ok"] is False:
+        return json.dumps(argCheckDict)
 
     if dimension == "temperature":
-        arguments["dimension"] = "tas"
+        argCheckDict["arguments"]["dimension"] = "tas"
     elif dimension == "air-pressure":
         pass
     elif dimension == "precipitation":
-        arguments["dimension"] = "pr"
+        argCheckDict["arguments"]["dimension"] = "pr"
     elif dimension == "water-level":
         pass
 
     if "dimension" not in arguments.keys():
         return json.dumps({"ok": False,
-                           "error":
+                           "errorMessage":
                            "Client sent incorrect dimension: " + dimension})
 
-    returnData = request.handleRequest(arguments,
+    returnData = request.handleRequest(argCheckDict["arguments"],
                                        const.ncFiles,
                                        const.log)
 
