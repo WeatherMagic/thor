@@ -116,34 +116,6 @@ def argumentsHandler(arguments):
     return {"ok": True,
             "arguments": arguments}
 
-
-def checkArguments(arguments):
-    failure = False
-    missingArgs = []
-
-    # Check that request includes all arguments
-    for arg in const.apiMustArgs:
-        if arg not in arguments:
-            failure = True
-            missingArgs.append(arg)
-
-    # If not, format a human readable error message
-    if failure:
-        errorMessage = ""
-        for arg in missingArgs:
-            errorMessage += arg
-            if arg != missingArgs[-1] and arg != missingArgs[-2]:
-                errorMessage += ", "
-            elif len(missingArgs) != 1 and arg == missingArgs[-2]:
-                errorMessage += " and "
-        return {"ok":
-                False,
-                "error":
-                "Missing non-optional argument(s) " + errorMessage + "!"}
-
-    return {"ok": True}
-
-
 def openFiles(folder):
     files = os.listdir(folder)
     domainDict = dict()
