@@ -22,6 +22,8 @@ Where the two schemes gives different resolution on data. The first returns inte
 
 Each request needs to provide parameters either in URL or as a json (OBS: Set the HTTP header "Content-type" to "application/json") data object: 
 
+- from-year
+- from-month
 - return-dimension
 - from-longitude
 - to-longitude
@@ -52,7 +54,6 @@ Several arguments can be added to the request in order to get more control over 
 
 - from-year
 - to-year
-- from-month 
 - to-month 
 - domain
 - climate-model

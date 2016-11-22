@@ -47,13 +47,8 @@ def argumentsHandler(arguments):
                 "Missing non-optional argument(s) " + errorMessage + "!"}
 
     # Handeling time
-    if "to-month" not in arguments and "from-month" not in arguments:
-        arguments["to-month"] = 6
-        arguments["from-month"] = 6
-    elif "to-month" not in arguments and "from-month" in arguments:
+    elif "to-month" not in arguments:
         arguments["to-month"] = arguments["from-month"]
-    elif "from-month" not in arguments and "to-month" in arguments:
-        arguments["from-month"] = arguments["to-month"]
 
     if "to-year" not in arguments:
         arguments["to-year"] = arguments["from-year"]
