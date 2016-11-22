@@ -16,7 +16,7 @@ class Axis(Enum):
 # -------------------------------------
 def interpolate(climateData,
                 returnDimensions):
-    
+
     maxAxes = climateData.shape
 
     removedDimensions = []

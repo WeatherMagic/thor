@@ -3,13 +3,16 @@ if 3 / 2 == 1:
 elif 3 / 2 == 1.5:
     version = 3
 
+
 def col(i):
     ''' For binding named attributes to spots inside subclasses of tuple.'''
     g = tuple.__getitem__
+
     @property
     def _col(self):
-        return g(self,i)
+        return g(self, i)
     return _col
+
 
 class Item(tuple):
     ''' Designed for storing key-value pairs inside
@@ -44,32 +47,45 @@ class Item(tuple):
 
     __slots__ = ()
     key, value = col(0), col(1)
+
     def __hash__(self):
         return hash(self.key)
+
     def __eq__(self, other):
         if isinstance(other, Item):
             return tuple.__eq__(self, other)
         return self.key == other
+
     def __ne__(self, other):
         return not self.__eq__(other)
+
     def __str__(self):
         return '%r: %r' % self
+
     def __repr__(self):
         return 'Item((%r, %r))' % self
 
+
 class FrozenDict(frozenset):
-    ''' Behaves in most ways like a regular dictionary, except that it's immutable.
-        It differs from other implementations because it doesn't subclass "dict".
-        Instead it subclasses "frozenset" which guarantees immutability.
-        FrozenDict instances are created with the same arguments used to initialize
-        regular dictionaries, and has all the same methods.
+    ''' Behaves in most ways like a regular dictionary,
+        except that it's immutable.
+        It differs from other implementations
+        because it doesn't subclass "dict".
+        Instead it subclasses "frozenset" which
+        guarantees immutability.
+        FrozenDict instances are created with the
+        same arguments used to initialize
+        regular dictionaries, and has all
+        the same methods.
             [in]  >>> f = FrozenDict(x=3,y=4,z=5)
             [in]  >>> f['x']
             [out] >>> 3
             [in]  >>> f['a'] = 0
-            [out] >>> TypeError: 'FrozenDict' object does not support item assignment
+            [out] >>> TypeError: 'FrozenDict' object
+            does not support item assignment
 
-        FrozenDict can accept un-hashable values, but FrozenDict is only hashable if its values are hashable.
+        FrozenDict can accept un-hashable values, but
+        FrozenDict is only hashable if its values are hashable.
             [in]  >>> f = FrozenDict(x=3,y=4,z=5)
             [in]  >>> hash(f)
             [out] >>> 646626455
@@ -77,13 +93,15 @@ class FrozenDict(frozenset):
             [in]  >>> hash(g)
             [out] >>> TypeError: unhashable type: 'list'
 
-        FrozenDict interacts with dictionary objects as though it were a dict itself.
+        FrozenDict interacts with dictionary
+        objects as though it were a dict itself.
             [in]  >>> original = dict(x=3,y=4,z=5)
             [in]  >>> frozen = FrozenDict(x=3,y=4,z=5)
             [in]  >>> original == frozen
             [out] >>> True
 
-        FrozenDict supports bi-directional conversions with regular dictionaries.
+        FrozenDict supports bi-directional
+        conversions with regular dictionaries.
             [in]  >>> original = {'x': 3, 'y': 4, 'z': 5}
             [in]  >>> FrozenDict(original)
             [out] >>> FrozenDict({'x': 3, 'y': 4, 'z': 5})
@@ -91,6 +109,7 @@ class FrozenDict(frozenset):
             [out] >>> {'x': 3, 'y': 4, 'z': 5}   '''
 
     __slots__ = ()
+
     def __new__(cls, orig={}, **kw):
         if kw:
             d = dict(orig, **kw)
@@ -105,7 +124,7 @@ class FrozenDict(frozenset):
     def __repr__(self):
         cls = self.__class__.__name__
         items = frozenset.__iter__(self)
-        _repr = ', '.join(map(str,items))
+        _repr = ', '.join(map(str, items))
         return '%s({%s})' % (cls, _repr)
 
     def __getitem__(self, key):
@@ -145,7 +164,7 @@ class FrozenDict(frozenset):
 
     @classmethod
     def fromkeys(cls, keys, value):
-        d = dict.fromkeys(keys,value)
+        d = dict.fromkeys(keys, value)
         return cls(d)
 
     def __hash__(self):
@@ -166,7 +185,7 @@ class FrozenDict(frozenset):
 
 
 if version == 2:
-    #Here are the Python2 modifications
+    # Here are the Python2 modifications
     class Python2(FrozenDict):
         def __iter__(self):
             items = frozenset.__iter__(self)
@@ -200,8 +219,8 @@ if version == 2:
         def viewitems(self):
             return dict(self).viewitems()
 
-    #If this is Python2, rebuild the class
-    #from scratch rather than use a subclass
+    # If this is Python2, rebuild the class
+    # from scratch rather than use a subclass
     py3 = FrozenDict.__dict__
     py3 = {k: py3[k] for k in py3}
     py2 = {}
