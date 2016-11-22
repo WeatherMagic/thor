@@ -11,7 +11,6 @@ logFiles = ()
 ncFolder = "ncFiles"
 
 apiMustArgs = ("from-year",
-               "to-year",
                "from-longitude",
                "from-latitude",
                "to-latitude",
@@ -19,6 +18,7 @@ apiMustArgs = ("from-year",
                "return-dimension")
 apiOptionalArgs = ("from-month",
                    "to-month",
+                   "to-year",
                    "domain",
-                   "model"
+                   "climate-model"
                    "exhaust-level")

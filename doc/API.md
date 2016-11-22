@@ -19,6 +19,7 @@ Where the two schemes gives different resolution on data. The first returns inte
 - precipitation
 - water-level
 
+
 Each request needs to provide parameters either in URL or as a json (OBS: Set the HTTP header "Content-type" to "application/json") data object: 
 
 - return-dimension
@@ -26,14 +27,10 @@ Each request needs to provide parameters either in URL or as a json (OBS: Set th
 - to-longitude
 - from-latitude
 - to-latitude
-- from-year
-- to-year
-- from-month (optional)
-- to-month (optional)
 
 If month is omitted, data returned will be as filtered over a month. If month is specified, data points for each day will be returned. 
 
-Return-dimension is a 3D dimensional list that should contatin integers telling how many steps in each direction to return [time-dimension, lat-dimension, long-dimension].
+Return-dimension is a 3D dimensional list that should contatin integers telling how many steps in each direction to return [time-dimension, lat-dimension, long-dimension]. If the user is only intrested in 2d data then the time-dimension can omitted and return-dimension will be [lat-dimension, long-dimension].
 
 All methods must be called using HTTP(S). Arguments can be passed as GET or POST params, or a mix.
 
@@ -43,16 +40,42 @@ All methods must be called using HTTP(S). Arguments can be passed as GET or POST
 {
 	"from-year": "2082",
 	"from-month": "6",
-	"to-year": "2082",
-	"to-month": "12",
 	"from-longitude": "1",
 	"to-longitude": "5",
 	"from-latitude": "37",
 	"to-latitude": "45",
-	"return-dimension": [2,4,3]
+	"return-dimension": [4,3]
 }
 ```
+### Optional arguments
+Several arguments can be added to the request in order to get more control over what data is recived.
 
+- from-year
+- to-year
+- from-month 
+- to-month 
+- domain
+- climate-model
+- exhaust-level
+
+### Example with optional arguments
+
+```
+{
+	"from-year": "2082",
+	"from-month": 3,
+	"to-year": 2083,
+	"to-month": 4,
+	"from-longitude": "33",
+	"to-longitude": "34",
+	"from-latitude": "27",
+	"to-latitude": "28",
+	"return-dimension": [2,10,20],
+	"domain": "EUR-11",
+	"climate-model": "MOHC-HadGEM2-ES",
+	"exhaust-level": "rcp85"
+}
+```
 
 ## Response
 
