@@ -121,7 +121,6 @@ def argumentsHandler(arguments):
                 "error":
                 "To or from latitude contains something that is not a number."}
 
-
     if arguments["to-latitude"] < arguments["from-latitude"]:
         return {"ok":
                 False,
@@ -138,7 +137,8 @@ def argumentsHandler(arguments):
         return {"ok":
                 False,
                 "error":
-                "To or from longitude contains something that is not a number."}
+                "To or from longitude contains" +
+                " something that is not a number."}
 
     if arguments["to-longitude"] < arguments["from-longitude"]:
         return {"ok":
