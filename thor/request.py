@@ -86,7 +86,7 @@ def handleRequest(arguments, ncFileDictTree, log):
                         return returnAreaDict
 
                     return {"ok": True,
-                            "data": returnAreaDict["data"].tolist()}
+                            "data": returnAreaDict["data"]}
 
     returnDataDict = {"ok": False,
                       "errorMessage":

@@ -3,6 +3,8 @@
 import flask
 import json
 import os
+import scipy
+import io
 import thor.util as util
 import thor.request as request
 import thor.const as const
@@ -46,6 +48,28 @@ def api(dimension):
                            "error":
                            "Client sent incorrect dimension: " + dimension})
 
-    return json.dumps(request.handleRequest(arguments,
-                      const.ncFiles,
-                      const.log))
+    returnData = request.handleRequest(arguments,
+                                       const.ncFiles,
+                                       const.log)
+
+    if not returnData["ok"]:
+        return json.dumps(returnData)
+    elif len(returnData["data"].shape) != 2:
+        returnData["ok"] = False
+        returnData["data"] = returnData["data"].tolist()
+        return json.dumps(returnData)
+    else:
+        # Kelvin->Celsius and fit into PNG integer range (0 to 255)
+        if dimension == "temperature":
+            returnData["data"] = returnData["data"] - 145 # -145 = -273 + 128
+        # Return a PNG as requested by weather-front
+        output = io.BytesIO()
+        image = scipy.misc.toimage(returnData["data"])
+        image.save(output, 'PNG')
+        output.seek(0)
+        return flask.send_file(
+                    output,
+                    attachment_filename="climate.png",
+                    mimetype="image/png",
+                    as_attachment=True
+                         )

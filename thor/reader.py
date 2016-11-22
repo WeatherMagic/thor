@@ -265,6 +265,9 @@ same as regular data! This is bad!"}
             startTime:stopTime,
             startLat:stopLat,
             startLong:stopLong]
+        # Kelvin->Celsius and fit into PNG (0 to 255)
+        if self.variable == "tas":
+            weatherData3D = weatherData3D - 145 # 273 - 128
 
         if not weatherData3D.size:
             return {"ok": False,
