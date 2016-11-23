@@ -8,6 +8,7 @@ import io
 import thor.util as util
 import thor.request as request
 import thor.const as const
+import PIL
 
 
 thorApp = flask.Flask("thor")
@@ -69,6 +70,8 @@ def api(dimension):
         # Return a PNG as requested by weather-front
         output = io.BytesIO()
         image = scipy.misc.toimage(returnData["data"])
+        # Flip since top left corner is 0,0 in image
+        image = image.transpose(PIL.Image.FLIP_TOP_BOTTOM)
         image.save(output, 'PNG')
         output.seek(0)
         return flask.send_file(
