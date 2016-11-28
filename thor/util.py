@@ -247,20 +247,46 @@ def openFiles(folder):
     return domainDict
 
 
+def padWithZeros(vector, pad_width, iaxis, kwargs):
+    vector[:pad_width[0]] = 0
+    vector[-pad_width[1]:] = 0
+    return vector
+
+
+def padWithMinusOneTwoEight(vector, pad_width, iaxis, kwargs):
+    vector[:pad_width[0]] = -128
+    vector[-pad_width[1]:] = -128
+    return vector
+
+
 def convertToPNGRange(data, dimension):
-    # Kelvin->Celsius and fit into PNG signed integer range (-128 to 127)
+    # Kelvin->Celsius and fit into PNG 8-bit integer range (0 to 255)
     if dimension == "temperature":
-        # -145 = -273
-        data = data - 273
+        # -273 + 128 = -145 degrees
+        data = data - 145
+        data = np.clip(data, 1, 254)
+        # Pad data with -128 in order to fill out rest of earth
+        data\
+            = np.lib.pad(data, 1, padWithZeros)
+        # Represent correct range in PNG by setting upper roof
+        data[0][0] = 255
+
         # Clamp data to integer since PNG-range is integer
         data\
-            = data.astype("int8")
+            = data.astype("uint8")
     elif dimension == "precipitation":
         # Convert from kg/(m^2*s) to kg/(m^2*d) = mm/d
         data = data * 86400 # 3600s/h * 24h/d = 86400s/d
+        # Clamp data to 1-254
+        data = np.clip(data, 1, 254)
+        # Pad data with 0 in order to fill out rest of earth
+        data\
+            = np.lib.pad(data, 1, padWithZeros)
+        # Represent correct range in PNG by setting one value to 255
+        data[0][0] = 255
         # Clamp data to integer since PNG-range is integer
         data\
-            = data.astype("int8")
+            = data.astype("uint8")
 
 
     return data

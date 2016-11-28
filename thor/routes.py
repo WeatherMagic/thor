@@ -23,12 +23,6 @@ def hello_world():
             code=302)
 
 
-def padwithzeros(vector, pad_width, iaxis, kwargs):
-    vector[:pad_width[0]] = 0
-    vector[-pad_width[1]:] = 0
-    return vector
-
-
 @thorApp.route('/api/<dimension>', methods=["GET", "POST"])
 def api(dimension):
     # None if args not given as json
@@ -72,10 +66,6 @@ def api(dimension):
     else:
         # Convert data to integer range.
         returnData["data"] = util.convertToPNGRange(returnData["data"], dimension)
-        # Pad data with zeros in order to fill out rest of earth
-        returnData["data"]\
-            = np.lib.pad(returnData["data"], 1, padwithzeros)
-
         # Return a PNG as requested by weather-front
         output = io.BytesIO()
         image = scipy.misc.toimage(returnData["data"])
