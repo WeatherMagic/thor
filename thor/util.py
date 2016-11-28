@@ -165,7 +165,10 @@ def printTree(folder):
                                 + " - "\
                                 + str(readerList[i].getLastDate())[0:10]
 
-    print(json.dumps(domainDict, sort_keys=True, indent=4, separators=(',', ': ')))
+    print(json.dumps(domainDict,
+                     sort_keys=True,
+                     indent=4,
+                     separators=(',', ': ')))
 
 
 def openFiles(folder):
@@ -276,7 +279,8 @@ def convertToPNGRange(data, dimension):
             = data.astype("uint8")
     elif dimension == "precipitation":
         # Convert from kg/(m^2*s) to kg/(m^2*d) = mm/d
-        data = data * 86400 # 3600s/h * 24h/d = 86400s/d
+        # 3600s/h * 24h/d = 86400s/d
+        data = data * 86400
         # Clamp data to 1-254
         data = np.clip(data, 1, 254)
         # Pad data with 0 in order to fill out rest of earth
@@ -287,6 +291,5 @@ def convertToPNGRange(data, dimension):
         # Clamp data to integer since PNG-range is integer
         data\
             = data.astype("uint8")
-
 
     return data

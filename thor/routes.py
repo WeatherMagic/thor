@@ -65,7 +65,8 @@ def api(dimension):
         return json.dumps(returnData)
     else:
         # Convert data to integer range.
-        returnData["data"] = util.convertToPNGRange(returnData["data"], dimension)
+        returnData["data"]\
+                = util.convertToPNGRange(returnData["data"], dimension)
         # Return a PNG as requested by weather-front
         output = io.BytesIO()
         image = scipy.misc.toimage(returnData["data"])
