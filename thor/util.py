@@ -7,6 +7,7 @@ import thor.frozendict as frozendict
 from datetime import datetime
 from datetime import timedelta
 import numpy as np
+import json
 
 
 def printHelp(execName):
@@ -150,6 +151,15 @@ def argumentsHandler(arguments):
             "arguments": arguments}
 
 
+def printTree(ncTree):
+    domainDict = ncTree.copy()
+    for domain, modelDict in domainDict.items():
+        for model, expDict in modelDict.items():
+            for experiment, variableDict in expDict.items():
+                for variable, readerList in variableDict.items():
+                    variableDict[variable] = ""
+    print(json.dumps(ncTree, sort_keys=True, indent=4, separators=(',', ': ')))
+
 def openFiles(folder):
     files = os.listdir(folder)
     domainDict = dict()
@@ -238,6 +248,6 @@ def openFiles(folder):
 #                    experiment] = frozendict.FrozenDict(variableDict)
 #            modelDict[model] = frozendict.FrozenDict(experimentDict)
 #        domainDict[domain] = frozendict.FrozenDict(modelDict)
-
+    printTree(domainDict)
     # Return a froxen dict structure
     return frozendict.FrozenDict(domainDict)
