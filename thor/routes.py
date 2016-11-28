@@ -4,6 +4,7 @@ import flask
 import json
 import os
 import scipy
+import numpy as np
 import io
 import thor.util as util
 import thor.request as request
@@ -63,10 +64,9 @@ def api(dimension):
         returnData["data"] = returnData["data"].tolist()
         return json.dumps(returnData)
     else:
-        # Kelvin->Celsius and fit into PNG integer range (0 to 255)
-        if dimension == "temperature":
-            # -145 = -273 + 128
-            returnData["data"] = returnData["data"] - 145
+        # Convert data to integer range.
+        returnData["data"]\
+                = util.convertToPNGRange(returnData["data"], dimension)
         # Return a PNG as requested by weather-front
         output = io.BytesIO()
         image = scipy.misc.toimage(returnData["data"])

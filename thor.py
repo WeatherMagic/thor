@@ -6,9 +6,11 @@ import thor.const as const
 import thor.util as util
 import sys
 import logging
+import thor.frozendict as frozendict
 
 
 if __name__ == "__main__":
+    printTree = False
     # Read arguments from command line
     for argument in sys.argv:
         if "--help" in argument or "-h" in argument:
@@ -22,7 +24,8 @@ if __name__ == "__main__":
             ncFolder = argument.replace("--netCDF-folder=", "")
         elif "--log-file=" in argument:
             logFiles.append(argument.replace("--log-file=", ""))
-
+        elif "--print-tree" in argument:
+            printTree = True
     # appName and subfolder to read netCDF files from
     const.appName = appName
 
@@ -43,7 +46,9 @@ if __name__ == "__main__":
         const.log.addHandler(fileHandler)
 
     # Load ncFiles
-    const.ncFiles = util.openFiles(ncFolder)
+    const.ncFiles = frozendict.FrozenDict(util.openFiles(ncFolder))
+    if printTree:
+        util.printTree(ncFolder)
 
     # This defines valid arguments for API
     const.apiMustArgs = apiMustArgs

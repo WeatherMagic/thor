@@ -7,6 +7,8 @@ import thor.frozendict as frozendict
 from datetime import datetime
 from datetime import timedelta
 import numpy as np
+import json
+import copy
 
 
 def printHelp(execName):
@@ -15,7 +17,7 @@ def printHelp(execName):
     print("Usage: ")
     print("    " + execName +
           " [--debug] [--app-name=appName] \
-[--netCDF-folder=folder] [--log-file=logFile]")
+[--netCDF-folder=folder] [--log-file=logFile] [--print-tree]")
     print("")
     print("Default values for all arguments can \
 be found (and set) in the file defaults.py.")
@@ -150,6 +152,25 @@ def argumentsHandler(arguments):
             "arguments": arguments}
 
 
+def printTree(folder):
+    domainDict = openFiles(folder)
+    for domain, modelDict in domainDict.items():
+        for model, expDict in modelDict.items():
+            for experiment, variableDict in expDict.items():
+                for variable, readerList in variableDict.items():
+                    for i in range(0, len(readerList)):
+                        readerList[i] = readerList[i].getVariable()\
+                                + ": "\
+                                + str(readerList[i].getStartDate())[0:10]\
+                                + " - "\
+                                + str(readerList[i].getLastDate())[0:10]
+
+    print(json.dumps(domainDict,
+                     sort_keys=True,
+                     indent=4,
+                     separators=(',', ': ')))
+
+
 def openFiles(folder):
     files = os.listdir(folder)
     domainDict = dict()
@@ -225,19 +246,50 @@ def openFiles(folder):
                             currentFile.getExperiment()][
                                 currentFile.getVariable()].append(
                                     currentFile)
-
-    # TODO: This sometimes works, sometimes does not.
-    # Might be a bug in Python or FrozenDict
-    # Create tuples of all lists, making them immutable
-#    for domain, modelDict in domainDict.items():
-#        for model, expDict in modelDict.items():
-#            for experiment, variableDict in expDict.items():
-#                for variable, readerList in variableDict.items():
-#                    variableDict[variable] = tuple(readerList)
-#                experimentDict[
-#                    experiment] = frozendict.FrozenDict(variableDict)
-#            modelDict[model] = frozendict.FrozenDict(experimentDict)
-#        domainDict[domain] = frozendict.FrozenDict(modelDict)
-
     # Return a froxen dict structure
-    return frozendict.FrozenDict(domainDict)
+    return domainDict
+
+
+def padWithZeros(vector, pad_width, iaxis, kwargs):
+    vector[:pad_width[0]] = 0
+    vector[-pad_width[1]:] = 0
+    return vector
+
+
+def padWithMinusOneTwoEight(vector, pad_width, iaxis, kwargs):
+    vector[:pad_width[0]] = -128
+    vector[-pad_width[1]:] = -128
+    return vector
+
+
+def convertToPNGRange(data, dimension):
+    # Kelvin->Celsius and fit into PNG 8-bit integer range (0 to 255)
+    if dimension == "temperature":
+        # -273 + 128 = -145 degrees
+        data = data - 145
+        data = np.clip(data, 1, 254)
+        # Pad data with -128 in order to fill out rest of earth
+        data\
+            = np.lib.pad(data, 1, padWithZeros)
+        # Represent correct range in PNG by setting upper roof
+        data[0][0] = 255
+
+        # Clamp data to integer since PNG-range is integer
+        data\
+            = data.astype("uint8")
+    elif dimension == "precipitation":
+        # Convert from kg/(m^2*s) to kg/(m^2*d) = mm/d
+        # 3600s/h * 24h/d = 86400s/d
+        data = data * 86400
+        # Clamp data to 1-254
+        data = np.clip(data, 1, 254)
+        # Pad data with 0 in order to fill out rest of earth
+        data\
+            = np.lib.pad(data, 1, padWithZeros)
+        # Represent correct range in PNG by setting one value to 255
+        data[0][0] = 255
+        # Clamp data to integer since PNG-range is integer
+        data\
+            = data.astype("uint8")
+
+    return data
