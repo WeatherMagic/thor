@@ -70,16 +70,12 @@ def api(dimension):
         returnData["data"] = returnData["data"].tolist()
         return json.dumps(returnData)
     else:
-        # Kelvin->Celsius and fit into PNG signed integer range (-128 to 127)
-        if dimension == "temperature":
-            # -145 = -273
-            returnData["data"] = returnData["data"] - 273
-            # Pad data with zeros in order to fill out rest of earth
-            returnData["data"]\
-                = np.lib.pad(returnData["data"], 1, padwithzeros)
-        # Clamp data to integer since PNG-range is integer
+        # Convert data to integer range.
+        returnData["data"] = util.convertToPNGRange(returnData["data"], dimension)
+        # Pad data with zeros in order to fill out rest of earth
         returnData["data"]\
-            = returnData["data"].astype("int8")
+            = np.lib.pad(returnData["data"], 1, padwithzeros)
+
         # Return a PNG as requested by weather-front
         output = io.BytesIO()
         image = scipy.misc.toimage(returnData["data"])

@@ -245,3 +245,22 @@ def openFiles(folder):
                                     currentFile)
     # Return a froxen dict structure
     return domainDict
+
+
+def convertToPNGRange(data, dimension):
+    # Kelvin->Celsius and fit into PNG signed integer range (-128 to 127)
+    if dimension == "temperature":
+        # -145 = -273
+        data = data - 273
+        # Clamp data to integer since PNG-range is integer
+        data\
+            = data.astype("int8")
+    elif dimension == "precipitation":
+        # Convert from kg/(m^2*s) to kg/(m^2*d) = mm/d
+        data = data * 86400 # 3600s/h * 24h/d = 86400s/d
+        # Clamp data to integer since PNG-range is integer
+        data\
+            = data.astype("int8")
+
+
+    return data
