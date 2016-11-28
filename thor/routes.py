@@ -4,6 +4,7 @@ import flask
 import json
 import os
 import scipy
+import numpy as np
 import io
 import thor.util as util
 import thor.request as request
@@ -20,6 +21,12 @@ def hello_world():
     return flask.redirect(
             "https://github.com/WeatherMagic/thor/blob/master/doc/API.md",
             code=302)
+
+
+def padwithzeros(vector, pad_width, iaxis, kwargs):
+    vector[:pad_width[0]] = 0
+    vector[-pad_width[1]:] = 0
+    return vector
 
 
 @thorApp.route('/api/<dimension>', methods=["GET", "POST"])
@@ -63,10 +70,16 @@ def api(dimension):
         returnData["data"] = returnData["data"].tolist()
         return json.dumps(returnData)
     else:
-        # Kelvin->Celsius and fit into PNG integer range (0 to 255)
+        # Kelvin->Celsius and fit into PNG signed integer range (-128 to 127)
         if dimension == "temperature":
-            # -145 = -273 + 128
-            returnData["data"] = returnData["data"] - 145
+            # -145 = -273
+            returnData["data"] = returnData["data"] - 273
+            # Pad data with zeros in order to fill out rest of earth
+            returnData["data"]\
+                = np.lib.pad(returnData["data"], 1, padwithzeros)
+        # Clamp data to integer since PNG-range is integer
+        returnData["data"]\
+            = returnData["data"].astype("int8")
         # Return a PNG as requested by weather-front
         output = io.BytesIO()
         image = scipy.misc.toimage(returnData["data"])
