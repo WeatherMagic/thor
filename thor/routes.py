@@ -30,6 +30,10 @@ def api(variable):
     # Set arguments from URL if not from json
     if arguments is None:
         arguments = flask.request.args.to_dict(flat=False)
+        # Some way every argument is nested in list
+        # Remove this somehow
+        for arg, value in arguments.items():
+            arguments[arg] = value[0]
 
     # Check arguments given by client
     argCheckDict = util.argumentsHandler(arguments)
