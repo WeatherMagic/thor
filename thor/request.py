@@ -22,7 +22,7 @@ def handleRequest(arguments, ncFileDictTree, log):
     # ---------------
     """ TODO: Until we expose different climate models within the API
      - we just set default values for them """
-    variable = arguments["dimension"]
+    variable = arguments["variable"]
     if "domain" not in arguments:
         domain = list(ncFileDictTree.keys())[0]
     else:

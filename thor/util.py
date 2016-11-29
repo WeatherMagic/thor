@@ -148,8 +148,8 @@ def argumentsHandler(arguments):
                 "error":
                 "from-longitude larger than to-longitude."}
 
-    return {"ok": True,
-            "arguments": arguments}
+    arguments["ok"] = True
+    return arguments
 
 
 def printTree(folder):
@@ -262,32 +262,34 @@ def padWithMinusOneTwoEight(vector, pad_width, iaxis, kwargs):
     return vector
 
 
-def convertToPNGRange(data, dimension):
+def convertToPNGRange(data, variable):
     # Kelvin->Celsius and fit into PNG 8-bit integer range (0 to 255)
-    if dimension == "temperature":
-        # -273 + 128 = -145 degrees
-        data = data - 145
-        data = np.clip(data, 1, 254)
+    if variable == "temperature":
+        # Set 0 degrees Celsius around 64
+        # -273 + 64 = -209 degrees
+        data = data - 209
+        data = data
+        data = np.clip(data, 1, 126)
         # Pad data with -128 in order to fill out rest of earth
         data\
             = np.lib.pad(data, 1, padWithZeros)
         # Represent correct range in PNG by setting upper roof
-        data[0][0] = 255
+        data[0][0] = 127
 
         # Clamp data to integer since PNG-range is integer
         data\
             = data.astype("uint8")
-    elif dimension == "precipitation":
+    elif variable == "precipitation":
         # Convert from kg/(m^2*s) to kg/(m^2*d) = mm/d
         # 3600s/h * 24h/d = 86400s/d
         data = data * 86400
         # Clamp data to 1-254
-        data = np.clip(data, 1, 254)
+        data = np.clip(data, 1, 62)
         # Pad data with 0 in order to fill out rest of earth
         data\
             = np.lib.pad(data, 1, padWithZeros)
         # Represent correct range in PNG by setting one value to 255
-        data[0][0] = 255
+        data[0][0] = 63
         # Clamp data to integer since PNG-range is integer
         data\
             = data.astype("uint8")
