@@ -23,8 +23,8 @@ def hello_world():
             code=302)
 
 
-@thorApp.route('/api/<dimension>', methods=["GET", "POST"])
-def api(dimension):
+@thorApp.route('/api/<variable>', methods=["GET", "POST"])
+def api(variable):
     # None if args not given as json
     arguments = flask.request.get_json()
     # Set arguments from URL if not from json
@@ -36,21 +36,21 @@ def api(dimension):
     if argCheckDict["ok"] is False:
         return json.dumps(argCheckDict)
 
-    if dimension == "temperature":
-        argCheckDict["arguments"]["dimension"] = "tas"
-    elif dimension == "air-pressure":
+    if variable == "temperature":
+        argCheckDict["variable"] = "tas"
+    elif variable == "air-pressure":
         pass
-    elif dimension == "precipitation":
-        argCheckDict["arguments"]["dimension"] = "pr"
-    elif dimension == "water-level":
+    elif variable == "precipitation":
+        argCheckDict["variable"] = "pr"
+    elif variable == "water-level":
         pass
 
-    if "dimension" not in arguments.keys():
+    if "variable" not in argCheckDict.keys():
         return json.dumps({"ok": False,
                            "errorMessage":
-                           "Client sent incorrect dimension: " + dimension})
+                           "Client sent incorrect variable: " + variable})
 
-    returnData = request.handleRequest(argCheckDict["arguments"],
+    returnData = request.handleRequest(argCheckDict,
                                        const.ncFiles,
                                        const.log)
 
@@ -66,7 +66,7 @@ def api(dimension):
     else:
         # Convert data to integer range.
         returnData["data"]\
-                = util.convertToPNGRange(returnData["data"], dimension)
+                = util.convertToPNGRange(returnData["data"], variable)
         # Return a PNG as requested by weather-front
         output = io.BytesIO()
         image = scipy.misc.toimage(returnData["data"])

@@ -7,12 +7,12 @@ This document outlines the Thor Web API.
 The URL-scheme are as follows:
 
 ```
-/api/dimension
+/api/variable
 ```
 
-Where the two schemes gives different resolution on data. The first returns interpolated data for every month, with extreme values for that month. The second URL scheme returns data points for every day during specified month. 
+Returned data variable and dimensionality is decided by in-arguments given by the client. 
 
-** ''dimension'' is one of the following: **
+** ''variable'' is one of the following: **
 
 - temperature
 - air-pressure
@@ -32,9 +32,9 @@ Each request needs to provide parameters either in URL or as a json (OBS: Set th
 
 If month is omitted, data returned will be as filtered over a month. If month is specified, data points for each day will be returned. 
 
-Return-dimension is a 3D dimensional list that should contatin integers telling how many steps in each direction to return [time-dimension, lat-dimension, long-dimension]. If the user is only intrested in 2d data then the time-dimension can omitted and return-dimension will be [lat-dimension, long-dimension].
+Return-dimension is a 3-element list that should contatin integers telling how many steps in each direction to return [time-dimension, lat-dimension, long-dimension]. If the user is only intrested in 2D data then the time-dimension can omitted and return-dimension will be [lat-dimension, long-dimension]. In the 2D-case a PNG image will be returned to the client. The reference client weather-front only uses the PNG mode.
 
-All methods must be called using HTTP(S). Arguments can be passed as GET or POST params, or a mix.
+All methods must be called using HTTP(S). Arguments can be passed as GET or POST params.
 
 ### Example
 
@@ -80,20 +80,9 @@ Several arguments can be added to the request in order to get more control over 
 
 ## Response
 
-The response contains a JSON object, which at the top level contains a boolean value indicating success status. A non successful request will contain an error message. 
+If the requested data contains 2 dimensions, the response is a PNG image containing the data. Otherwise the response contains a JSON object, which at the top level contains a boolean value indicating success status. A non successful request will contain an error message. 
 
-**Example of successful request:**
-
-```json
-{
-    "ok": true
-    "data": [All the goodie simulations here]
-}
-```
-
-The returned data is three dimensional with the dimensions time, y and x (IN THAT ORDER). There's `12.231 km` between data points in each spatial direction when using zoom-level 1. The time resolution is one month.
-
-**Example of a non successful request:** 
+**Example of a non successful response:** 
 
 ```
 {
@@ -101,6 +90,26 @@ The returned data is three dimensional with the dimensions time, y and x (IN THA
     "error": "ERROR MESSAGE"
 }
 ```
+
+### Temperature
+
+Temperature returned as a PNG image is clamped to 0-255 integer range since limited by PNG integer range. The temperature is centered with 0 around 128, and the total temperature range is -63 to 62 degrees celcius. This means that each step in the PNG integer range represents half a degree Celius/Kelvin. Formula for getting temperature in Celcius from a pixel value in returned image is as follows.
+
+```
+celcius = (pixel_value + 128) / 2.0 # FLOAT!
+```
+
+If a data point is equal to 
+
+### Percipitation
+
+Percipitation returned as a PNG image is clamped to 0-255 integer range since limited by PNG integer range. The total percipitation range is 0 to 62 mm/day. This means that each step in the PNG integer range represents 0,25 mm/day of rain. Formula for getting percipitation in Celcius from a pixel value in returned image is as follows.
+
+```
+mm/day = pixel_value / 4.0 # FLOAT!
+```
+
+
 
 For more specific information on each function, please see the respective functions:
 

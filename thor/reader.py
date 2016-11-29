@@ -123,21 +123,33 @@ class Reader():
         # Find where to start and stop in rotated coordinates
         rotFrom = transform.toRot(fromLat, fromLong)
         rotTo = transform.toRot(toLat, toLong)
+        errorMessage = {"ok": False,
+                        "error": "Variable not within server range: "
+                        }
+
+        # Check if initial data can be seen in file
+        if rotFrom.item(1, 0) < self.netCDF.variables['rlat'][0]:
+            errorMessage["error"] += "from-latitude"
+            return errorMessage
+        if rotFrom.item(0, 0) < self.netCDF.variables['rlon'][0]:
+            errorMessage["error"] += "from-longitude"
+            return errorMessage
 
         startLat = 0
-        while self.netCDF.variables['rlat'][
-                startLat] < rotFrom.item(1, 0):
+        while self.netCDF.variables['rlat'][startLat] < rotFrom.item(1, 0):
             if startLat < self.latLen:
                 startLat = startLat + 1
             else:
-                return {"ok": False}
+                errorMessage["error"] += "from-latitude"
+                return errorMessage
 
         stopLat = startLat
         while self.netCDF.variables['rlat'][stopLat] < rotTo.item(1, 0):
             if stopLat < self.latLen:
                 stopLat = stopLat + 1
             else:
-                return {"ok": False}
+                errorMessage["error"] += "to-latitude"
+                return errorMessage
 
         startLong = 0
         while self.netCDF.variables['rlon'][
@@ -145,7 +157,8 @@ class Reader():
             if startLong < self.lonLen:
                 startLong = startLong + 1
             else:
-                return {"ok": False}
+                errorMessage["error"] += "from-longitude"
+                return errorMessage
 
         stopLong = startLong + 1
         while self.netCDF.variables['rlon'][
@@ -153,7 +166,8 @@ class Reader():
             if stopLong < self.lonLen:
                 stopLong = stopLong + 1
             else:
-                return {"ok": False}
+                errorMessage["error"] += "to-longitude"
+                return errorMessage
 
         return({"ok": True,
                 "data": [startTime,
