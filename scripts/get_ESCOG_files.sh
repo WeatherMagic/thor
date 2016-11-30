@@ -2,22 +2,16 @@
 
 #Checks if ncFiles exists, empties it if it does and creates it if it dosen't
 
-dir="ncFiles" #Default folder dor net cdf files
+curr_dir=$(pwd)
+dir="$(dirname $0)/../ncFiles" #Default folder for net cdf files
 
-if [ -d "../$dir" ]; then
-    #Folder exists and is empty
-    echo "*"
-else
-    echo "* Creating directory ncFiles."
-    mkdir ../$dir
-fi
+echo "* Creating directory $dir"
+mkdir -p $dir
 
-#Changeing folder to get the wget files in the right place
-cd ../$dir
-
+cd $dir
 #Downloads the choosen amount of ncFiles to the ncFiles folder
 while true; do 
-    read -p "* How much data should I get? (min/med/max/ext) " RESP
+    read -p "* How much data should I get? (min/med/max/maxi/ext) " RESP
     if [ "$RESP" = "min" ]; then
         echo "* Begining Downloading $RESP amount of data."
         ../scripts/wget-ncFilesMin.sh
@@ -30,6 +24,10 @@ while true; do
         echo "* Begining Downloading $RESP amount of data."
         ../scripts/wget-ncFilesMax.sh
         break
+    elif [ "$RESP" = "maxi" ]; then
+        echo "* Begining Downloading $RESP amount of data."
+        ../scripts/wget-ncFilesMax-i.sh
+        break
     elif [ "$RESP" = "ext" ]; then
         echo "* Exiting."
         break
@@ -37,3 +35,5 @@ while true; do
         echo "* $RESP is not a valid input pls help me help you."
     fi
 done
+
+cd $curr_dir
