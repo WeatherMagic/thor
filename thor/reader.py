@@ -18,7 +18,7 @@ class Reader():
         # Open netCDF file for reading
         self.netCDF = netCDF4.Dataset(filename, 'r')
         self.filename = filename
- 
+
         # Getting meta data from the netCDF file
         for key in self.netCDF.variables.keys():
             if key in filename:
@@ -26,7 +26,6 @@ class Reader():
                 break
 
         metaData = str(self.netCDF)
-        print(metaData)
 
         for line in metaData.split("\n"):
             temp = line.split(": ")
@@ -74,15 +73,11 @@ class Reader():
             self.maxLon = self.netCDF.variables['lon'][-1]
             self.lonLen = len(self.netCDF["lon"])
             self.latLen = len(self.netCDF["lat"])
+            self.latScale = self.latLen / (self.maxLat-self.minLat)
+            self.lonScale = self.lonLen / (self.maxLon-self.minLon)
         else:
             self.lonLen = len(self.netCDF["rlon"])-1
             self.latLen = len(self.netCDF["rlat"])-1
-
-
-        #print(self.getDomain)
-        #print(currentFile.getModel)
-        #print(currentFile.getExperiment)
-        #print(currentFile.getVariable)
 
     # -------------------------------------
     def getVariable(self):
@@ -190,27 +185,35 @@ class Reader():
         if fromLat < self.minLat:
             return {"ok": False,
                     "error": "fromLat is smaller than " +
-                    "smallest allowed value, " +
+                    "smallest file value, " +
                     str(self.minLat)}
         if toLat > self.maxLat:
             return {"ok": False,
-                    "error": "toLat is smaller than " +
-                    "largest allowed value, " +
+                    "error": "toLat is latger than " +
+                    "largest file value, " +
                     str(self.maxLat)}
         if fromLong < self.minLon:
             return {"ok": False,
                     "error": "fromLong is smaller than " +
-                    "smallest allowed value, " +
+                    "smallest file value, " +
                     str(self.minLon)}
         if toLong > self.maxLon:
 
             return {"ok": False,
-                    "error": "toLong is smaller than " +
-                    "largest allowed value, " +
-                    str(self.maxLat)}
+                    "error": "toLong is larger than " +
+                    "largest file value, " +
+                    str(self.maxLon)}
 
-        print("latlen "+str(self.latLen))
-        print("lonlen "+str(self.lonLen))
+        startLat = int(floor((fromLat - self.minLat) * self.latScale))
+        stopLat = int(floor((toLat - self.minLat) * self.latScale))
+        startLong = int(floor((fromLong - self.minLon) * self.lonScale))
+        stopLong = int(floor((toLong - self.minLon) * self.lonScale))
+
+        return {"ok": True,
+                "data": [startLat,
+                         stopLat,
+                         startLong,
+                         stopLong]}
 
     # -------------------------------------
     def getArea(self,
@@ -231,28 +234,32 @@ class Reader():
             stopTime = stopTime + 1
 
         if "i" in self.domain:
-            indexDict = getAreaNew(fromLat,
-                                   toLat,
-                                   fromLong,
-                                   toLong)
+            indexDict = self.getAreaNew(fromLat,
+                                        toLat,
+                                        fromLong,
+                                        toLong)
         else:
-            indexDict = getAreaOld(fromLat,
-                                   toLat,
-                                   fromLong,
-                                   toLong)
+            indexDict = self.getAreaOld(fromLat,
+                                        toLat,
+                                        fromLong,
+                                        toLong)
+        if indexDict["ok"]:
 
-        (startLat,
-         stopLat,
-         startLong,
-         stopLong) = [0, 0, 0, 0]
+            (startLat,
+             stopLat,
+             startLong,
+             stopLong) = indexDict["data"]
 
-        return({"ok": True,
-                "data": [startTime,
-                         stopTime,
-                         startLat,
-                         stopLat,
-                         startLong,
-                         stopLong]})
+            return({"ok": True,
+                    "data": [startTime,
+                             stopTime,
+                             startLat,
+                             stopLat,
+                             startLong,
+                             stopLong]})
+
+        else:
+            return indexDict
 
     # -------------------------------------
     def getData(self,
@@ -271,10 +278,7 @@ class Reader():
                                 toLong)
 
         if not areaDict["ok"]:
-            return {"ok": False,
-                    "errorMessage":
-                    "Specified lat/lon combination not" +
-                    " within server dataset."}
+            return areaDict
 
         [startTime,
          stopTime,
