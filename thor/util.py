@@ -76,7 +76,7 @@ def argumentsHandler(arguments):
     # ---------------------------------------
 
     # Handling returnDimension
-    if type(arguments["return-dimension"]) == "string":
+    if isinstance(arguments["return-dimension"], str):
         retDim = arguments["return-dimension"].replace("[", "")
         retDim = retDim.replace("]", "")
         retDim = retDim.split(", ")
@@ -94,6 +94,7 @@ def argumentsHandler(arguments):
         int_arg = 0
 
         try:
+            print(arg)
             int_arg = int(arg)
             intReturnDimension.append(int_arg)
         except ValueError:
