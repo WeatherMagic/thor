@@ -9,12 +9,14 @@ import logging
 
 
 def getList(dictTree,
-            domain,
             model,
             experiment,
             variable):
-
-    return dictTree[domain][model][experiment][variable]
+    returnList = []
+    for domain in dictTree:
+        returnList = returnList + dictTree[
+            domain][model][experiment][variable]
+    return returnList
 
 
 def handleRequest(arguments, ncFileDictTree, log):
@@ -49,10 +51,10 @@ def handleRequest(arguments, ncFileDictTree, log):
 
     # ---------------
     requestedFiles = getList(ncFileDictTree,
-                             domain,
                              model,
                              experiment,
                              variable)
+    
 
     for ncFile in requestedFiles:
         if arguments["from-date"] > ncFile.getStartDate()\
