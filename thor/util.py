@@ -76,7 +76,7 @@ def argumentsHandler(arguments):
     # ---------------------------------------
 
     # Handling returnDimension
-    if type(arguments["return-dimension"] == "string"):
+    if isinstance(arguments["return-dimension"], str):
         retDim = arguments["return-dimension"].replace("[", "")
         retDim = retDim.replace("]", "")
         retDim = retDim.split(", ")
