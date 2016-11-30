@@ -18,10 +18,7 @@ class Reader():
         # Open netCDF file for reading
         self.netCDF = netCDF4.Dataset(filename, 'r')
         self.filename = filename
-
-        self.lonLen = len(self.netCDF["rlon"])-1
-        self.latLen = len(self.netCDF["rlat"])-1
-
+ 
         # Getting meta data from the netCDF file
         for key in self.netCDF.variables.keys():
             if key in filename:
@@ -29,6 +26,7 @@ class Reader():
                 break
 
         metaData = str(self.netCDF)
+        print(metaData)
 
         for line in metaData.split("\n"):
             temp = line.split(": ")
@@ -69,6 +67,23 @@ class Reader():
         self.dateResolution = abs(self.netCDF.variables['time'][1] -
                                   self.netCDF.variables['time'][0])
 
+        if "i" in self.domain:
+            self.minLat = self.netCDF.variables['lat'][0]
+            self.maxLat = self.netCDF.variables['lat'][-1]
+            self.minLon = self.netCDF.variables['lon'][0]
+            self.maxLon = self.netCDF.variables['lon'][-1]
+            self.lonLen = len(self.netCDF["lon"])
+            self.latLen = len(self.netCDF["lat"])
+        else:
+            self.lonLen = len(self.netCDF["rlon"])-1
+            self.latLen = len(self.netCDF["rlat"])-1
+
+
+        #print(self.getDomain)
+        #print(currentFile.getModel)
+        #print(currentFile.getExperiment)
+        #print(currentFile.getVariable)
+
     # -------------------------------------
     def getVariable(self):
         return self.variable
@@ -104,21 +119,11 @@ class Reader():
             datetime.timedelta(days=self.netCDF.variables['time'][last])
 
     # -------------------------------------
-    def getArea(self,
-                fromDate,
-                toDate,
-                fromLat,
-                toLat,
-                fromLong,
-                toLong):
-
-        startTime = int(round((fromDate-self.startDate).days /
-                              self.dateResolution))
-        stopTime = int(round((toDate-self.startDate).days /
-                             self.dateResolution))
-        # Due to how numpy range-indexing works, we need one more.
-        if stopTime < len(self.netCDF.variables["time"]) - 1:
-            stopTime = stopTime + 1
+    def getAreaOld(self,
+                   fromLat,
+                   toLat,
+                   fromLong,
+                   toLong):
 
         # Find where to start and stop in rotated coordinates
         rotFrom = transform.toRot(fromLat, fromLong)
@@ -168,6 +173,78 @@ class Reader():
             else:
                 errorMessage["error"] += "to-longitude"
                 return errorMessage
+
+        return({"ok": True,
+                "data": [startLat,
+                         stopLat,
+                         startLong,
+                         stopLong]})
+
+    # -------------------------------------
+    def getAreaNew(self,
+                   fromLat,
+                   toLat,
+                   fromLong,
+                   toLong):
+
+        if fromLat < self.minLat:
+            return {"ok": False,
+                    "error": "fromLat is smaller than " +
+                    "smallest allowed value, " +
+                    str(self.minLat)}
+        if toLat > self.maxLat:
+            return {"ok": False,
+                    "error": "toLat is smaller than " +
+                    "largest allowed value, " +
+                    str(self.maxLat)}
+        if fromLong < self.minLon:
+            return {"ok": False,
+                    "error": "fromLong is smaller than " +
+                    "smallest allowed value, " +
+                    str(self.minLon)}
+        if toLong > self.maxLon:
+
+            return {"ok": False,
+                    "error": "toLong is smaller than " +
+                    "largest allowed value, " +
+                    str(self.maxLat)}
+
+        print("latlen "+str(self.latLen))
+        print("lonlen "+str(self.lonLen))
+
+    # -------------------------------------
+    def getArea(self,
+                fromDate,
+                toDate,
+                fromLat,
+                toLat,
+                fromLong,
+                toLong):
+
+        startTime = int(round((fromDate-self.startDate).days /
+                              self.dateResolution))
+        stopTime = int(round((toDate-self.startDate).days /
+                             self.dateResolution))
+
+        # Due to how numpy range-indexing works, we need one more.
+        if stopTime < len(self.netCDF.variables["time"]) - 1:
+            stopTime = stopTime + 1
+
+        if "i" in self.domain:
+            indexDict = getAreaNew(fromLat,
+                                   toLat,
+                                   fromLong,
+                                   toLong)
+        else:
+            indexDict = getAreaOld(fromLat,
+                                   toLat,
+                                   fromLong,
+                                   toLong)
+
+        (startLat,
+         stopLat,
+         startLong,
+         stopLong) = [0, 0, 0, 0]
 
         return({"ok": True,
                 "data": [startTime,
