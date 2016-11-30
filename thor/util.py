@@ -94,7 +94,6 @@ def argumentsHandler(arguments):
         int_arg = 0
 
         try:
-            print(arg)
             int_arg = int(arg)
             intReturnDimension.append(int_arg)
         except ValueError:
