@@ -135,6 +135,17 @@ def argumentsHandler(arguments):
                 "error":
                 "from-latitude larger than to-latitude."}
 
+    if arguments["from-latitude"] < -90:
+        return {"ok":
+                False,
+                "error":
+                "from-latitude is smaller than -90."}
+    if arguments["to-latitude"] > 90:
+        return {"ok":
+                False,
+                "error":
+                "to-latitude is larger than 90."}
+
     # ---------------------------------------
 
     # Handling longitude
@@ -153,6 +164,19 @@ def argumentsHandler(arguments):
                 False,
                 "error":
                 "from-longitude larger than to-longitude."}
+
+    if arguments["from-longitude"] < -180:
+        return {"ok":
+                False,
+                "error":
+                "from-longitude is smaller than -180."}
+    if arguments["to-longitude"] > 180:
+        return {"ok":
+                False,
+                "error":
+                "to-latitude is larger than 180."}
+
+
 
     arguments["ok"] = True
     return arguments

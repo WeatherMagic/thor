@@ -114,95 +114,35 @@ class Reader():
             datetime.timedelta(days=self.netCDF.variables['time'][last])
 
     # -------------------------------------
-    def getAreaOld(self,
-                   fromLat,
-                   toLat,
-                   fromLong,
-                   toLong):
+    def areaInFiles(self, corners):
 
-        # Find where to start and stop in rotated coordinates
-        rotFrom = transform.toRot(fromLat, fromLong)
-        rotTo = transform.toRot(toLat, toLong)
-        errorMessage = {"ok": False,
-                        "error": "Variable not within server range: "
-                        }
+        for corner in corners:
+            if corner[0] > self.minLat and\
+               corner[0] < self.maxLat and\
+               corner[1] > self.minLon and\
+               corner[1] < self.maxLon:
+                return True
+        return False
 
-        # Check if initial data can be seen in file
-        if rotFrom.item(1, 0) < self.netCDF.variables['rlat'][0]:
-            errorMessage["error"] += "from-latitude"
-            return errorMessage
-        if rotFrom.item(0, 0) < self.netCDF.variables['rlon'][0]:
-            errorMessage["error"] += "from-longitude"
-            return errorMessage
-
-        startLat = 0
-        while self.netCDF.variables['rlat'][startLat] < rotFrom.item(1, 0):
-            if startLat < self.latLen:
-                startLat = startLat + 1
-            else:
-                errorMessage["error"] += "from-latitude"
-                return errorMessage
-
-        stopLat = startLat
-        while self.netCDF.variables['rlat'][stopLat] < rotTo.item(1, 0):
-            if stopLat < self.latLen:
-                stopLat = stopLat + 1
-            else:
-                errorMessage["error"] += "to-latitude"
-                return errorMessage
-
-        startLong = 0
-        while self.netCDF.variables['rlon'][
-                startLong] < rotFrom.item(0, 0):
-            if startLong < self.lonLen:
-                startLong = startLong + 1
-            else:
-                errorMessage["error"] += "from-longitude"
-                return errorMessage
-
-        stopLong = startLong + 1
-        while self.netCDF.variables['rlon'][
-              stopLong] < rotTo.item(0, 0):
-            if stopLong < self.lonLen:
-                stopLong = stopLong + 1
-            else:
-                errorMessage["error"] += "to-longitude"
-                return errorMessage
-
-        return({"ok": True,
-                "data": [startLat,
-                         stopLat,
-                         startLong,
-                         stopLong]})
 
     # -------------------------------------
-    def getAreaNew(self,
-                   fromLat,
-                   toLat,
-                   fromLong,
-                   toLong):
+    # def returnArea(self,
+    #               corners):
+    #
+    #    for corner in corners
+    #
+    #    if fromLat < self.minLat:
+    #        fromLat = self.minLat
+    #   if toLat > self.maxLat:
+    #        toLat =
 
-        if fromLat < self.minLat:
-            return {"ok": False,
-                    "error": "fromLat is smaller than " +
-                    "smallest file value, " +
-                    str(self.minLat)}
-        if toLat > self.maxLat:
-            return {"ok": False,
-                    "error": "toLat is latger than " +
-                    "largest file value, " +
-                    str(self.maxLat)}
-        if fromLong < self.minLon:
-            return {"ok": False,
-                    "error": "fromLong is smaller than " +
-                    "smallest file value, " +
-                    str(self.minLon)}
-        if toLong > self.maxLon:
 
-            return {"ok": False,
-                    "error": "toLong is larger than " +
-                    "largest file value, " +
-                    str(self.maxLon)}
+    # -------------------------------------
+    def getArea(self,
+                fromLat,
+                toLat,
+                fromLong,
+                toLong):
 
         startLat = int(floor((fromLat - self.minLat) * self.latScale))
         stopLat = int(floor((toLat - self.minLat) * self.latScale))
@@ -244,7 +184,6 @@ class Reader():
                                         fromLong,
                                         toLong)
         if indexDict["ok"]:
-
             (startLat,
              stopLat,
              startLong,

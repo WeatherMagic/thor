@@ -14,8 +14,12 @@ def getList(dictTree,
             variable):
     returnList = []
     for domain in dictTree:
-        returnList = returnList + dictTree[
-            domain][model][experiment][variable]
+        print(domain)
+        print(model)
+        print(experiment)
+        print(variable)
+        nextDomain = dictTree[domain][model][experiment][variable]
+        returnList = returnList + nextDomain
     return returnList
 
 
@@ -54,33 +58,39 @@ def handleRequest(arguments, ncFileDictTree, log):
                              model,
                              experiment,
                              variable)
-    
 
     for ncFile in requestedFiles:
         if arguments["from-date"] > ncFile.getStartDate()\
                 and arguments["to-date"] < ncFile.getLastDate():
                     # If climateArea is false, it is not within file
-                    climateAreaDict = ncFile.getData(
-                        arguments["from-date"],
-                        arguments["to-date"],
-                        arguments["from-latitude"],
-                        arguments["to-latitude"],
-                        arguments["from-longitude"],
-                        arguments["to-longitude"])
 
-                    if not climateAreaDict["ok"]:
-                        return climateAreaDict
+            cornerPoints = sigProcess.pointsFromGrid(np.array(
+                [[arguments["from-latitude"],
+                  arguments["to-latitude"]],
+                 [arguments["from-longitude"],
+                  arguments["to-longitude"]]]))
 
-                    # Interpolating the data
-                    returnAreaDict = sigProcess.interpolate(
-                        climateAreaDict["data"],
-                        arguments["return-dimension"])
+                climateAreaDict = ncFile.getData(
+                    arguments["from-date"],
+                    arguments["to-date"],
+                    arguments["from-latitude"],
+                    arguments["to-latitude"],
+                    arguments["from-longitude"],
+                    arguments["to-longitude"])
 
-                    if not returnAreaDict["ok"]:
-                        return returnAreaDict
+            if not climateAreaDict["ok"]:
+                return climateAreaDict
 
-                    return {"ok": True,
-                            "data": returnAreaDict["data"]}
+            # Interpolating the data
+            returnAreaDict = sigProcess.interpolate(
+                climateAreaDict["data"],
+                arguments["return-dimension"])
+
+            if not returnAreaDict["ok"]:
+                return returnAreaDict
+
+            return {"ok": True,
+                    "data": returnAreaDict["data"]}
 
     returnDataDict = {"ok": False,
                       "errorMessage":
