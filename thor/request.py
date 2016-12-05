@@ -14,8 +14,11 @@ def getList(dictTree,
             variable):
     returnList = []
     for domain in dictTree:
-        nextDomain = dictTree[domain][model][experiment][variable]
-        returnList = returnList + nextDomain
+        if model in list(dictTree[domain].keys()) and\
+           experiment in list(dictTree[domain][model].keys()) and\
+           variable in list(dictTree[domain][model][experiment].keys()):
+            nextDomain = dictTree[domain][model][experiment][variable]
+            returnList = returnList + nextDomain
     return returnList
 
 
@@ -55,16 +58,13 @@ def handleRequest(arguments, ncFileDictTree, log):
                              experiment,
                              variable)
 
-    returnArray = ndarray
+    returnData = np.ndarray(shape=arguments["return-dimension"],
+                            dtype=float)
+    returnData.fill(100000)
 
     for ncFile in requestedFiles:
-        cornerPoints = sigProcess.pointsFromGrid(np.array(
-                [[arguments["from-latitude"],
-                  arguments["to-latitude"]],
-                 [arguments["from-longitude"],
-                  arguments["to-longitude"]]]))
-
-        if ncFile.overlap(cornerPoints):
+        if arguments["from-date"] > ncFile.getStartDate()\
+           and arguments["to-date"] < ncFile.getLastDate():
 
                 climateAreaDict = ncFile.getData(
                     arguments["from-date"],
@@ -74,22 +74,21 @@ def handleRequest(arguments, ncFileDictTree, log):
                     arguments["from-longitude"],
                     arguments["to-longitude"])
 
-            if not climateAreaDict["ok"]:
-                return climateAreaDict
+                if not climateAreaDict["ok"]:
+                    return climateAreaDict
 
             # Interpolating the data
-            returnAreaDict = sigProcess.interpolate(
-                climateAreaDict["data"],
-                arguments["return-dimension"])
+                returnAreaDict = sigProcess.interpolate(
+                    climateAreaDict["data"],
+                    arguments["return-dimension"])
 
-            if not returnAreaDict["ok"]:
-                return returnAreaDict
+                if not returnAreaDict["ok"]:
+                    return returnAreaDict
 
-            return {"ok": True,
-                    "data": returnAreaDict["data"]}
+                return {"ok": True,
+                        "data": returnAreaDict["data"]}
 
-    returnDataDict = {"ok": False,
-                      "errorMessage":
-                      "Specified date range not within server dataset."}
+    return {"ok": False,
+            "error":
+            "Specified date range not within server dataset."}
 
-    return returnDataDict

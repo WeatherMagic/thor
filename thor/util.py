@@ -115,7 +115,9 @@ def argumentsHandler(arguments):
                                                   np.array(arguments[
                                                       "return-dimension"]))
     else:
-        arguments["return-dimension"] = np.array(arguments["return-dimension"])
+        return {"ok": False,
+                "error":
+        "returnDimension doesn't contain two values."}
 
     # ---------------------------------------
 

@@ -114,16 +114,41 @@ class Reader():
             datetime.timedelta(days=self.netCDF.variables['time'][last])
 
     # -------------------------------------
-    def overlap(self, corners):
+    def overlap(self,
+                fromLat,
+                toLat,
+                fromLong,
+                toLong):
 
-        for corner in corners:
-            if corner[0] > self.minLat and\
-               corner[0] < self.maxLat and\
-               corner[1] > self.minLon and\
-               corner[1] < self.maxLon:
-                return True
-        return False
+        # Checking overlap
+        if self.minLat > toLat:
+            return {"ok": False,
+                    "error": "No overlap"}
+        if self.maxLat < fromLat:
+            return {"ok": False,
+                    "error": "No overlap"}
+        if self.minLon > toLong:
+            return {"ok": False,
+                    "error": "No overlap"}
+        if self.maxLon < fromLong:
+            return {"ok": False,
+                    "error": "No overlap"}
 
+        # Checking area
+        if self.minLat > fromLat:
+            fromLat = self.minLat
+        if self.maxLat < toLat:
+            toLat = self.maxLat
+        if self.minLon > fromLong:
+            fromLong = self.minLon
+        if self.maxLon < toLong:
+            toLong = self.maxLon
+
+        return {"ok": True,
+                "area": [fromLat,
+                         toLat,
+                         fromLong,
+                         toLong]}
 
     # -------------------------------------
     # def returnArea(self,
@@ -135,25 +160,6 @@ class Reader():
     #        fromLat = self.minLat
     #   if toLat > self.maxLat:
     #        toLat =
-
-
-    # -------------------------------------
-    def getArea(self,
-                fromLat,
-                toLat,
-                fromLong,
-                toLong):
-
-        startLat = int(floor((fromLat - self.minLat) * self.latScale))
-        stopLat = int(floor((toLat - self.minLat) * self.latScale))
-        startLong = int(floor((fromLong - self.minLon) * self.lonScale))
-        stopLong = int(floor((toLong - self.minLon) * self.lonScale))
-
-        return {"ok": True,
-                "data": [startLat,
-                         stopLat,
-                         startLong,
-                         stopLong]}
 
     # -------------------------------------
     def getArea(self,
@@ -195,6 +201,19 @@ class Reader():
                 fromLong,
                 toLong):
 
+        overlapDict = self.overlap(fromLat,
+                                   toLat,
+                                   fromLong,
+                                   toLong)
+
+        if not overlapDict["ok"]:
+            return overlapDict
+
+        [fromLat,
+         toLat,
+         fromLong,
+         toLong] = overlapDict["area"]
+
         areaDict = self.getArea(fromDate,
                                 toDate,
                                 fromLat,
@@ -224,4 +243,8 @@ class Reader():
 
         return {"ok": True,
                 "data":
-                weatherData3D}
+                weatherData3D,
+                "area": [fromLat,
+                         toLat,
+                         fromLong,
+                         fromLat]}
