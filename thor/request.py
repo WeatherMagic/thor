@@ -25,17 +25,29 @@ def handleRequest(arguments, ncFileDictTree, log):
     variable = arguments["variable"]
     if "domain" not in arguments:
         domain = list(ncFileDictTree.keys())[0]
+    elif arguments["domain"] not in list(ncFileDictTree.keys())[0]:
+        return {"ok": False,
+                "error": "No files with specified domain."}
     else:
         domain = str(arguments["domain"])
     if "climate-model" not in arguments:
         model = list(ncFileDictTree[domain].keys())[0]
+    elif arguments["climate-model"] not in list(ncFileDictTree[
+            domain].keys())[0]:
+        return {"ok": False,
+                "error": "No files with specified climate-model."}
     else:
         model = str(arguments["climate-model"])
     if "exhaust-level" not in arguments:
         experiment = list(ncFileDictTree[domain][model].keys())[0]
+    elif arguments["exhaust-level"] not in list(ncFileDictTree[
+            domain][model].keys())[0]:
+        return {"ok": False,
+                "error": "No files with specified exhaust-level."}
     else:
         experiment = str(arguments["exhaust-level"])
 
+    print(domain + " "+ model + " " + experiment)
     # ---------------
     requestedFiles = getList(ncFileDictTree,
                              domain,
