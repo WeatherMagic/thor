@@ -47,7 +47,6 @@ def handleRequest(arguments, ncFileDictTree, log):
     else:
         experiment = str(arguments["exhaust-level"])
 
-    print(domain + " "+ model + " " + experiment)
     # ---------------
     requestedFiles = getList(ncFileDictTree,
                              domain,
