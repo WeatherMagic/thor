@@ -83,18 +83,15 @@ def handleRequest(arguments, ncFileDictTree, log):
     for ncFile in requestedFiles:
         if arguments["from-date"] > ncFile.getStartDate()\
            and arguments["to-date"] < ncFile.getLastDate():
+            climateAreaDict = ncFile.getData(
+                arguments["from-date"],
+                arguments["to-date"],
+                arguments["from-latitude"],
+                arguments["to-latitude"],
+                arguments["from-longitude"],
+                arguments["to-longitude"])
 
-                climateAreaDict = ncFile.getData(
-                    arguments["from-date"],
-                    arguments["to-date"],
-                    arguments["from-latitude"],
-                    arguments["to-latitude"],
-                    arguments["from-longitude"],
-                    arguments["to-longitude"])
-
-                if not climateAreaDict["ok"]:
-                    return climateAreaDict
-
+            if climateAreaDict["ok"]:
                 [latScale,
                  lonScale] = overlapScale(climateAreaDict["area"],
                                           arguments["from-latitude"],
@@ -107,35 +104,32 @@ def handleRequest(arguments, ncFileDictTree, log):
                 lonInterpolLen = floor(arguments["return-dimension"][1] *
                                        lonScale)
 
+
                 # Interpolating the data
                 returnAreaDict = sigProcess.interpolate(
                     climateAreaDict["data"],
-                    [latInterpolLen,
+                    [1,
+                     latInterpolLen,
                      lonInterpolLen])
 
                 if not returnAreaDict["ok"]:
                     return returnAreaDict
 
-                latStart = (((climateAreaDict["area"][0] -
-                              arguments["from-latitude"]) *
-                            arguments["return-dimension"][0]) /
-                            (arguments["to-latitude"] -
-                             arguments["from-latitude"]))
+                latStart = floor((((climateAreaDict["area"][0] -
+                                    arguments["from-latitude"]) *
+                                   arguments["return-dimension"][0]) /
+                                  (arguments["to-latitude"] -
+                                   arguments["from-latitude"])))
 
-                lonStart = (((climateAreaDict["area"][3] -
-                              arguments["from-longitude"]) *
-                            arguments["return-dimension"][1]) /
-                            (arguments["to-longitude"] -
-                             arguments["from-longitude"]))
+                lonStart = floor((((climateAreaDict["area"][2] -
+                                    arguments["from-longitude"]) *
+                                   arguments["return-dimension"][1]) /
+                                  (arguments["to-longitude"] -
+                                   arguments["from-longitude"])))
 
                 returnData[latStart:latStart+latInterpolLen,
                            lonStart:lonStart+lonInterpolLen] = returnAreaDict[
                                "data"]
 
-                return {"ok": True,
-                        "data": returnData}
-
-    return {"ok": False,
-            "error":
-            "Specified date range not within server dataset."}
-
+    return {"ok": True,
+            "data": returnData}

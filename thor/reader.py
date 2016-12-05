@@ -236,4 +236,4 @@ class Reader():
                 "area": [fromLat,
                          toLat,
                          fromLong,
-                         fromLat]}
+                         toLong]}

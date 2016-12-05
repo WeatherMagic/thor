@@ -111,9 +111,8 @@ def argumentsHandler(arguments):
     arguments["return-dimension"] = intReturnDimension
 
     if len(arguments["return-dimension"]) == 2:
-        arguments["return-dimension"] = np.append(np.array(1),
-                                                  np.array(arguments[
-                                                      "return-dimension"]))
+        arguments["return-dimension"] = np.array(arguments[
+            "return-dimension"])
     else:
         return {"ok": False,
                 "error":
