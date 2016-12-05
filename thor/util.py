@@ -305,7 +305,7 @@ def convertToPNGRange(data, variable):
     data = data.astype("uint8")
     data = np.lib.pad(data, 1, padWithZeros)
     data[0, 0] = border_value
-    # Create an array with two channels (LA PNG)
+    # Create an array with four channels (RGBA PNG)
     dimensions = data.shape
     out_data = np.ndarray(shape=(dimensions[0],
                                  dimensions[1],
