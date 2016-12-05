@@ -151,17 +151,6 @@ class Reader():
                          toLong]}
 
     # -------------------------------------
-    # def returnArea(self,
-    #               corners):
-    #
-    #    for corner in corners
-    #
-    #    if fromLat < self.minLat:
-    #        fromLat = self.minLat
-    #   if toLat > self.maxLat:
-    #        toLat =
-
-    # -------------------------------------
     def getArea(self,
                 fromDate,
                 toDate,

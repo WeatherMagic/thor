@@ -21,6 +21,9 @@ def getList(dictTree,
             returnList = returnList + nextDomain
     return returnList
 
+def overlapScale(bajs,a,s,d,f):
+
+    return (1,2)
 
 def handleRequest(arguments, ncFileDictTree, log):
 
@@ -76,6 +79,13 @@ def handleRequest(arguments, ncFileDictTree, log):
 
                 if not climateAreaDict["ok"]:
                     return climateAreaDict
+
+                [latScale,
+                 lonScale] = overlapScale(climateAreaDict["area"],
+                                          arguments["from-latitude"],
+                                          arguments["to-latitude"],
+                                          arguments["from-longitude"],
+                                          arguments["to-longitude"])
 
             # Interpolating the data
                 returnAreaDict = sigProcess.interpolate(
