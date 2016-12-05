@@ -275,58 +275,43 @@ def padWithMinusOneTwoEight(vector, pad_width, iaxis, kwargs):
 
 
 def convertToPNGRange(data, variable):
+    border_value = 0
+    data = np.ma.masked_greater(data, 10000)
+
     # Kelvin->Celsius and fit into PNG 8-bit integer range (0 to 255)
     if variable == "temperature":
         # Set 0 degrees Celsius around 64
         # -273 + 64 = -209 degrees
         data = data - 209
-        data = np.ma.masked_greater(data, 127)
-
-        # Get a mask that'll be the alpha channel
-        mask_array = data.mask
-        # Fit to integer range
-        mask_array = mask_array.astype("uint8")
-        # PAd with ones
-        mask_array = np.lib.pad(mask_array, 1, padWithOnes)
-        # Convert to PNG alpha range
-        mask_array = (255-255*mask_array)
-
-        data = data.clip(0, 127)
-        data = data.astype("uint8")
-        data = np.lib.pad(data, 1, padWithZeros)
-        data[0][0] = 127
-
-        dimensions = data.shape
-        out_data = np.ndarray(shape=(dimensions[0],
-                                     dimensions[1],
-                                     2),
-                              dtype="uint8")
-        out_data[:, :, 0] = data[:, :]
-        out_data[:, :, 1] = mask_array[:, :]
+        border_value = 127
 
     elif variable == "precipitation":
         # Convert from kg/(m^2*s) to kg/(m^2*d) = mm/d
         # 3600s/h * 24h/d = 86400s/d
         data = data * 86400
-        # Clamp data to 1-254
-        data = np.ma.masked_greater(data, 63)
+        border_value = 63
 
-        mask_array = data.mask
-        mask_array = mask_array.astype("uint8")
-        mask_array = np.lib.pad(mask_array, 1, padWithOnes)
-        mask_array = (255-255*mask_array)
+    # Get a mask that'll be the alpha channel
+    mask_array = data.mask
+    # Fit to integer range
+    mask_array = mask_array.astype("uint8")
+    # PAd with ones
+    mask_array = np.lib.pad(mask_array, 1, padWithOnes)
+    # Convert to PNG alpha range
+    mask_array = (255-255*mask_array)
 
-        data = data.clip(0, 63)
-        data = data.astype("uint8")
-        data = np.lib.pad(data, 1, padWithZeros)
-        data[0][0] = 63
-
-        dimensions = data.shape
-        out_data = np.ndarray(shape=(dimensions[0],
-                                     dimensions[1],
-                                     2),
-                              dtype="uint8")
-        out_data[:, :, 0] = data[:, :]
-        out_data[:, :, 1] = mask_array[:, :]
+    # Set border in order to fix PNG res
+    data = data.clip(0, border_value)
+    data = data.astype("uint8")
+    data = np.lib.pad(data, 1, padWithZeros)
+    data[0, 0] = border_value
+    # Create an array with two channels (LA PNG)
+    dimensions = data.shape
+    out_data = np.ndarray(shape=(dimensions[0],
+                                 dimensions[1],
+                                 2),
+                          dtype="uint8")
+    out_data[:, :, 0] = data[:, :]
+    out_data[:, :, 1] = mask_array[:, :]
 
     return out_data
