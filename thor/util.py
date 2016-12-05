@@ -275,7 +275,7 @@ def padWithMinusOneTwoEight(vector, pad_width, iaxis, kwargs):
 
 
 def convertToPNGRange(data, variable):
-    border_value = 0
+    borderValue = 0
     data = np.ma.masked_greater(data, 10000)
 
     # Kelvin->Celsius and fit into PNG 8-bit integer range (0 to 255)
@@ -283,37 +283,37 @@ def convertToPNGRange(data, variable):
         # Set 0 degrees Celsius around 64
         # -273 + 64 = -209 degrees
         data = data - 209
-        border_value = 127
+        borderValue = 127
 
     elif variable == "precipitation":
         # Convert from kg/(m^2*s) to kg/(m^2*d) = mm/d
         # 3600s/h * 24h/d = 86400s/d
         data = data * 86400
-        border_value = 63
+        borderValue = 63
 
     # Get a mask that'll be the alpha channel
-    mask_array = data.mask
+    maskArray = data.mask
     # Fit to integer range
-    mask_array = mask_array.astype("uint8")
+    maskArray = maskArray.astype("uint8")
     # PAd with ones
-    mask_array = np.lib.pad(mask_array, 1, padWithOnes)
+    maskArray = np.lib.pad(maskArray, 1, padWithOnes)
     # Convert to PNG alpha range
-    mask_array = (255-255*mask_array)
+    maskArray = (255-255*maskArray)
 
     # Set border in order to fix PNG res
-    data = data.clip(0, border_value)
+    data = data.clip(0, borderValue)
     data = data.astype("uint8")
     data = np.lib.pad(data, 1, padWithZeros)
-    data[0, 0] = border_value
+    data[0, 0] = borderValue
     # Create an array with four channels (RGBA PNG)
     dimensions = data.shape
-    out_data = np.ndarray(shape=(dimensions[0],
+    outData = np.ndarray(shape=(dimensions[0],
                                  dimensions[1],
                                  4),
                           dtype="uint8")
-    out_data[:, :, 0] = data[:, :]
-    out_data[:, :, 1] = 0
-    out_data[:, :, 2] = 0
-    out_data[:, :, 3] = mask_array[:, :]
+    outData[:, :, 0] = data[:, :]
+    outData[:, :, 1] = 0
+    outData[:, :, 2] = 0
+    outData[:, :, 3] = maskArray[:, :]
 
-    return out_data
+    return outData
