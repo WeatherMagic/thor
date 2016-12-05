@@ -6,7 +6,7 @@ from datetime import datetime
 from datetime import timedelta
 import numpy as np
 import logging
-
+from math import floor
 
 def getList(dictTree,
             model,
@@ -21,9 +21,24 @@ def getList(dictTree,
             returnList = returnList + nextDomain
     return returnList
 
-def overlapScale(bajs,a,s,d,f):
-
-    return (1,2)
+def overlapScale(overlapArea,
+                 fromLat,
+                 toLat,
+                 fromLong,
+                 toLong):
+    def scale(oldFrom,
+              oldTo,
+              newFrom,
+              newTo):
+        return (newTo-newFrom)/(oldTo-oldFrom)
+    return (scale(fromLat,
+                  toLat,
+                  overlapArea[0],
+                  overlapArea[1]),
+            scale(fromLong,
+                  toLong,
+                  overlapArea[2],
+                  overlapArea[3]))
 
 def handleRequest(arguments, ncFileDictTree, log):
 
@@ -87,16 +102,38 @@ def handleRequest(arguments, ncFileDictTree, log):
                                           arguments["from-longitude"],
                                           arguments["to-longitude"])
 
-            # Interpolating the data
+                latInterpolLen = floor(arguments["return-dimension"][0] *
+                                       latScale)
+                lonInterpolLen = floor(arguments["return-dimension"][1] *
+                                       lonScale)
+
+                # Interpolating the data
                 returnAreaDict = sigProcess.interpolate(
                     climateAreaDict["data"],
-                    arguments["return-dimension"])
+                    [latInterpolLen,
+                     lonInterpolLen])
 
                 if not returnAreaDict["ok"]:
                     return returnAreaDict
 
+                latStart = (((climateAreaDict["area"][0] -
+                              arguments["from-latitude"]) *
+                            arguments["return-dimension"][0]) /
+                            (arguments["to-latitude"] -
+                             arguments["from-latitude"]))
+
+                lonStart = (((climateAreaDict["area"][3] -
+                              arguments["from-longitude"]) *
+                            arguments["return-dimension"][1]) /
+                            (arguments["to-longitude"] -
+                             arguments["from-longitude"]))
+
+                returnData[latStart:latStart+latInterpolLen,
+                           lonStart:lonStart+lonInterpolLen] = returnAreaDict[
+                               "data"]
+
                 return {"ok": True,
-                        "data": returnAreaDict["data"]}
+                        "data": returnData}
 
     return {"ok": False,
             "error":
