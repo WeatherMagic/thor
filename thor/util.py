@@ -262,6 +262,12 @@ def padWithZeros(vector, pad_width, iaxis, kwargs):
     return vector
 
 
+def padWithOnes(vector, pad_width, iaxis, kwargs):
+    vector[:pad_width[0]] = 1
+    vector[-pad_width[1]:] = 1
+    return vector
+
+
 def padWithMinusOneTwoEight(vector, pad_width, iaxis, kwargs):
     vector[:pad_width[0]] = -128
     vector[-pad_width[1]:] = -128
@@ -274,30 +280,53 @@ def convertToPNGRange(data, variable):
         # Set 0 degrees Celsius around 64
         # -273 + 64 = -209 degrees
         data = data - 209
-        data = data
-        data = np.clip(data, 1, 126)
-        # Pad data with -128 in order to fill out rest of earth
-        data\
-            = np.lib.pad(data, 1, padWithZeros)
-        # Represent correct range in PNG by setting upper roof
+        data = np.ma.masked_greater(data, 127)
+
+        # Get a mask that'll be the alpha channel
+        mask_array = data.mask
+        # Fit to integer range
+        mask_array = mask_array.astype("uint8")
+        # PAd with ones
+        mask_array = np.lib.pad(mask_array, 1, padWithOnes)
+        # Convert to PNG alpha range
+        mask_array = (255-255*mask_array)
+
+        data = data.clip(0, 127)
+        data = data.astype("uint8")
+        data = np.lib.pad(data, 1, padWithZeros)
         data[0][0] = 127
 
-        # Clamp data to integer since PNG-range is integer
-        data\
-            = data.astype("uint8")
+        dimensions = data.shape
+        out_data = np.ndarray(shape=(dimensions[0],
+                                     dimensions[1],
+                                     2),
+                              dtype="uint8")
+        out_data[:, :, 0] = data[:, :]
+        out_data[:, :, 1] = mask_array[:, :]
+
     elif variable == "precipitation":
         # Convert from kg/(m^2*s) to kg/(m^2*d) = mm/d
         # 3600s/h * 24h/d = 86400s/d
         data = data * 86400
         # Clamp data to 1-254
-        data = np.clip(data, 1, 62)
-        # Pad data with 0 in order to fill out rest of earth
-        data\
-            = np.lib.pad(data, 1, padWithZeros)
-        # Represent correct range in PNG by setting one value to 255
-        data[0][0] = 63
-        # Clamp data to integer since PNG-range is integer
-        data\
-            = data.astype("uint8")
+        data = np.ma.masked_greater(data, 63)
 
-    return data
+        mask_array = data.mask
+        mask_array = mask_array.astype("uint8")
+        mask_array = np.lib.pad(mask_array, 1, padWithOnes)
+        mask_array = (255-255*mask_array)
+
+        data = data.clip(0, 63)
+        data = data.astype("uint8")
+        data = np.lib.pad(data, 1, padWithZeros)
+        data[0][0] = 63
+
+        dimensions = data.shape
+        out_data = np.ndarray(shape=(dimensions[0],
+                                     dimensions[1],
+                                     2),
+                              dtype="uint8")
+        out_data[:, :, 0] = data[:, :]
+        out_data[:, :, 1] = mask_array[:, :]
+
+    return out_data

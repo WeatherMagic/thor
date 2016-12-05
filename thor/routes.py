@@ -73,7 +73,7 @@ def api(variable):
                 = util.convertToPNGRange(returnData["data"], variable)
         # Return a PNG as requested by weather-front
         output = io.BytesIO()
-        image = scipy.misc.toimage(returnData["data"])
+        image = PIL.Image.fromarray(returnData["data"], "LA")
         # Flip since top left corner is 0,0 in image
         image = image.transpose(PIL.Image.FLIP_TOP_BOTTOM)
         image.save(output, 'PNG')
