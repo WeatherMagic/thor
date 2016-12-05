@@ -32,7 +32,7 @@ Each request needs to provide parameters either in URL or as a json (OBS: Set th
 
 If month is omitted, data returned will be as filtered over a month. If month is specified, data points for each day will be returned. 
 
-Return-dimension is a 3-element list that should contatin integers telling how many steps in each direction to return [time-dimension, lat-dimension, long-dimension]. If the user is only intrested in 2D data then the time-dimension can omitted and return-dimension will be [lat-dimension, long-dimension]. In the 2D-case a PNG image will be returned to the client. The reference client weather-front only uses the PNG mode.
+Return-dimension is a 2-element list that should contatin integers telling how many steps in each direction to return [ lat-dimension, long-dimension].
 
 All methods must be called using HTTP(S). Arguments can be passed as GET or POST params.
 
@@ -55,7 +55,6 @@ Several arguments can be added to the request in order to get more control over 
 - from-year
 - to-year
 - to-month 
-- domain
 - climate-model
 - exhaust-level
 
@@ -72,7 +71,6 @@ Several arguments can be added to the request in order to get more control over 
 	"from-latitude": "27",
 	"to-latitude": "28",
 	"return-dimension": [2,10,20],
-	"domain": "EUR-11",
 	"climate-model": "MOHC-HadGEM2-ES",
 	"exhaust-level": "rcp85"
 }
