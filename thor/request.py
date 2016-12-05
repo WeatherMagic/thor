@@ -14,10 +14,6 @@ def getList(dictTree,
             variable):
     returnList = []
     for domain in dictTree:
-        print(domain)
-        print(model)
-        print(experiment)
-        print(variable)
         nextDomain = dictTree[domain][model][experiment][variable]
         returnList = returnList + nextDomain
     return returnList
@@ -59,16 +55,16 @@ def handleRequest(arguments, ncFileDictTree, log):
                              experiment,
                              variable)
 
-    for ncFile in requestedFiles:
-        if arguments["from-date"] > ncFile.getStartDate()\
-                and arguments["to-date"] < ncFile.getLastDate():
-                    # If climateArea is false, it is not within file
+    returnArray = ndarray
 
-            cornerPoints = sigProcess.pointsFromGrid(np.array(
+    for ncFile in requestedFiles:
+        cornerPoints = sigProcess.pointsFromGrid(np.array(
                 [[arguments["from-latitude"],
                   arguments["to-latitude"]],
                  [arguments["from-longitude"],
                   arguments["to-longitude"]]]))
+
+        if ncFile.overlap(cornerPoints):
 
                 climateAreaDict = ncFile.getData(
                     arguments["from-date"],

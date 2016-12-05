@@ -114,7 +114,7 @@ class Reader():
             datetime.timedelta(days=self.netCDF.variables['time'][last])
 
     # -------------------------------------
-    def areaInFiles(self, corners):
+    def overlap(self, corners):
 
         for corner in corners:
             if corner[0] > self.minLat and\
@@ -173,32 +173,18 @@ class Reader():
         if stopTime < len(self.netCDF.variables["time"]) - 1:
             stopTime = stopTime + 1
 
-        if "i" in self.domain:
-            indexDict = self.getAreaNew(fromLat,
-                                        toLat,
-                                        fromLong,
-                                        toLong)
-        else:
-            indexDict = self.getAreaOld(fromLat,
-                                        toLat,
-                                        fromLong,
-                                        toLong)
-        if indexDict["ok"]:
-            (startLat,
-             stopLat,
-             startLong,
-             stopLong) = indexDict["data"]
+        startLat = int(floor((fromLat - self.minLat) * self.latScale))
+        stopLat = int(floor((toLat - self.minLat) * self.latScale))
+        startLong = int(floor((fromLong - self.minLon) * self.lonScale))
+        stopLong = int(floor((toLong - self.minLon) * self.lonScale))
 
-            return({"ok": True,
-                    "data": [startTime,
-                             stopTime,
-                             startLat,
-                             stopLat,
-                             startLong,
-                             stopLong]})
-
-        else:
-            return indexDict
+        return({"ok": True,
+                "data": [startTime,
+                         stopTime,
+                         startLat,
+                         stopLat,
+                         startLong,
+                         stopLong]})
 
     # -------------------------------------
     def getData(self,
