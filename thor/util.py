@@ -309,9 +309,11 @@ def convertToPNGRange(data, variable):
     dimensions = data.shape
     out_data = np.ndarray(shape=(dimensions[0],
                                  dimensions[1],
-                                 2),
+                                 4),
                           dtype="uint8")
     out_data[:, :, 0] = data[:, :]
-    out_data[:, :, 1] = mask_array[:, :]
+    out_data[:, :, 1] = 0
+    out_data[:, :, 2] = 0
+    out_data[:, :, 3] = mask_array[:, :]
 
     return out_data
