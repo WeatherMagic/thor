@@ -116,7 +116,7 @@ def argumentsHandler(arguments):
     else:
         return {"ok": False,
                 "error":
-        "returnDimension doesn't contain two values."}
+                "returnDimension doesn't contain two values."}
 
     # ---------------------------------------
 
@@ -176,8 +176,6 @@ def argumentsHandler(arguments):
                 False,
                 "error":
                 "to-latitude is larger than 180."}
-
-
 
     arguments["ok"] = True
     return arguments

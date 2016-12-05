@@ -8,6 +8,7 @@ import numpy as np
 import logging
 from math import floor
 
+
 def getList(dictTree,
             model,
             experiment,
@@ -20,6 +21,7 @@ def getList(dictTree,
             nextDomain = dictTree[domain][model][experiment][variable]
             returnList = returnList + nextDomain
     return returnList
+
 
 def overlapScale(overlapArea,
                  fromLat,
@@ -39,6 +41,7 @@ def overlapScale(overlapArea,
                   toLong,
                   overlapArea[2],
                   overlapArea[3]))
+
 
 def handleRequest(arguments, ncFileDictTree, log):
 
@@ -103,7 +106,6 @@ def handleRequest(arguments, ncFileDictTree, log):
                                        latScale)
                 lonInterpolLen = floor(arguments["return-dimension"][1] *
                                        lonScale)
-
 
                 # Interpolating the data
                 returnAreaDict = sigProcess.interpolate(
