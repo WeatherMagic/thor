@@ -262,6 +262,12 @@ def padWithZeros(vector, pad_width, iaxis, kwargs):
     return vector
 
 
+def padWithOnes(vector, pad_width, iaxis, kwargs):
+    vector[:pad_width[0]] = 1
+    vector[-pad_width[1]:] = 1
+    return vector
+
+
 def padWithMinusOneTwoEight(vector, pad_width, iaxis, kwargs):
     vector[:pad_width[0]] = -128
     vector[-pad_width[1]:] = -128
@@ -269,35 +275,45 @@ def padWithMinusOneTwoEight(vector, pad_width, iaxis, kwargs):
 
 
 def convertToPNGRange(data, variable):
+    borderValue = 0
+    data = np.ma.masked_greater(data, 10000)
+
     # Kelvin->Celsius and fit into PNG 8-bit integer range (0 to 255)
     if variable == "temperature":
         # Set 0 degrees Celsius around 64
         # -273 + 64 = -209 degrees
         data = data - 209
-        data = data
-        data = np.clip(data, 1, 126)
-        # Pad data with -128 in order to fill out rest of earth
-        data\
-            = np.lib.pad(data, 1, padWithZeros)
-        # Represent correct range in PNG by setting upper roof
-        data[0][0] = 127
+        borderValue = 127
 
-        # Clamp data to integer since PNG-range is integer
-        data\
-            = data.astype("uint8")
     elif variable == "precipitation":
         # Convert from kg/(m^2*s) to kg/(m^2*d) = mm/d
         # 3600s/h * 24h/d = 86400s/d
         data = data * 86400
-        # Clamp data to 1-254
-        data = np.clip(data, 1, 62)
-        # Pad data with 0 in order to fill out rest of earth
-        data\
-            = np.lib.pad(data, 1, padWithZeros)
-        # Represent correct range in PNG by setting one value to 255
-        data[0][0] = 63
-        # Clamp data to integer since PNG-range is integer
-        data\
-            = data.astype("uint8")
+        borderValue = 63
 
-    return data
+    # Get a mask that'll be the alpha channel
+    maskArray = data.mask
+    # Fit to integer range
+    maskArray = maskArray.astype("uint8")
+    # PAd with ones
+    maskArray = np.lib.pad(maskArray, 1, padWithOnes)
+    # Convert to PNG alpha range
+    maskArray = (255-255*maskArray)
+
+    # Set border in order to fix PNG res
+    data = data.clip(0, borderValue)
+    data = data.astype("uint8")
+    data = np.lib.pad(data, 1, padWithZeros)
+    data[0, 0] = borderValue
+    # Create an array with four channels (RGBA PNG)
+    dimensions = data.shape
+    outData = np.ndarray(shape=(dimensions[0],
+                                dimensions[1],
+                                4),
+                         dtype="uint8")
+    outData[:, :, 0] = data[:, :]
+    outData[:, :, 1] = 0
+    outData[:, :, 2] = 0
+    outData[:, :, 3] = maskArray[:, :]
+
+    return outData
