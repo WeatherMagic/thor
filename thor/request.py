@@ -133,8 +133,8 @@ def handleRequest(arguments, ncFileDictTree, log):
                                                 lonInterpolLen]
 
                     tempReturnData.data[
-                        cutMask is True] = areaData[
-                            cutMask is True]
+                        cutMask == True] = areaData[
+                            cutMask == True]
 
                     returnData.data[latStart:latStart +
                                     latInterpolLen,

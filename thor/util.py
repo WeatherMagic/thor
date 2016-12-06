@@ -307,7 +307,7 @@ def convertToPNGRange(data, variable):
     outData = np.ndarray(shape=(dimensions[0],
                                 dimensions[1],
                                 4),
-                                dtype="uint8")
+                         dtype="uint8")
     outData[:, :, 0] = data[:, :]
     outData[:, :, 1] = 0
     outData[:, :, 2] = 0
