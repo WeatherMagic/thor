@@ -57,7 +57,7 @@ def handleRequest(arguments, ncFileDictTree, log):
                                    experiment,
                                    variable)
 
-    if requestedFiles is None:
+    if len(requestedFiles) == 0:
         return {"ok": False,
                 "error": "No files found with specified variable," +
                 "climate-model, exhaust-level."}
@@ -151,4 +151,4 @@ def handleRequest(arguments, ncFileDictTree, log):
                 "data": returnData}
     else:
         return {"ok": False,
-                "error": "No data in specified area with"}
+                "error": "No data in specified area"}
