@@ -9,10 +9,10 @@ import logging
 from math import floor
 
 
-def getList(dictTree,
-            model,
-            experiment,
-            variable):
+def getReaderList(dictTree,
+                  model,
+                  experiment,
+                  variable):
     returnList = []
     for domain in dictTree:
         if model in list(dictTree[domain].keys()) and\
@@ -74,10 +74,10 @@ def handleRequest(arguments, ncFileDictTree, log):
         experiment = str(arguments["exhaust-level"])
 
     # ---------------
-    requestedFiles = getList(ncFileDictTree,
-                             model,
-                             experiment,
-                             variable)
+    requestedFiles = getReaderList(ncFileDictTree,
+                                   model,
+                                   experiment,
+                                   variable)
 
     returnData = np.ndarray(shape=arguments["return-dimension"],
                             dtype=float)
