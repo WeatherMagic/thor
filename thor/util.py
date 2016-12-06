@@ -299,7 +299,7 @@ def padWithMinusOneTwoEight(vector, pad_width, iaxis, kwargs):
 
 def convertToPNGRange(data, variable):
     borderValue = 0
-    data = np.ma.masked_greater(data, 10000)
+    data = np.ma.masked_greater(data.data, 10000)
 
     # Kelvin->Celsius and fit into PNG 8-bit integer range (0 to 255)
     if variable == "temperature":

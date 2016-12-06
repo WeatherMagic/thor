@@ -81,7 +81,8 @@ def handleRequest(arguments, ncFileDictTree, log):
 
     returnData = np.ndarray(shape=arguments["return-dimension"],
                             dtype=float)
-    returnData.fill(100000)
+
+    returnData = np.ma.array(returnData, mask=True)
 
     fillFlag = False
 
@@ -131,10 +132,35 @@ def handleRequest(arguments, ncFileDictTree, log):
                                        arguments["from-longitude"])))
 
                     fillFlag = True
+
+                    areaData = np.ma.masked_greater(
+                        returnAreaDict["data"], 10000)
+
+                    origMask = returnData.mask[latStart:latStart +
+                                               latInterpolLen,
+                                               lonStart:lonStart +
+                                               lonInterpolLen]
+
+                    cutMask = np.logical_and(origMask,
+                                             np.logical_not(areaData.mask))
+
+                    tempReturnData = returnData[latStart:latStart +
+                                                latInterpolLen,
+                                                lonStart:lonStart +
+                                                lonInterpolLen]
+
+                    tempReturnData[cutMask == True] = areaData[cutMask == True]
+
                     returnData[latStart:latStart +
                                latInterpolLen,
                                lonStart:lonStart +
-                               lonInterpolLen] = returnAreaDict["data"]
+                               lonInterpolLen] = tempReturnData
+                    returnData.mask[latStart:latStart +
+                                    latInterpolLen,
+                                    lonStart:lonStart +
+                                    lonInterpolLen] = np.logical_and(
+                                        origMask,
+                                        areaData.mask)
     if fillFlag:
         return {"ok": True,
                 "data": returnData}
