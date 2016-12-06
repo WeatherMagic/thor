@@ -291,35 +291,34 @@ def convertToPNGRange(data, variable):
         # Set 0 degrees Celsius around 64
         # -273 + 64 = -209 degrees
         data = data - 209
-        borderValue = 127
+        borderValue = 127.5
 
     elif variable == "precipitation":
         # Convert from kg/(m^2*s) to kg/(m^2*d) = mm/d
         # 3600s/h * 24h/d = 86400s/d
         data = data * 86400
-        borderValue = 63
+        borderValue = 255
 
     # Get a mask that'll be the alpha channel
     maskArray = data.mask
-#    if maskArray:
-#        # Fit to integer range
     maskArray = maskArray.astype("uint8")
-    # PAd with ones
     maskArray = np.lib.pad(maskArray, 1, padWithOnes)
-#        # Convert to PNG alpha range
+    # Convert to alpha
     maskArray = (255-255*maskArray)
 
     # Set border in order to fix PNG res
     data = data.clip(0, borderValue)
-    data = data.astype("uint8")
     data = np.lib.pad(data, 1, padWithZeros)
     data[0, 0] = borderValue
+    if variable == "temperature"
+        data = data * 2
+    data = data.astype("uint8")
     # Create an array with four channels (RGBA PNG)
     dimensions = data.shape
     outData = np.ndarray(shape=(dimensions[0],
                                 dimensions[1],
                                 4),
-                         dtype="uint8")
+                                dtype="uint8")
     outData[:, :, 0] = data[:, :]
     outData[:, :, 1] = 0
     outData[:, :, 2] = 0
