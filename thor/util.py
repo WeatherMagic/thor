@@ -299,7 +299,6 @@ def padWithMinusOneTwoEight(vector, pad_width, iaxis, kwargs):
 
 def convertToPNGRange(data, variable):
     borderValue = 0
-    data = np.ma.masked_greater(data.data, 10000)
 
     # Kelvin->Celsius and fit into PNG 8-bit integer range (0 to 255)
     if variable == "temperature":
@@ -316,13 +315,13 @@ def convertToPNGRange(data, variable):
 
     # Get a mask that'll be the alpha channel
     maskArray = data.mask
-    if maskArray:
-        # Fit to integer range
-        maskArray = maskArray.astype("uint8")
-        # PAd with ones
-        maskArray = np.lib.pad(maskArray, 1, padWithOnes)
-        # Convert to PNG alpha range
-        maskArray = (255-255*maskArray)
+#    if maskArray:
+#        # Fit to integer range
+    maskArray = maskArray.astype("uint8")
+    # PAd with ones
+    maskArray = np.lib.pad(maskArray, 1, padWithOnes)
+#        # Convert to PNG alpha range
+    maskArray = (255-255*maskArray)
 
     # Set border in order to fix PNG res
     data = data.clip(0, borderValue)
@@ -338,9 +337,6 @@ def convertToPNGRange(data, variable):
     outData[:, :, 0] = data[:, :]
     outData[:, :, 1] = 0
     outData[:, :, 2] = 0
-    if maskArray:
-        outData[:, :, 3] = maskArray[:, :]
-    else:
-        outData[:, :, 3] = 255
+    outData[:, :, 3] = maskArray[:, :]
 
     return outData
