@@ -327,7 +327,6 @@ def convertToPNGRange(data, variable):
     # Set border in order to fix PNG res
     data = data.clip(0, borderValue)
     data = data.astype("uint8")
-    print("hit3")
     data = np.lib.pad(data, 1, padWithZeros)
     data[0, 0] = borderValue
     # Create an array with four channels (RGBA PNG)
@@ -343,5 +342,5 @@ def convertToPNGRange(data, variable):
         outData[:, :, 3] = maskArray[:, :]
     else:
         outData[:, :, 3] = 255
-        
+
     return outData
