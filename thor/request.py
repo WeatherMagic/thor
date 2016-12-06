@@ -114,24 +114,24 @@ def handleRequest(arguments, ncFileDictTree, log):
                      latInterpolLen,
                      lonInterpolLen])
 
-                if not returnAreaDict["ok"]:
-                    return returnAreaDict
+                if returnAreaDict["ok"]:
 
-                latStart = floor((((climateAreaDict["area"][0] -
-                                    arguments["from-latitude"]) *
-                                   arguments["return-dimension"][0]) /
-                                  (arguments["to-latitude"] -
-                                   arguments["from-latitude"])))
+                    latStart = floor((((climateAreaDict["area"][0] -
+                                        arguments["from-latitude"]) *
+                                       arguments["return-dimension"][0]) /
+                                      (arguments["to-latitude"] -
+                                       arguments["from-latitude"])))
 
-                lonStart = floor((((climateAreaDict["area"][2] -
-                                    arguments["from-longitude"]) *
-                                   arguments["return-dimension"][1]) /
-                                  (arguments["to-longitude"] -
-                                   arguments["from-longitude"])))
+                    lonStart = floor((((climateAreaDict["area"][2] -
+                                        arguments["from-longitude"]) *
+                                       arguments["return-dimension"][1]) /
+                                      (arguments["to-longitude"] -
+                                       arguments["from-longitude"])))
 
-                returnData[latStart:latStart+latInterpolLen,
-                           lonStart:lonStart+lonInterpolLen] = returnAreaDict[
-                               "data"]
+                    returnData[latStart:latStart +
+                               latInterpolLen,
+                               lonStart:lonStart +
+                               lonInterpolLen] = returnAreaDict["data"]
 
     return {"ok": True,
             "data": returnData}

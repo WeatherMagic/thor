@@ -316,16 +316,18 @@ def convertToPNGRange(data, variable):
 
     # Get a mask that'll be the alpha channel
     maskArray = data.mask
-    # Fit to integer range
-    maskArray = maskArray.astype("uint8")
-    # PAd with ones
-    maskArray = np.lib.pad(maskArray, 1, padWithOnes)
-    # Convert to PNG alpha range
-    maskArray = (255-255*maskArray)
+    if maskArray:
+        # Fit to integer range
+        maskArray = maskArray.astype("uint8")
+        # PAd with ones
+        maskArray = np.lib.pad(maskArray, 1, padWithOnes)
+        # Convert to PNG alpha range
+        maskArray = (255-255*maskArray)
 
     # Set border in order to fix PNG res
     data = data.clip(0, borderValue)
     data = data.astype("uint8")
+    print("hit3")
     data = np.lib.pad(data, 1, padWithZeros)
     data[0, 0] = borderValue
     # Create an array with four channels (RGBA PNG)
@@ -337,6 +339,9 @@ def convertToPNGRange(data, variable):
     outData[:, :, 0] = data[:, :]
     outData[:, :, 1] = 0
     outData[:, :, 2] = 0
-    outData[:, :, 3] = maskArray[:, :]
-
+    if maskArray:
+        outData[:, :, 3] = maskArray[:, :]
+    else:
+        outData[:, :, 3] = 255
+        
     return outData
