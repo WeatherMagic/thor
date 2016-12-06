@@ -34,6 +34,14 @@ def argumentsHandler(arguments):
         if arg not in arguments:
             failure = True
             missingArgs.append(arg)
+    # Check that the request only contains arguments
+    # that's valid
+    validArgs = const.apiMustArgs + const.apiOptionalArgs
+    for arg in arguments:
+        if arg not in validArgs:
+            return {"ok": False,
+                    "error": "Use of non-valid argument " + arg + "!"
+                    }
 
     # If not, format a human readable error message
     if failure:
@@ -73,21 +81,6 @@ def argumentsHandler(arguments):
                 False,
                 "error":
                 "from-date larger than to-date."}
-
-    # ---------------------------------------
-
-    # Handling returnDimension
-    if isinstance(arguments["return-dimension"], str):
-        retDim = arguments["return-dimension"].replace("[", "")
-        retDim = retDim.replace("]", "")
-        retDim = retDim.split(", ")
-        arguments["return-dimension"] = retDim
-
-    if len(arguments["return-dimension"]) < 2:
-        return {"ok":
-                False,
-                "error":
-                "return-dimension contains to few dimensions."}
 
     # ---------------------------------------
 
@@ -155,6 +148,12 @@ def argumentsHandler(arguments):
                 "error":
                 "height-resolution contains something that is not a number."}
 
+    # -------------------------------------
+    """
+     Decide the return size of the image to put on earth.
+     This is to simplify for front-end since they don't
+     need to take lon-lat res scaling into account
+    """
     lenLat = arguments["to-latitude"] - arguments["from-latitude"]
     lenLon = arguments["to-longitude"] - arguments["from-longitude"]
 

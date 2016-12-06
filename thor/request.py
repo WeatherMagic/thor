@@ -28,11 +28,13 @@ def overlapScale(overlapArea,
                  toLat,
                  fromLong,
                  toLong):
+
     def scale(oldFrom,
               oldTo,
               newFrom,
               newTo):
         return (newTo-newFrom)/(oldTo-oldFrom)
+
     return (scale(fromLat,
                   toLat,
                   overlapArea[0],
