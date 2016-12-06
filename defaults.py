@@ -16,7 +16,7 @@ apiMustArgs = ("from-month",
                "from-latitude",
                "to-latitude",
                "to-longitude",
-               "return-dimension")
+               "height-resolution")
 apiOptionalArgs = ("to-month",
                    "to-year",
                    "domain",
