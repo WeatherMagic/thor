@@ -134,7 +134,10 @@ class Reader():
             return {"ok": False,
                     "error": "No overlap"}
 
-        # Checking area
+        # Checking overlaping area between
+        # requesting area and this file
+        # If overlap only take out the
+        # data that is within the overlap
         if self.minLat > fromLat:
             fromLat = self.minLat
         if self.maxLat < toLat:
