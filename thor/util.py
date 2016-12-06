@@ -271,6 +271,7 @@ def padWithMinusOneTwoEight(vector, pad_width, iaxis, kwargs):
 
 def convertToPNGRange(data, variable):
     borderValue = 0
+    multiplier = 0
 
     # Kelvin->Celsius and fit into PNG 8-bit integer range (0 to 255)
     if variable == "temperature":
@@ -278,12 +279,15 @@ def convertToPNGRange(data, variable):
         # -273 + 64 = -209 degrees
         data = data - 209
         borderValue = 127.5
+        multiplier = 2
 
     elif variable == "precipitation":
         # Convert from kg/(m^2*s) to kg/(m^2*d) = mm/d
         # 3600s/h * 24h/d = 86400s/d
+        # Then half of it to
         data = data * 86400
-        borderValue = 255
+        borderValue = 63.75
+        multiplier = 4
 
     # Get a mask that'll be the alpha channel
     maskArray = data.mask
@@ -296,8 +300,7 @@ def convertToPNGRange(data, variable):
     data = data.clip(0, borderValue)
     data = np.lib.pad(data, 1, padWithZeros)
     data[0, 0] = borderValue
-    if variable == "temperature":
-        data = data * 2
+    data = data * multiplier
     data = data.astype("uint8")
     # Create an array with four channels (RGBA PNG)
     dimensions = data.shape
