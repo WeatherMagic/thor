@@ -83,6 +83,8 @@ def handleRequest(arguments, ncFileDictTree, log):
                             dtype=float)
     returnData.fill(100000)
 
+    fillFlag = False
+
     for ncFile in requestedFiles:
         if arguments["from-date"] > ncFile.getStartDate()\
            and arguments["to-date"] < ncFile.getLastDate():
@@ -128,10 +130,15 @@ def handleRequest(arguments, ncFileDictTree, log):
                                       (arguments["to-longitude"] -
                                        arguments["from-longitude"])))
 
+                    fillFlag = True
                     returnData[latStart:latStart +
                                latInterpolLen,
                                lonStart:lonStart +
                                lonInterpolLen] = returnAreaDict["data"]
-
-    return {"ok": True,
-            "data": returnData}
+    if fillFlag:
+        return {"ok": True,
+                "data": returnData}
+    else:
+        return {"ok": False,
+                "error": "No data in specified area with" +
+                "specified climate-model and exhaust-level."}
