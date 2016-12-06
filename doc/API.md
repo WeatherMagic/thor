@@ -15,72 +15,42 @@ Returned data variable and dimensionality is decided by in-arguments given by th
 ** ''variable'' is one of the following: **
 
 - temperature
-- air-pressure
 - precipitation
-- water-level
-
+[//]: # (- air-pressure)
 
 Each request needs to provide parameters either in URL or as a json (OBS: Set the HTTP header "Content-type" to "application/json") data object: 
 
-- from-year
-- from-month
-- return-dimension
-- from-longitude
-- to-longitude
-- from-latitude
-- to-latitude
+ - year                 (int)
+ - month                (int)
+ - from-longitude       (float)
+ - to-longitude         (float)
+ - from-latitude        (float)
+ - to-latitude          (float)
+ - exhaust-level        (int)
+ - climate-model        (int)
+ - height-resolution    (int)
 
-If month is omitted, data returned will be as filtered over a month. If month is specified, data points for each day will be returned. 
-
-Return-dimension is a 3-element list that should contatin integers telling how many steps in each direction to return [time-dimension, lat-dimension, long-dimension]. If the user is only intrested in 2D data then the time-dimension can omitted and return-dimension will be [lat-dimension, long-dimension]. In the 2D-case a PNG image will be returned to the client. The reference client weather-front only uses the PNG mode.
-
-All methods must be called using HTTP(S). Arguments can be passed as GET or POST params.
+All methods must be called using HTTP(S). Arguments can be passed as GET or POST params, either in URL or as "Content-Type: application/json"when doing a POST.
 
 ### Example
 
 ```
 {
-	"from-year": "2082",
-	"from-month": "6",
-	"from-longitude": "1",
-	"to-longitude": "5",
-	"from-latitude": "37",
-	"to-latitude": "45",
-	"return-dimension": [4,3]
-}
-```
-### Optional arguments
-Several arguments can be added to the request in order to get more control over what data is recived.
-
-- from-year
-- to-year
-- to-month 
-- domain
-- climate-model
-- exhaust-level
-
-### Example with optional arguments
-
-```
-{
-	"from-year": "2082",
-	"from-month": 3,
-	"to-year": 2083,
-	"to-month": 4,
-	"from-longitude": "33",
-	"to-longitude": "34",
-	"from-latitude": "27",
-	"to-latitude": "28",
-	"return-dimension": [2,10,20],
-	"domain": "EUR-11",
-	"climate-model": "MOHC-HadGEM2-ES",
-	"exhaust-level": "rcp85"
+	"year": "2083",
+	"month": 1,
+	"from-longitude": "-180",
+	"to-longitude": "180",
+  	"from-latitude": "-80",
+	"to-latitude": "80",
+	"exhaust-level": "rcp45",
+	"climate-model": "CNRM-CERFACS-CNRM-CM5",
+    "height-resolution": 1024
 }
 ```
 
 ## Response
 
-If the requested data contains 2 dimensions, the response is a PNG image containing the data. Otherwise the response contains a JSON object, which at the top level contains a boolean value indicating success status. A non successful request will contain an error message. 
+If the result is successful, the response is a PNG image containing the data. in the event of a non-successfull request the response contains a JSON object, which at the top level contains a boolean value indicating success status as well as an error message. 
 
 **Example of a non successful response:** 
 
@@ -93,13 +63,11 @@ If the requested data contains 2 dimensions, the response is a PNG image contain
 
 ### Temperature
 
-Temperature returned as a PNG image is clamped to 0-255 integer range since limited by PNG integer range. The temperature is centered with 0 around 128, and the total temperature range is -63 to 62 degrees celcius. This means that each step in the PNG integer range represents half a degree Celius/Kelvin. Formula for getting temperature in Celcius from a pixel value in returned image is as follows.
+Temperature returned as a PNG image is clamped to 0-255 integer range since limited by PNG integer range. The temperature is centered with 0 around 128, and the total temperature range is -64 to 63 degrees celcius. This means that each step in the PNG integer range represents half a degree Celius/Kelvin. Formula for getting temperature in Celcius from a pixel value in returned image is as follows.
 
 ```
-celcius = (pixel_value + 128) / 2.0 # FLOAT!
+celcius = (pixel_value - 128) / 2.0 # FLOAT!
 ```
-
-If a data point is equal to 
 
 ### Percipitation
 
@@ -108,7 +76,6 @@ Percipitation returned as a PNG image is clamped to 0-255 integer range since li
 ```
 mm/day = pixel_value / 4.0 # FLOAT!
 ```
-
 
 
 For more specific information on each function, please see the respective functions:

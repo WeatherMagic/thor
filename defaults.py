@@ -10,15 +10,15 @@ logFiles = ()
 
 ncFolder = "ncFiles"
 
-apiMustArgs = ("from-month",
-               "from-year",
+apiMustArgs = ("month",
+               "year",
                "from-longitude",
                "from-latitude",
                "to-latitude",
                "to-longitude",
-               "return-dimension")
-apiOptionalArgs = ("to-month",
-                   "to-year",
-                   "domain",
-                   "climate-model"
-                   "exhaust-level")
+               "height-resolution",
+               "climate-model",
+               "exhaust-level"
+               )
+apiOptionalArgs = (
+        )

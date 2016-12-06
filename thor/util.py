@@ -9,6 +9,7 @@ from datetime import timedelta
 import numpy as np
 import json
 import copy
+from math import floor
 
 
 def printHelp(execName):
@@ -33,6 +34,14 @@ def argumentsHandler(arguments):
         if arg not in arguments:
             failure = True
             missingArgs.append(arg)
+    # Check that the request only contains arguments
+    # that's valid
+    validArgs = const.apiMustArgs + const.apiOptionalArgs
+    for arg in arguments:
+        if arg not in validArgs:
+            return {"ok": False,
+                    "error": "Use of non-valid argument " + arg + "!"
+                    }
 
     # If not, format a human readable error message
     if failure:
@@ -51,72 +60,14 @@ def argumentsHandler(arguments):
     # ---------------------------------------
 
     # Handeling time
-    elif "to-month" not in arguments:
-        arguments["to-month"] = arguments["from-month"]
+    arguments["to-month"] = arguments["month"]
 
-    if "to-year" not in arguments:
-        arguments["to-year"] = arguments["from-year"]
+    arguments["year"] = arguments["year"]
 
-    arguments["from-date"] = datetime.strptime(str(arguments["from-year"]) +
-                                               str(arguments["from-month"]) +
+    arguments["from-date"] = datetime.strptime(str(arguments["year"]) +
+                                               str(arguments["month"]) +
                                                "1",
                                                "%Y%m%d")
-    arguments["to-date"] = datetime.strptime(str(arguments["to-year"]) +
-                                             str(int(arguments[
-                                                 "to-month"])) +
-                                             "1",
-                                             "%Y%m%d")
-
-    if arguments["from-date"] > arguments["to-date"]:
-        return {"ok":
-                False,
-                "error":
-                "from-date larger than to-date."}
-
-    # ---------------------------------------
-
-    # Handling returnDimension
-    if isinstance(arguments["return-dimension"], str):
-        retDim = arguments["return-dimension"].replace("[", "")
-        retDim = retDim.replace("]", "")
-        retDim = retDim.split(", ")
-        arguments["return-dimension"] = retDim
-
-    if len(arguments["return-dimension"]) < 2:
-        return {"ok":
-                False,
-                "error":
-                "return-dimension contains to few dimensions."}
-
-    # We need this since we need integers in return dimension
-    intReturnDimension = []
-    for arg in arguments["return-dimension"]:
-        int_arg = 0
-
-        try:
-            int_arg = int(arg)
-            intReturnDimension.append(int_arg)
-        except ValueError:
-            return {"ok":
-                    False,
-                    "error":
-                    "return-dimension contains non-integers."}
-
-        if int_arg < 1:
-            return {"ok":
-                    False,
-                    "error":
-                    "return-dimension contains non-positive dimension count."}
-    # Save as integers
-    arguments["return-dimension"] = intReturnDimension
-
-    if len(arguments["return-dimension"]) == 2:
-        arguments["return-dimension"] = np.append(np.array(1),
-                                                  np.array(arguments[
-                                                      "return-dimension"]))
-    else:
-        arguments["return-dimension"] = np.array(arguments["return-dimension"])
-
     # ---------------------------------------
 
     # Handling latitude
@@ -134,6 +85,17 @@ def argumentsHandler(arguments):
                 False,
                 "error":
                 "from-latitude larger than to-latitude."}
+
+    if arguments["from-latitude"] < -90:
+        return {"ok":
+                False,
+                "error":
+                "from-latitude is smaller than -90."}
+    if arguments["to-latitude"] > 90:
+        return {"ok":
+                False,
+                "error":
+                "to-latitude is larger than 90."}
 
     # ---------------------------------------
 
@@ -153,6 +115,39 @@ def argumentsHandler(arguments):
                 False,
                 "error":
                 "from-longitude larger than to-longitude."}
+
+    if arguments["from-longitude"] < -180:
+        return {"ok":
+                False,
+                "error":
+                "from-longitude is smaller than -180."}
+    if arguments["to-longitude"] > 180:
+        return {"ok":
+                False,
+                "error":
+                "to-latitude is larger than 180."}
+
+    try:
+        arguments["height-resolution"] = int(arguments["height-resolution"])
+    except ValueError:
+        return {"ok": False,
+                "error":
+                "height-resolution contains something that is not a number."}
+
+    # -------------------------------------
+    """
+     Decide the return size of the image to put on earth.
+     This is to simplify for front-end since they don't
+     need to take lon-lat res scaling into account
+    """
+    lenLat = arguments["to-latitude"] - arguments["from-latitude"]
+    lenLon = arguments["to-longitude"] - arguments["from-longitude"]
+
+    resLat = arguments["height-resolution"]
+    resLon = floor(lenLon/lenLat*resLat)
+
+    arguments["return-dimension"] = [resLat,
+                                     resLon]
 
     arguments["ok"] = True
     return arguments
@@ -276,35 +271,37 @@ def padWithMinusOneTwoEight(vector, pad_width, iaxis, kwargs):
 
 def convertToPNGRange(data, variable):
     borderValue = 0
-    data = np.ma.masked_greater(data, 10000)
+    multiplier = 0
 
     # Kelvin->Celsius and fit into PNG 8-bit integer range (0 to 255)
     if variable == "temperature":
         # Set 0 degrees Celsius around 64
         # -273 + 64 = -209 degrees
         data = data - 209
-        borderValue = 127
+        borderValue = 127.5
+        multiplier = 2
 
     elif variable == "precipitation":
         # Convert from kg/(m^2*s) to kg/(m^2*d) = mm/d
         # 3600s/h * 24h/d = 86400s/d
-        data = data * 86400
-        borderValue = 63
+        # Then half of it to
+        data[data.mask == False] = data[data.mask == False] * 86400
+        borderValue = 63.75
+        multiplier = 4
 
     # Get a mask that'll be the alpha channel
     maskArray = data.mask
-    # Fit to integer range
     maskArray = maskArray.astype("uint8")
-    # PAd with ones
     maskArray = np.lib.pad(maskArray, 1, padWithOnes)
-    # Convert to PNG alpha range
+    # Convert to alpha
     maskArray = (255-255*maskArray)
 
     # Set border in order to fix PNG res
     data = data.clip(0, borderValue)
-    data = data.astype("uint8")
     data = np.lib.pad(data, 1, padWithZeros)
     data[0, 0] = borderValue
+    data = data * multiplier
+    data = data.astype("uint8")
     # Create an array with four channels (RGBA PNG)
     dimensions = data.shape
     outData = np.ndarray(shape=(dimensions[0],

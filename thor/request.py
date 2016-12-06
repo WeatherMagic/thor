@@ -6,82 +6,149 @@ from datetime import datetime
 from datetime import timedelta
 import numpy as np
 import logging
+from math import floor
 
 
-def getList(dictTree,
-            domain,
-            model,
-            experiment,
-            variable):
+def getReaderList(dictTree,
+                  model,
+                  experiment,
+                  variable):
+    returnList = []
+    for domain in dictTree:
+        if model in list(dictTree[domain].keys()) and\
+           experiment in list(dictTree[domain][model].keys()) and\
+           variable in list(dictTree[domain][model][experiment].keys()):
+            nextDomain = dictTree[domain][model][experiment][variable]
+            returnList = returnList + nextDomain
+    return returnList
 
-    return dictTree[domain][model][experiment][variable]
+
+def overlapScale(overlapArea,
+                 fromLat,
+                 toLat,
+                 fromLong,
+                 toLong):
+
+    def scale(oldFrom,
+              oldTo,
+              newFrom,
+              newTo):
+        return (newTo-newFrom)/(oldTo-oldFrom)
+
+    return (scale(fromLat,
+                  toLat,
+                  overlapArea[0],
+                  overlapArea[1]),
+            scale(fromLong,
+                  toLong,
+                  overlapArea[2],
+                  overlapArea[3]))
 
 
 def handleRequest(arguments, ncFileDictTree, log):
 
-    # ---------------
-    """ TODO: Until we expose different climate models within the API
-     - we just set default values for them """
     variable = arguments["variable"]
-    if "domain" not in arguments:
-        domain = list(ncFileDictTree.keys())[0]
-    elif arguments["domain"] not in list(ncFileDictTree.keys()):
-        return {"ok": False,
-                "error": "No files with specified domain."}
-    else:
-        domain = str(arguments["domain"])
-    if "climate-model" not in arguments:
-        model = list(ncFileDictTree[domain].keys())[0]
-    elif arguments["climate-model"] not in list(ncFileDictTree[
-            domain].keys()):
-        return {"ok": False,
-                "error": "No files with specified climate-model."}
-    else:
-        model = str(arguments["climate-model"])
-    if "exhaust-level" not in arguments:
-        experiment = list(ncFileDictTree[domain][model].keys())[0]
-    elif arguments["exhaust-level"] not in list(ncFileDictTree[
-            domain][model].keys()):
-        return {"ok": False,
-                "error": "No files with specified exhaust-level."}
-    else:
-        experiment = str(arguments["exhaust-level"])
+    model = str(arguments["climate-model"])
+    experiment = str(arguments["exhaust-level"])
 
     # ---------------
-    requestedFiles = getList(ncFileDictTree,
-                             domain,
-                             model,
-                             experiment,
-                             variable)
+    requestedFiles = getReaderList(ncFileDictTree,
+                                   model,
+                                   experiment,
+                                   variable)
+
+    if len(requestedFiles) == 0:
+        return {"ok": False,
+                "error": "No files found with specified variable, " +
+                "climate-model, exhaust-level."}
+
+    returnData = np.ndarray(shape=arguments["return-dimension"],
+                            dtype=float)
+
+    returnData = np.ma.array(returnData, mask=True)
+
+    fillFlag = False
 
     for ncFile in requestedFiles:
         if arguments["from-date"] > ncFile.getStartDate()\
-                and arguments["to-date"] < ncFile.getLastDate():
-                    # If climateArea is false, it is not within file
-                    climateAreaDict = ncFile.getData(
-                        arguments["from-date"],
-                        arguments["to-date"],
-                        arguments["from-latitude"],
-                        arguments["to-latitude"],
-                        arguments["from-longitude"],
-                        arguments["to-longitude"])
+           and arguments["from-date"] < ncFile.getLastDate():
+            climateAreaDict = ncFile.getData(
+                arguments["from-date"],
+                arguments["from-date"],
+                arguments["from-latitude"],
+                arguments["to-latitude"],
+                arguments["from-longitude"],
+                arguments["to-longitude"])
 
-                    if not climateAreaDict["ok"]:
-                        return climateAreaDict
+            if climateAreaDict["ok"]:
+                [latScale,
+                 lonScale] = overlapScale(climateAreaDict["area"],
+                                          arguments["from-latitude"],
+                                          arguments["to-latitude"],
+                                          arguments["from-longitude"],
+                                          arguments["to-longitude"])
 
-                    # Interpolating the data
-                    returnAreaDict = sigProcess.interpolate(
-                        climateAreaDict["data"],
-                        arguments["return-dimension"])
+                latInterpolLen = floor(arguments["return-dimension"][0] *
+                                       latScale)
+                lonInterpolLen = floor(arguments["return-dimension"][1] *
+                                       lonScale)
 
-                    if not returnAreaDict["ok"]:
-                        return returnAreaDict
+                # Interpolating the data
+                returnAreaDict = sigProcess.interpolate(
+                    climateAreaDict["data"],
+                    [1,
+                     latInterpolLen,
+                     lonInterpolLen])
 
-                    return {"ok": True,
-                            "data": returnAreaDict["data"]}
+                if returnAreaDict["ok"]:
 
-    returnDataDict = {"ok": False,
-                      "errorMessage":
-                      "Specified date range not within server dataset."}
+                    latStart = floor((((climateAreaDict["area"][0] -
+                                        arguments["from-latitude"]) *
+                                       arguments["return-dimension"][0]) /
+                                      (arguments["to-latitude"] -
+                                       arguments["from-latitude"])))
 
-    return returnDataDict
+                    lonStart = floor((((climateAreaDict["area"][2] -
+                                        arguments["from-longitude"]) *
+                                       arguments["return-dimension"][1]) /
+                                      (arguments["to-longitude"] -
+                                       arguments["from-longitude"])))
+
+                    fillFlag = True
+
+                    areaData = np.ma.masked_greater(
+                        returnAreaDict["data"], 10000)
+
+                    origMask = returnData.mask[latStart:latStart +
+                                               latInterpolLen,
+                                               lonStart:lonStart +
+                                               lonInterpolLen]
+
+                    cutMask = np.logical_and(origMask,
+                                             np.logical_not(areaData.mask))
+
+                    tempReturnData = returnData[latStart:latStart +
+                                                latInterpolLen,
+                                                lonStart:lonStart +
+                                                lonInterpolLen]
+
+                    tempReturnData.data[
+                        cutMask == True] = areaData[
+                            cutMask == True]
+
+                    returnData.data[latStart:latStart +
+                                    latInterpolLen,
+                                    lonStart:lonStart +
+                                    lonInterpolLen] = tempReturnData
+                    returnData.mask[latStart:latStart +
+                                    latInterpolLen,
+                                    lonStart:lonStart +
+                                    lonInterpolLen] = np.logical_and(
+                                        origMask,
+                                        areaData.mask)
+    if fillFlag:
+        return {"ok": True,
+                "data": returnData}
+    else:
+        return {"ok": False,
+                "error": "No data in specified area"}

@@ -114,106 +114,44 @@ class Reader():
             datetime.timedelta(days=self.netCDF.variables['time'][last])
 
     # -------------------------------------
-    def getAreaOld(self,
-                   fromLat,
-                   toLat,
-                   fromLong,
-                   toLong):
+    def overlap(self,
+                fromLat,
+                toLat,
+                fromLong,
+                toLong):
 
-        # Find where to start and stop in rotated coordinates
-        rotFrom = transform.toRot(fromLat, fromLong)
-        rotTo = transform.toRot(toLat, toLong)
-        errorMessage = {"ok": False,
-                        "error": "Variable not within server range: "
-                        }
-
-        # Check if initial data can be seen in file
-        if rotFrom.item(1, 0) < self.netCDF.variables['rlat'][0]:
-            errorMessage["error"] += "from-latitude"
-            return errorMessage
-        if rotFrom.item(0, 0) < self.netCDF.variables['rlon'][0]:
-            errorMessage["error"] += "from-longitude"
-            return errorMessage
-
-        startLat = 0
-        while self.netCDF.variables['rlat'][startLat] < rotFrom.item(1, 0):
-            if startLat < self.latLen:
-                startLat = startLat + 1
-            else:
-                errorMessage["error"] += "from-latitude"
-                return errorMessage
-
-        stopLat = startLat
-        while self.netCDF.variables['rlat'][stopLat] < rotTo.item(1, 0):
-            if stopLat < self.latLen:
-                stopLat = stopLat + 1
-            else:
-                errorMessage["error"] += "to-latitude"
-                return errorMessage
-
-        startLong = 0
-        while self.netCDF.variables['rlon'][
-                startLong] < rotFrom.item(0, 0):
-            if startLong < self.lonLen:
-                startLong = startLong + 1
-            else:
-                errorMessage["error"] += "from-longitude"
-                return errorMessage
-
-        stopLong = startLong + 1
-        while self.netCDF.variables['rlon'][
-              stopLong] < rotTo.item(0, 0):
-            if stopLong < self.lonLen:
-                stopLong = stopLong + 1
-            else:
-                errorMessage["error"] += "to-longitude"
-                return errorMessage
-
-        return({"ok": True,
-                "data": [startLat,
-                         stopLat,
-                         startLong,
-                         stopLong]})
-
-    # -------------------------------------
-    def getAreaNew(self,
-                   fromLat,
-                   toLat,
-                   fromLong,
-                   toLong):
-
-        if fromLat < self.minLat:
+        # Checking overlap
+        if self.minLat > toLat:
             return {"ok": False,
-                    "error": "fromLat is smaller than " +
-                    "smallest file value, " +
-                    str(self.minLat)}
-        if toLat > self.maxLat:
+                    "error": "No overlap"}
+        if self.maxLat < fromLat:
             return {"ok": False,
-                    "error": "toLat is latger than " +
-                    "largest file value, " +
-                    str(self.maxLat)}
-        if fromLong < self.minLon:
+                    "error": "No overlap"}
+        if self.minLon > toLong:
             return {"ok": False,
-                    "error": "fromLong is smaller than " +
-                    "smallest file value, " +
-                    str(self.minLon)}
-        if toLong > self.maxLon:
+                    "error": "No overlap"}
+        if self.maxLon < fromLong:
+            return {"ok": False,
+                    "error": "No overlap"}
 
-            return {"ok": False,
-                    "error": "toLong is larger than " +
-                    "largest file value, " +
-                    str(self.maxLon)}
-
-        startLat = int(floor((fromLat - self.minLat) * self.latScale))
-        stopLat = int(floor((toLat - self.minLat) * self.latScale))
-        startLong = int(floor((fromLong - self.minLon) * self.lonScale))
-        stopLong = int(floor((toLong - self.minLon) * self.lonScale))
+        # Checking overlaping area between
+        # requesting area and this file
+        # If overlap only take out the
+        # data that is within the overlap
+        if self.minLat > fromLat:
+            fromLat = self.minLat
+        if self.maxLat < toLat:
+            toLat = self.maxLat
+        if self.minLon > fromLong:
+            fromLong = self.minLon
+        if self.maxLon < toLong:
+            toLong = self.maxLon
 
         return {"ok": True,
-                "data": [startLat,
-                         stopLat,
-                         startLong,
-                         stopLong]}
+                "area": [fromLat,
+                         toLat,
+                         fromLong,
+                         toLong]}
 
     # -------------------------------------
     def getArea(self,
@@ -233,33 +171,18 @@ class Reader():
         if stopTime < len(self.netCDF.variables["time"]) - 1:
             stopTime = stopTime + 1
 
-        if "i" in self.domain:
-            indexDict = self.getAreaNew(fromLat,
-                                        toLat,
-                                        fromLong,
-                                        toLong)
-        else:
-            indexDict = self.getAreaOld(fromLat,
-                                        toLat,
-                                        fromLong,
-                                        toLong)
-        if indexDict["ok"]:
+        startLat = int(floor((fromLat - self.minLat) * self.latScale))
+        stopLat = int(floor((toLat - self.minLat) * self.latScale))
+        startLong = int(floor((fromLong - self.minLon) * self.lonScale))
+        stopLong = int(floor((toLong - self.minLon) * self.lonScale))
 
-            (startLat,
-             stopLat,
-             startLong,
-             stopLong) = indexDict["data"]
-
-            return({"ok": True,
-                    "data": [startTime,
-                             stopTime,
-                             startLat,
-                             stopLat,
-                             startLong,
-                             stopLong]})
-
-        else:
-            return indexDict
+        return({"ok": True,
+                "data": [startTime,
+                         stopTime,
+                         startLat,
+                         stopLat,
+                         startLong,
+                         stopLong]})
 
     # -------------------------------------
     def getData(self,
@@ -269,6 +192,19 @@ class Reader():
                 toLat,
                 fromLong,
                 toLong):
+
+        overlapDict = self.overlap(fromLat,
+                                   toLat,
+                                   fromLong,
+                                   toLong)
+
+        if not overlapDict["ok"]:
+            return overlapDict
+
+        [fromLat,
+         toLat,
+         fromLong,
+         toLong] = overlapDict["area"]
 
         areaDict = self.getArea(fromDate,
                                 toDate,
@@ -299,4 +235,8 @@ class Reader():
 
         return {"ok": True,
                 "data":
-                weatherData3D}
+                weatherData3D,
+                "area": [fromLat,
+                         toLat,
+                         fromLong,
+                         toLong]}
