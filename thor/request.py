@@ -90,10 +90,10 @@ def handleRequest(arguments, ncFileDictTree, log):
 
     for ncFile in requestedFiles:
         if arguments["from-date"] > ncFile.getStartDate()\
-           and arguments["to-date"] < ncFile.getLastDate():
+           and arguments["from-date"] < ncFile.getLastDate():
             climateAreaDict = ncFile.getData(
                 arguments["from-date"],
-                arguments["to-date"],
+                arguments["from-date"],
                 arguments["from-latitude"],
                 arguments["to-latitude"],
                 arguments["from-longitude"],

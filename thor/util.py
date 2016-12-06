@@ -60,28 +60,14 @@ def argumentsHandler(arguments):
     # ---------------------------------------
 
     # Handeling time
-    elif "to-month" not in arguments:
-        arguments["to-month"] = arguments["from-month"]
+    arguments["to-month"] = arguments["month"]
 
-    if "to-year" not in arguments:
-        arguments["to-year"] = arguments["from-year"]
+    arguments["year"] = arguments["year"]
 
-    arguments["from-date"] = datetime.strptime(str(arguments["from-year"]) +
-                                               str(arguments["from-month"]) +
+    arguments["from-date"] = datetime.strptime(str(arguments["year"]) +
+                                               str(arguments["month"]) +
                                                "1",
                                                "%Y%m%d")
-    arguments["to-date"] = datetime.strptime(str(arguments["to-year"]) +
-                                             str(int(arguments[
-                                                 "to-month"])) +
-                                             "1",
-                                             "%Y%m%d")
-
-    if arguments["from-date"] > arguments["to-date"]:
-        return {"ok":
-                False,
-                "error":
-                "from-date larger than to-date."}
-
     # ---------------------------------------
 
     # Handling latitude
@@ -310,7 +296,7 @@ def convertToPNGRange(data, variable):
     data = data.clip(0, borderValue)
     data = np.lib.pad(data, 1, padWithZeros)
     data[0, 0] = borderValue
-    if variable == "temperature"
+    if variable == "temperature":
         data = data * 2
     data = data.astype("uint8")
     # Create an array with four channels (RGBA PNG)
