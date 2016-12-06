@@ -59,7 +59,7 @@ def handleRequest(arguments, ncFileDictTree, log):
 
     if len(requestedFiles) == 0:
         return {"ok": False,
-                "error": "No files found with specified variable," +
+                "error": "No files found with specified variable, " +
                 "climate-model, exhaust-level."}
 
     returnData = np.ndarray(shape=arguments["return-dimension"],
