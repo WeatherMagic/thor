@@ -285,7 +285,7 @@ def convertToPNGRange(data, variable):
         # Convert from kg/(m^2*s) to kg/(m^2*d) = mm/d
         # 3600s/h * 24h/d = 86400s/d
         # Then half of it to
-        data = data * 86400
+        data[data.mask == False] = data[data.mask == False] * 86400
         borderValue = 63.75
         multiplier = 4
 
