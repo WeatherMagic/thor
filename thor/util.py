@@ -144,6 +144,11 @@ def argumentsHandler(arguments):
     lenLon = arguments["to-longitude"] - arguments["from-longitude"]
 
     resLat = arguments["height-resolution"]
+
+    if lenLat == 0.0 or lenLon == 0.0:
+        return{"ok":False,
+               "error":"Latitude or longitude range is zero"}
+
     resLon = floor(lenLon/lenLat*resLat)
 
     arguments["return-dimension"] = [resLat,
