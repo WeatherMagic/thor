@@ -57,6 +57,11 @@ def handleRequest(arguments, ncFileDictTree, log):
                                    experiment,
                                    variable)
 
+    if requestedFiles is None:
+        return {"ok": False,
+                "error": "No files found with specified variable," +
+                "climate-model, exhaust-level."}
+
     returnData = np.ndarray(shape=arguments["return-dimension"],
                             dtype=float)
 
@@ -127,12 +132,14 @@ def handleRequest(arguments, ncFileDictTree, log):
                                                 lonStart:lonStart +
                                                 lonInterpolLen]
 
-                    tempReturnData.data[cutMask == True] = areaData[cutMask == True]
+                    tempReturnData.data[
+                        cutMask is True] = areaData[
+                            cutMask is True]
 
                     returnData.data[latStart:latStart +
-                               latInterpolLen,
-                               lonStart:lonStart +
-                               lonInterpolLen] = tempReturnData
+                                    latInterpolLen,
+                                    lonStart:lonStart +
+                                    lonInterpolLen] = tempReturnData
                     returnData.mask[latStart:latStart +
                                     latInterpolLen,
                                     lonStart:lonStart +
@@ -144,5 +151,4 @@ def handleRequest(arguments, ncFileDictTree, log):
                 "data": returnData}
     else:
         return {"ok": False,
-                "error": "No data in specified area with" +
-                "specified climate-model and exhaust-level."}
+                "error": "No data in specified area with"}
