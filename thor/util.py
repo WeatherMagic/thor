@@ -9,6 +9,7 @@ from datetime import timedelta
 import numpy as np
 import json
 import copy
+from math import floor
 
 
 def printHelp(execName):
@@ -33,6 +34,14 @@ def argumentsHandler(arguments):
         if arg not in arguments:
             failure = True
             missingArgs.append(arg)
+    # Check that the request only contains arguments
+    # that's valid
+    validArgs = const.apiMustArgs + const.apiOptionalArgs
+    for arg in arguments:
+        if arg not in validArgs:
+            return {"ok": False,
+                    "error": "Use of non-valid argument " + arg + "!"
+                    }
 
     # If not, format a human readable error message
     if failure:
@@ -72,51 +81,6 @@ def argumentsHandler(arguments):
                 False,
                 "error":
                 "from-date larger than to-date."}
-
-    # ---------------------------------------
-
-    # Handling returnDimension
-    if isinstance(arguments["return-dimension"], str):
-        retDim = arguments["return-dimension"].replace("[", "")
-        retDim = retDim.replace("]", "")
-        retDim = retDim.split(", ")
-        arguments["return-dimension"] = retDim
-
-    if len(arguments["return-dimension"]) < 2:
-        return {"ok":
-                False,
-                "error":
-                "return-dimension contains to few dimensions."}
-
-    # We need this since we need integers in return dimension
-    intReturnDimension = []
-    for arg in arguments["return-dimension"]:
-        int_arg = 0
-
-        try:
-            int_arg = int(arg)
-            intReturnDimension.append(int_arg)
-        except ValueError:
-            return {"ok":
-                    False,
-                    "error":
-                    "return-dimension contains non-integers."}
-
-        if int_arg < 1:
-            return {"ok":
-                    False,
-                    "error":
-                    "return-dimension contains non-positive dimension count."}
-    # Save as integers
-    arguments["return-dimension"] = intReturnDimension
-
-    if len(arguments["return-dimension"]) == 2:
-        arguments["return-dimension"] = np.array(arguments[
-            "return-dimension"])
-    else:
-        return {"ok": False,
-                "error":
-                "returnDimension doesn't contain two values."}
 
     # ---------------------------------------
 
@@ -176,6 +140,28 @@ def argumentsHandler(arguments):
                 False,
                 "error":
                 "to-latitude is larger than 180."}
+
+    try:
+        arguments["height-resolution"] = int(arguments["height-resolution"])
+    except ValueError:
+        return {"ok": False,
+                "error":
+                "height-resolution contains something that is not a number."}
+
+    # -------------------------------------
+    """
+     Decide the return size of the image to put on earth.
+     This is to simplify for front-end since they don't
+     need to take lon-lat res scaling into account
+    """
+    lenLat = arguments["to-latitude"] - arguments["from-latitude"]
+    lenLon = arguments["to-longitude"] - arguments["from-longitude"]
+
+    resLat = arguments["height-resolution"]
+    resLon = floor(lenLon/lenLat*resLat)
+
+    arguments["return-dimension"] = [resLat,
+                                     resLon]
 
     arguments["ok"] = True
     return arguments
