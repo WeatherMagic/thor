@@ -16,9 +16,9 @@ apiMustArgs = ("from-month",
                "from-latitude",
                "to-latitude",
                "to-longitude",
-               "return-dimension")
-apiOptionalArgs = ("to-month",
-                   "to-year",
-                   "domain",
-                   "climate-model"
-                   "exhaust-level")
+               "height-resolution",
+               "climate-model",
+               "exhaust-level"
+               )
+apiOptionalArgs = (
+        )

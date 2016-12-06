@@ -28,11 +28,13 @@ def overlapScale(overlapArea,
                  toLat,
                  fromLong,
                  toLong):
+
     def scale(oldFrom,
               oldTo,
               newFrom,
               newTo):
         return (newTo-newFrom)/(oldTo-oldFrom)
+
     return (scale(fromLat,
                   toLat,
                   overlapArea[0],
@@ -149,9 +151,9 @@ def handleRequest(arguments, ncFileDictTree, log):
                                                 lonStart:lonStart +
                                                 lonInterpolLen]
 
-                    tempReturnData[cutMask == True] = areaData[cutMask == True]
+                    tempReturnData.data[cutMask == True] = areaData[cutMask == True]
 
-                    returnData[latStart:latStart +
+                    returnData.data[latStart:latStart +
                                latInterpolLen,
                                lonStart:lonStart +
                                lonInterpolLen] = tempReturnData
