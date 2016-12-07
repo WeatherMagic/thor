@@ -82,7 +82,7 @@ mm/day = pixel_value / 4.0 # FLOAT!
 It is possible to ask the server for available data. To do this, send a GET or POST request to:
 
 ```
-/api/<variable>
+/api/question
 ```
 
 This will return a json with something like this: 
