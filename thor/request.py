@@ -7,6 +7,30 @@ from datetime import timedelta
 import numpy as np
 import logging
 from math import floor
+import thor.util as util
+
+
+def getClimateModels(ncFileTree, arguments, ncFolder):
+    returnData = {}
+    returnData["domains"] = []
+    returnData["models"] = []
+    returnData["exhaust-levels"] = []
+
+    for domain, modelDict in ncFileTree.items():
+        if domain not in returnData["domains"]:
+            returnData["domains"].append(domain)
+        for model, experimentDict in modelDict.items():
+            if model not in returnData["models"]:
+                returnData["models"].append(model)
+            for experiment in experimentDict.keys():
+                if experiment not in returnData["exhaust-levels"]:
+                    returnData["exhaust-levels"].append(experiment)
+
+    if arguments["with-tree"]:
+        returnData["tree"] = util.getTreeAsString(ncFolder)
+
+    returnData["ok"] = True
+    return returnData
 
 
 def getReaderList(dictTree,

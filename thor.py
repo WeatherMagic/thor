@@ -46,6 +46,7 @@ if __name__ == "__main__":
         const.log.addHandler(fileHandler)
 
     # Load ncFiles
+    const.ncFolder = ncFolder
     const.ncFiles = frozendict.FrozenDict(util.openFiles(ncFolder))
     if printTree:
         util.printTree(ncFolder)
