@@ -14,6 +14,9 @@ import thor.transform as transform
 
 class Reader():
 
+    """
+    Takes a file path to a netcdf file and loads it.
+    """
     def __init__(self, filename):
         # Open netCDF file for reading
         self.netCDF = netCDF4.Dataset(filename, 'r')
@@ -113,7 +116,10 @@ class Reader():
         return self.baseDate +\
             datetime.timedelta(days=self.netCDF.variables['time'][last])
 
-    # -------------------------------------
+    """
+     Finds overlaping area between file area and
+     area requested of Thor.
+    """
     def overlap(self,
                 fromLat,
                 toLat,
@@ -153,7 +159,9 @@ class Reader():
                          fromLong,
                          toLong]}
 
-    # -------------------------------------
+    """
+    Gets indexes for a given area from within the file
+    """
     def getArea(self,
                 fromDate,
                 toDate,
@@ -183,8 +191,11 @@ class Reader():
                          stopLat,
                          startLong,
                          stopLong]})
-
-    # -------------------------------------
+    """
+    Returns data in an area of an netcdf file.
+    The area is determined by checking overlap
+    between requested area and area in file.
+    """
     def getData(self,
                 fromDate,
                 toDate,
