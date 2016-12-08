@@ -7,7 +7,7 @@ This document outlines the Thor Web API.
 The URL-scheme are as follows:
 
 ```
-/api/variable
+/api/<variable>
 ```
 
 Returned data variable and dimensionality is decided by in-arguments given by the client. 
@@ -71,17 +71,48 @@ celcius = (pixel_value - 128) / 2.0 # FLOAT!
 
 ### Percipitation
 
-Percipitation returned as a PNG image is clamped to 0-255 integer range since limited by PNG integer range. The total percipitation range is 0 to 62 mm/day. This means that each step in the PNG integer range represents 0,25 mm/day of rain. Formula for getting percipitation in Celcius from a pixel value in returned image is as follows.
+Percipitation returned as a PNG image is clamped to 0-255 integer range since limited by PNG integer range. The total precipitation range is 0 to 62 mm/day. This means that each step in the PNG integer range represents 0,25 mm/day of rain. Formula for getting precipitation in Celcius from a pixel value in returned image is as follows.
 
 ```
 mm/day = pixel_value / 4.0 # FLOAT!
 ```
 
+## Finding available climate models
 
-For more specific information on each function, please see the respective functions:
+It is possible to ask the server for available data. To do this, send a GET or POST request to:
 
-- [temperature](temperature.md)
-- [air-pressure](air-pressure.md)
-- [precipitation](precipitation.md)
-- [water-level](water-level.md)
+```
+/api/question
+```
+
+This will return a json with something like this: 
+
+```
+{
+	"exhaust-levels": [
+		"rcp45",
+		"rcp85"
+	],
+	"models": [
+		"ICHEC-EC-EARTH",
+		"CNRM-CERFACS-CNRM-CM5",
+		"IPSL-IPSL-CM5A-MR"
+	],
+	"ok": true,
+	"domains": [
+		"NAM-44i",
+		"CAM-44i",
+		"EUR-11i",
+		"WAS-44i",
+		"EUR-44i",
+		"MNA-22i",
+		"AFR-44i",
+		"SAM-44i",
+		"ARC-44i",
+		"MNA-44i"
+	]
+}
+```
+
+It is also possible for the server to return the entire internal tree structure of the server by setting the argument "with-tree". This is however very taxing for the server and will give a much longer response time (seconds!). 
 

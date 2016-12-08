@@ -23,6 +23,23 @@ def hello_world():
             code=302)
 
 
+@thorApp.route('/api/question', methods=["GET", "POST"])
+def question():
+    # None if args not given as json
+    arguments = flask.request.get_json()
+    # Set arguments from URL if not from json
+    if arguments is None:
+        arguments = flask.request.args.to_dict(flat=False)
+        # Some way every argument is nested in list
+        # Remove this somehow
+        for arg, value in arguments.items():
+            arguments[arg] = value[0]
+    if not "with-tree" in arguments:
+        arguments["with-tree"] = False
+    return json.dumps(request.getClimateModels(const.ncFiles, arguments, const.ncFolder))
+
+
+
 @thorApp.route('/api/<variable>', methods=["GET", "POST"])
 def api(variable):
     # None if args not given as json

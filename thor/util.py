@@ -158,7 +158,7 @@ def argumentsHandler(arguments):
     return arguments
 
 
-def printTree(folder):
+def getTreeAsString(folder):
     domainDict = openFiles(folder)
     for domain, modelDict in domainDict.items():
         for model, expDict in modelDict.items():
@@ -170,8 +170,11 @@ def printTree(folder):
                                 + str(readerList[i].getStartDate())[0:10]\
                                 + " - "\
                                 + str(readerList[i].getLastDate())[0:10]
+    return domainDict
 
-    print(json.dumps(domainDict,
+
+def printTree(folder):
+    print(json.dumps(getTreeAsString(folder),
                      sort_keys=True,
                      indent=4,
                      separators=(',', ': ')))
