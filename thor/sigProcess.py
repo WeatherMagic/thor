@@ -6,14 +6,21 @@ import numpy.matlib
 from enum import Enum
 
 
-# ------------------------------------
+"""
+Creates an Enum so that different axis
+are always maped to a certain value
+"""
 class Axis(Enum):
     time = 0
     lat = 1
     long = 2
 
-
-# -------------------------------------
+"""
+Takes a 2D or 3D ndarray and checks dimensionality
+and interpolates to requested dimension.
+If requested dimension can't be obtained from the data or if the
+data is of lower dimensionality then 2D, an error is returned.
+"""
 def interpolate(climateData,
                 returnDimensions):
 
@@ -59,8 +66,10 @@ def interpolate(climateData,
     return({"ok": True,
             "data": interpolData})
 
-
-# -------------------------------------
+"""
+Takes data creates a data grid and an interpolation grid
+and interpolates the data to fit the interpolation grid.
+"""
 def interpolateFunc(climateData,
                     maxAxes,
                     returnDimension):
@@ -82,8 +91,9 @@ def interpolateFunc(climateData,
     # Interpolate data for the 3D points created earlier
     return weatherInterpolationFunc(interPoints).reshape(returnDimension)
 
-
-# -------------------------------------
+"""
+Given a 1D, 2D or 3D grid, creates every point in that grid.
+"""
 def pointsFromGrid(gridList):
     dim = len(gridList)
 
