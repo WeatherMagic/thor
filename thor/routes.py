@@ -24,7 +24,7 @@ def hello_world():
 
 
 @thorApp.route('/api/question', methods=["GET", "POST"])
-def quistion():
+def question():
     # None if args not given as json
     arguments = flask.request.get_json()
     # Set arguments from URL if not from json
