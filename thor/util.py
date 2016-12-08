@@ -11,6 +11,10 @@ import json
 import copy
 from math import floor
 
+"""
+Prints how python can be interacted with in terminal.
+"""
+
 
 def printHelp(execName):
     print("Thor - bringer of weather")
@@ -23,6 +27,12 @@ def printHelp(execName):
     print("Default values for all arguments can \
 be found (and set) in the file defaults.py.")
     print("")
+
+
+"""
+Checks so that the arguments given in a request to Thor follows
+the Thor API.
+"""
 
 
 def argumentsHandler(arguments):
@@ -157,6 +167,10 @@ def argumentsHandler(arguments):
     arguments["ok"] = True
     return arguments
 
+"""
+Returns a string with the netCDF file tree that Thor currently has loaded. 
+"""
+
 
 def getTreeAsString(folder):
     domainDict = openFiles(folder)
@@ -172,6 +186,10 @@ def getTreeAsString(folder):
                                 + str(readerList[i].getLastDate())[0:10]
     return domainDict
 
+"""
+Prints the netCDF file tree that Thor currently has loaded.
+"""
+
 
 def printTree(folder):
     print(json.dumps(getTreeAsString(folder),
@@ -179,6 +197,18 @@ def printTree(folder):
                      indent=4,
                      separators=(',', ': ')))
 
+
+"""
+Returns a dict tree with all the files Thor currently has loaded.
+The tree has the following levels to get to the netCDF files
+located in a leaf node lists.
+Tree-
+    |Domains-
+           |Models-
+                 |Exhaust-levels-
+                                |Variables-
+                                          |Files
+"""
 
 def openFiles(folder):
     files = os.listdir(folder)
