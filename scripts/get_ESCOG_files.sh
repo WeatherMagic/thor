@@ -11,21 +11,13 @@ mkdir -p $dir
 cd $dir
 #Downloads the choosen amount of ncFiles to the ncFiles folder
 while true; do 
-    read -p "* How much data should I get? (min/med/max/maxi/ext) " RESP
-    if [ "$RESP" = "min" ]; then
-        echo "* Begining Downloading $RESP amount of data."
-        ../scripts/wget-ncFilesMin.sh
+    read -p "* What data should I get? (hist/all/ext) " RESP
+    if [ "$RESP" = "hist" ]; then
+        echo "* Begining Downloading $RESP data."
+        ../scripts/wget-ncFilesHist.sh
         break
-    elif [ "$RESP" = "med" ]; then
-        echo "* Begining Downloading $RESP amount of data."
-        ../scripts/wget-ncFilesMedium.sh
-        break
-    elif [ "$RESP" = "max" ]; then
-        echo "* Begining Downloading $RESP amount of data."
-        ../scripts/wget-ncFilesMax.sh
-        break
-    elif [ "$RESP" = "maxi" ]; then
-        echo "* Begining Downloading $RESP amount of data."
+    elif [ "$RESP" = "all" ]; then
+        echo "* Begining Downloading $RESP data."
         ../scripts/wget-ncFilesMax-i.sh
         break
     elif [ "$RESP" = "ext" ]; then
