@@ -11,6 +11,11 @@ import thor.util as util
 
 
 def getClimateModels(ncFileTree, arguments, ncFolder):
+    """
+    Purpose: Get response on client question to server
+    asking which variables that are available within
+    the dataset.
+    """
     returnData = {}
     returnData["domains"] = []
     returnData["models"] = []
@@ -37,6 +42,11 @@ def getReaderList(dictTree,
                   model,
                   experiment,
                   variable):
+    """
+    Get the leaf of a certain tree path.
+    The leaf is a list of readers which
+    gives access to data from a NetCDF file
+    """
     returnList = []
     for domain in dictTree:
         if model in list(dictTree[domain].keys()) and\
@@ -52,7 +62,11 @@ def overlapScale(overlapArea,
                  toLat,
                  fromLong,
                  toLong):
-
+    """
+    Get the quota between the length of the
+    borders of the requested area and the data
+    within this file.
+    """
     def scale(oldFrom,
               oldTo,
               newFrom,
@@ -70,7 +84,11 @@ def overlapScale(overlapArea,
 
 
 def handleRequest(arguments, ncFileDictTree, log):
-
+    """
+    Purpose: Once all arguments are found to be
+    valid according to API - start working on
+    colllecting the data and return it.
+    """
     variable = arguments["variable"]
     model = str(arguments["climate-model"])
     experiment = str(arguments["exhaust-level"])
@@ -94,6 +112,7 @@ def handleRequest(arguments, ncFileDictTree, log):
     fillFlag = False
 
     for ncFile in requestedFiles:
+        # If request within time period for file
         if arguments["from-date"] > ncFile.getStartDate()\
            and arguments["from-date"] < ncFile.getLastDate():
             climateAreaDict = ncFile.getData(
@@ -104,6 +123,9 @@ def handleRequest(arguments, ncFileDictTree, log):
                 arguments["from-longitude"],
                 arguments["to-longitude"])
 
+            # Did we get any data from the file?
+            # If so, take overlap between file and
+            # requested area
             if climateAreaDict["ok"]:
                 [latScale,
                  lonScale] = overlapScale(climateAreaDict["area"],
