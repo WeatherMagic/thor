@@ -15,7 +15,7 @@ import thor.transform as transform
 class Reader():
 
     """
-    Takes a string to a netcdf file and reads data from it
+    Takes a file path to a netcdf file and loads it.
     """
     def __init__(self, filename):
         # Open netCDF file for reading
