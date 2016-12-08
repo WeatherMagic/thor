@@ -25,6 +25,10 @@ def hello_world():
 
 @thorApp.route('/api/question', methods=["GET", "POST"])
 def question():
+    """
+    Purpose: Give clients answer to which data
+    that is available to them from this server.
+    """
     # None if args not given as json
     arguments = flask.request.get_json()
     # Set arguments from URL if not from json
@@ -34,14 +38,18 @@ def question():
         # Remove this somehow
         for arg, value in arguments.items():
             arguments[arg] = value[0]
-    if not "with-tree" in arguments:
+    if "with-tree" not in arguments:
         arguments["with-tree"] = False
-    return json.dumps(request.getClimateModels(const.ncFiles, arguments, const.ncFolder))
-
+    return json.dumps(request.getClimateModels(const.ncFiles,
+                                               arguments,
+                                               const.ncFolder))
 
 
 @thorApp.route('/api/<variable>', methods=["GET", "POST"])
 def api(variable):
+    """
+    Purpose: Main API. Return data from NetCDF files.
+    """
     # None if args not given as json
     arguments = flask.request.get_json()
     # Set arguments from URL if not from json
@@ -85,7 +93,7 @@ def api(variable):
         returnData["data"] = returnData["data"].tolist()
         return json.dumps(returnData)
     else:
-        # Convert data to integer range.
+        # Convert data to PNG integer range.
         returnData["data"]\
                 = util.convertToPNGRange(returnData["data"], variable)
         # Return a PNG as requested by weather-front
