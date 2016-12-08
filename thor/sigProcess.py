@@ -10,6 +10,8 @@ from enum import Enum
 Creates an Enum so that different axis
 are always maped to a certain value
 """
+
+
 class Axis(Enum):
     time = 0
     lat = 1
@@ -21,6 +23,8 @@ and interpolates to requested dimension.
 If requested dimension can't be obtained from the data or if the
 data is of lower dimensionality then 2D, an error is returned.
 """
+
+
 def interpolate(climateData,
                 returnDimensions):
 
@@ -70,6 +74,8 @@ def interpolate(climateData,
 Takes data creates a data grid and an interpolation grid
 and interpolates the data to fit the interpolation grid.
 """
+
+
 def interpolateFunc(climateData,
                     maxAxes,
                     returnDimension):
@@ -94,6 +100,8 @@ def interpolateFunc(climateData,
 """
 Given a 1D, 2D or 3D grid, creates every point in that grid.
 """
+
+
 def pointsFromGrid(gridList):
     dim = len(gridList)
 
