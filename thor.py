@@ -54,6 +54,7 @@ if printTree:
 const.apiMustArgs = apiMustArgs
 const.apiOptionalArgs = apiOptionalArgs
 
+# If running as main exec (i e not under uwsgi)
 if __name__ == "__main__":
     thorApp.run()
 
