@@ -93,6 +93,14 @@ sudo pip3 install -U -r requirements.txt
 sudo pip3 install .
 ```
 
+# Get data files from ESGF
+
+- Create an account according to: https://github.com/WeatherMagic/thor/blob/master/doc/earthsystemcog_summary.md
+- Run the script in scripts/get_ESCOG_files.sh
+- Choose the ammount of data you want (hist/max)
+- Enter your ESGF-id (https://.... .... ...)
+- Enter empty MyProxy password
+- Enter your ESGF password next
 
 # Usage
 
