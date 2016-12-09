@@ -9,7 +9,6 @@ import scipy.interpolate
 import netCDF4
 # Regex
 import re
-import thor.transform as transform
 
 
 class Reader():
