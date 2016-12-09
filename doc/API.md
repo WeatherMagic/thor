@@ -97,6 +97,7 @@ This will return a json with something like this:
 		"ICHEC-EC-EARTH",
 		"CNRM-CERFACS-CNRM-CM5",
 		"IPSL-IPSL-CM5A-MR"
+        "historical"
 	],
 	"ok": true,
 	"domains": [
