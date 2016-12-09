@@ -69,9 +69,9 @@ Temperature returned as a PNG image is clamped to 0-255 integer range since limi
 celcius = (pixel_value - 128) / 2.0 # FLOAT!
 ```
 
-### Percipitation
+### Precipitation
 
-Percipitation returned as a PNG image is clamped to 0-255 integer range since limited by PNG integer range. The total precipitation range is 0 to 62 mm/day. This means that each step in the PNG integer range represents 0,25 mm/day of rain. Formula for getting precipitation in Celcius from a pixel value in returned image is as follows.
+Precipitation returned as a PNG image is clamped to 0-255 integer range since limited by PNG integer range. The total precipitation range is 0 to 62 mm/day. This means that each step in the PNG integer range represents 0,25 mm/day of rain. Formula for getting precipitation in Celcius from a pixel value in returned image is as follows.
 
 ```
 mm/day = pixel_value / 4.0 # FLOAT!
