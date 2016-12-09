@@ -25,7 +25,7 @@ This project is built using Python 3. You need to insteall Python and its packag
 On Debian or Ubuntu:
 
 ```bash
-sudo apt-get install python3 python3-pip netcdf-bin libhdf5-serial-dev libnetcdf-dev memcached
+sudo apt-get install python3 python3-pip netcdf-bin libhdf5-serial-dev libnetcdf-dev memcached libmemcached-dev zlib1g-dev
 ```
 
 On macOS:
