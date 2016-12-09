@@ -128,7 +128,8 @@ def api(variable):
         image.save(output, 'PNG')
         output.seek(0)
         # Save in memcache
-        const.thorCache.set(cacheLine, output, timeout=const.cacheMaxAge)
+        if const.enableCache:
+            const.thorCache.set(cacheLine, output, timeout=const.cacheMaxAge)
         # Return
         return flask.send_file(
                     output,
