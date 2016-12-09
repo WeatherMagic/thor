@@ -7,6 +7,7 @@ import thor.util as util
 import sys
 import logging
 import thor.frozendict as frozendict
+import werkzeug.contrib.cache as cache
 
 
 printTree = False
@@ -25,6 +26,8 @@ for argument in sys.argv:
         logFiles.append(argument.replace("--log-file=", ""))
     elif "--print-tree" in argument:
         printTree = True
+    elif "--disable-cache" in argument:
+        enableCache = False
 # appName and subfolder to read netCDF files from
 const.appName = appName
 
@@ -53,6 +56,12 @@ if printTree:
 # This defines valid arguments for API
 const.apiMustArgs = apiMustArgs
 const.apiOptionalArgs = apiOptionalArgs
+
+# init cache
+const.enableCache = enableCache
+const.cacheMaxAge = cacheMaxAge
+if const.enableCache:
+    const.thorCache = cache.MemcachedCache(['127.0.0.1:11211'])
 
 # If running as main exec (i e not under uwsgi)
 if __name__ == "__main__":

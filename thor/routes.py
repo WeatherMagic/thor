@@ -12,6 +12,7 @@ import thor.const as const
 import PIL
 
 
+# Create flask app and memcache
 thorApp = flask.Flask("thor")
 
 
@@ -79,6 +80,29 @@ def api(variable):
                            "errorMessage":
                            "Client sent incorrect variable: " + variable})
 
+    # Check if we've handled this response before
+    # If so - read from memcache
+    cacheLine = str(arguments["variable"]) +\
+                str(arguments["climate-model"]) +\
+                str(arguments["exhaust-level"]) +\
+                str(arguments["year"]) +\
+                str(arguments["month"]) +\
+                str(arguments["from-longitude"]) +\
+                str(arguments["from-latitude"]) +\
+                str(arguments["to-longitude"]) +\
+                str(arguments["to-latitude"])
+    cachedResponse = None
+    if const.enableCache:
+        cachedResponse = const.thorCache.get(cacheLine)
+
+    if cachedResponse is not None:
+        return flask.send_file(
+                cachedResponse,
+                attachment_filename="climate.png",
+                mimetype="image/png",
+                as_attachment=True
+                )
+
     returnData = request.handleRequest(argCheckDict,
                                        const.ncFiles,
                                        const.log)
@@ -103,6 +127,10 @@ def api(variable):
         image = image.transpose(PIL.Image.FLIP_TOP_BOTTOM)
         image.save(output, 'PNG')
         output.seek(0)
+        # Save in memcache
+        if const.enableCache:
+            const.thorCache.set(cacheLine, output, timeout=const.cacheMaxAge)
+        # Return
         return flask.send_file(
                     output,
                     attachment_filename="climate.png",
