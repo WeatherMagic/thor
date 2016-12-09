@@ -7,3 +7,4 @@ flask
 scipy
 Pillow
 uwsgi
+pylibmc

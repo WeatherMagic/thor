@@ -4,3 +4,4 @@ cython
 flask
 scipy
 Pillow
+pylibmc

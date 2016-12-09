@@ -25,13 +25,13 @@ This project is built using Python 3. You need to insteall Python and its packag
 On Debian or Ubuntu:
 
 ```bash
-sudo apt-get install python3 python3-pip netcdf-bin libhdf5-serial-dev libnetcdf-dev 
+sudo apt-get install python3 python3-pip netcdf-bin libhdf5-serial-dev libnetcdf-dev memcached
 ```
 
 On macOS:
 
 ```bash
-brew install python3 findutils
+brew install python3 findutils memcached
 pip3 install virtualenv
 ```
 
@@ -61,6 +61,10 @@ source env/bin/activate
 You're now ready to install the additional python dependencies into your virtual environment using pip:
 
 ```bash
+# macOS specific!!!
+export CPPFLAGS="-I/usr/local/include"
+export LDFLAGS="-L/usr/local/lib"
+# END macOS specific!!!
 USE_SETUPCFG=0 HDF5_INCDIR=/usr/include/hdf5/serial pip3 install -U -r dev-requirements.txt
 ```
 
