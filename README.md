@@ -96,7 +96,17 @@ sudo pip3 install .
 
 # Usage
 
-Magic!
+Run thor with:
+
+```bash
+./thor.py
+```
+
+Or for disabled cache:
+
+```bash
+./thor.py --disable-cache
+```
 
 
 # License
