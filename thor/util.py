@@ -11,12 +11,11 @@ import json
 import copy
 from math import floor
 
-"""
-Prints how python can be interacted with in terminal.
-"""
-
 
 def printHelp(execName):
+    """
+    Prints how python can be interacted with in terminal.
+    """
     print("Thor - bringer of weather")
     print("")
     print("Usage: ")
@@ -29,13 +28,11 @@ be found (and set) in the file defaults.py.")
     print("")
 
 
-"""
-Checks so that the arguments given in a request to Thor follows
-the Thor API.
-"""
-
-
 def argumentsHandler(arguments):
+    """
+    Checks so that the arguments given in a request to Thor follows
+    the Thor API.
+    """
     failure = False
     missingArgs = []
 
@@ -156,8 +153,8 @@ def argumentsHandler(arguments):
     resLat = arguments["height-resolution"]
 
     if lenLat == 0.0 or lenLon == 0.0:
-        return{"ok":False,
-               "error":"Latitude or longitude range is zero"}
+        return{"ok": False,
+               "error": "Latitude or longitude range is zero"}
 
     resLon = floor(lenLon/lenLat*resLat)
 
@@ -167,12 +164,11 @@ def argumentsHandler(arguments):
     arguments["ok"] = True
     return arguments
 
-"""
-Returns a string with the netCDF file tree that Thor currently has loaded. 
-"""
-
 
 def getTreeAsString(folder):
+    """
+    Returns a string with the netCDF file tree that Thor currently has loaded.
+    """
     domainDict = openFiles(folder)
     for domain, modelDict in domainDict.items():
         for model, expDict in modelDict.items():
@@ -186,31 +182,30 @@ def getTreeAsString(folder):
                                 + str(readerList[i].getLastDate())[0:10]
     return domainDict
 
-"""
-Prints the netCDF file tree that Thor currently has loaded.
-"""
-
 
 def printTree(folder):
+    """
+    Prints the netCDF file tree that Thor currently has loaded.
+    """
+
     print(json.dumps(getTreeAsString(folder),
                      sort_keys=True,
                      indent=4,
                      separators=(',', ': ')))
 
 
-"""
-Returns a dict tree with all the files Thor currently has loaded.
-The tree has the following levels to get to the netCDF files
-located in a leaf node lists.
-Tree-
-    |Domains-
-           |Models-
-                 |Exhaust-levels-
-                                |Variables-
-                                          |Files
-"""
-
 def openFiles(folder):
+    """
+    Returns a dict tree with all the files Thor currently has loaded.
+    The tree has the following levels to get to the netCDF files
+    located in a leaf node lists.
+    Tree-
+        |Domains-
+               |Models-
+                     |Exhaust-levels-
+                                    |Variables-
+                                              |Files
+    """
     files = os.listdir(folder)
     domainDict = dict()
 
@@ -290,24 +285,38 @@ def openFiles(folder):
 
 
 def padWithZeros(vector, pad_width, iaxis, kwargs):
+    """
+    Purpose: Pad a numpy array with zeros
+    """
     vector[:pad_width[0]] = 0
     vector[-pad_width[1]:] = 0
     return vector
 
 
 def padWithOnes(vector, pad_width, iaxis, kwargs):
+    """
+    Purpose: Pad a numpy array with ones
+    """
     vector[:pad_width[0]] = 1
     vector[-pad_width[1]:] = 1
     return vector
 
 
 def padWithMinusOneTwoEight(vector, pad_width, iaxis, kwargs):
+    """
+    Purpose: Pad a numpy array with minus 128
+    """
     vector[:pad_width[0]] = -128
     vector[-pad_width[1]:] = -128
     return vector
 
 
 def convertToPNGRange(data, variable):
+    """
+    Purpose: Convert a numpy array into PNG range
+    that works for our data variables and
+    are readable for weather-front.
+    """
     borderValue = 0
     multiplier = 0
 

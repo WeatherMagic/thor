@@ -113,8 +113,8 @@ def handleRequest(arguments, ncFileDictTree, log):
     timeFlag = False
     for ncFile in requestedFiles:
         # If request within time period for file
-        if arguments["from-date"] > ncFile.getStartDate()\
-           and arguments["from-date"] < ncFile.getLastDate():
+        if arguments["from-date"] >= ncFile.getStartDate()\
+           and arguments["from-date"] <= ncFile.getLastDate():
             timeFlag = True
 
             climateAreaDict = ncFile.getData(
@@ -135,7 +135,6 @@ def handleRequest(arguments, ncFileDictTree, log):
                                           arguments["to-latitude"],
                                           arguments["from-longitude"],
                                           arguments["to-longitude"])
-
                 latInterpolLen = floor(arguments["return-dimension"][0] *
                                        latScale)
                 lonInterpolLen = floor(arguments["return-dimension"][1] *
@@ -149,7 +148,6 @@ def handleRequest(arguments, ncFileDictTree, log):
                      lonInterpolLen])
 
                 if returnAreaDict["ok"]:
-
                     latStart = floor((((climateAreaDict["area"][0] -
                                         arguments["from-latitude"]) *
                                        arguments["return-dimension"][0]) /
