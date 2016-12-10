@@ -109,12 +109,14 @@ def handleRequest(arguments, ncFileDictTree, log):
 
     returnData = np.ma.array(returnData, mask=True)
 
-    fillFlag = False
-
+    areaFlag = False
+    timeFlag = False
     for ncFile in requestedFiles:
         # If request within time period for file
         if arguments["from-date"] > ncFile.getStartDate()\
            and arguments["from-date"] < ncFile.getLastDate():
+            timeFlag = True
+
             climateAreaDict = ncFile.getData(
                 arguments["from-date"],
                 arguments["from-date"],
@@ -160,7 +162,7 @@ def handleRequest(arguments, ncFileDictTree, log):
                                       (arguments["to-longitude"] -
                                        arguments["from-longitude"])))
 
-                    fillFlag = True
+                    areaFlag = True
 
                     areaData = np.ma.masked_greater(
                         returnAreaDict["data"], 10000)
@@ -192,9 +194,12 @@ def handleRequest(arguments, ncFileDictTree, log):
                                     lonInterpolLen] = np.logical_and(
                                         origMask,
                                         areaData.mask)
-    if fillFlag:
+    if areaFlag:
         return {"ok": True,
                 "data": returnData}
+    elif not timeFlag:
+        return {"ok": False,
+                "error": "No data at specified time"}
     else:
         return {"ok": False,
                 "error": "No data in specified area"}
