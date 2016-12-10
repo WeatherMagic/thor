@@ -76,7 +76,7 @@ class Reader():
         self.lastDate = datetime.datetime(lastDate.year, lastDate.month, 1)
 
         # Avg nr of days / month
-        self.dateResolution = 30.25
+        self.dateResolution = 30.42
 
         if "i" in self.domain:
             self.minLat = self.netCDF.variables['lat'][0]
