@@ -52,7 +52,7 @@ class Reader():
         # Replace all non-digit characters
         dateString = re.sub("\D", "", dateString)
         # Get only first 8 digits
-        dateString = dateString[0:8]
+        dateString = dateString[0:6] + "01"
 
         self.baseDate = datetime.datetime.strptime(
                 dateString,
@@ -64,9 +64,18 @@ class Reader():
             datetime.timedelta(
                 days=self.netCDF["time"][0]
             )
+        self.startDate = datetime.datetime(
+                self.startDate.year,
+                self.startDate.month,
+                1
+                )
 
-        self.dateResolution = abs(self.netCDF.variables['time'][1] -
-                                  self.netCDF.variables['time'][0])
+        last = len(self.netCDF.variables['time']) - 1
+        lastDate = self.baseDate +\
+            datetime.timedelta(days=self.netCDF.variables['time'][last])
+        self.lastDate = datetime.datetime(lastDate.year, lastDate.month, 1)
+
+        self.dateResolution = 30.25
 
         if "i" in self.domain:
             self.minLat = self.netCDF.variables['lat'][0]
@@ -111,9 +120,7 @@ class Reader():
 
     # -------------------------------------
     def getLastDate(self):
-        last = len(self.netCDF.variables['time']) - 1
-        return self.baseDate +\
-            datetime.timedelta(days=self.netCDF.variables['time'][last])
+        return self.lastDate
 
     """
      Finds overlaping area between file area and
@@ -171,12 +178,10 @@ class Reader():
 
         startTime = int(round((fromDate-self.startDate).days /
                               self.dateResolution))
-        stopTime = int(round((toDate-self.startDate).days /
-                             self.dateResolution))
+        stopTime = startTime + 1
 
         # Due to how numpy range-indexing works, we need one more.
-        if stopTime < len(self.netCDF.variables["time"]) - 1:
-            stopTime = stopTime + 1
+        # if stopTime < len(self.netCDF.variables["time"]) - 1:
 
         startLat = int(floor((fromLat - self.minLat) * self.latScale))
         stopLat = int(floor((toLat - self.minLat) * self.latScale))
@@ -240,7 +245,7 @@ class Reader():
 
         if not weatherData3D.size:
             return {"ok": False,
-                    "errorMessage":
+                    "error":
                     "Specified area did not contain any data"}
 
         return {"ok": True,
