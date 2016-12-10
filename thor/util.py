@@ -20,7 +20,7 @@ def printHelp(execName):
     print("")
     print("Usage: ")
     print("    " + execName +
-          " [--debug] [--app-name=appName] \
+          " [--disable-cache] [--debug] [--app-name=appName] \
 [--netCDF-folder=folder] [--log-file=logFile] [--print-tree]")
     print("")
     print("Default values for all arguments can \
@@ -67,14 +67,25 @@ def argumentsHandler(arguments):
     # ---------------------------------------
 
     # Handeling time
-    arguments["to-month"] = arguments["month"]
+    try:
+        arguments["to-month"] = int(arguments["month"])
+        arguments["year"] = int(arguments["year"])
+    except ValueError as e:
+        return {"ok": False,
+                "error": "Month and year needs to integers!"
+                }
 
-    arguments["year"] = arguments["year"]
+    if arguments["to-month"] < 1 or arguments["to-month"] > 12:
+        return {"ok": False,
+                "error": "Month has to be an integer between 1 and 12!"
+                }
 
-    arguments["from-date"] = datetime.strptime(str(arguments["year"]) +
-                                               str(arguments["month"]) +
-                                               "1",
-                                               "%Y%m%d")
+    if arguments["year"] < 1950 or arguments["year"] > 2100:
+        return {"ok": False,
+                "error": "Year has to be between 1950 and 2100!"
+                }
+
+    arguments["from-date"] = datetime(arguments["year"], arguments["to-month"], 1)
     # ---------------------------------------
 
     # Handling latitude

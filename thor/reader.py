@@ -75,6 +75,7 @@ class Reader():
             datetime.timedelta(days=self.netCDF.variables['time'][last])
         self.lastDate = datetime.datetime(lastDate.year, lastDate.month, 1)
 
+        # Avg nr of days / month
         self.dateResolution = 30.25
 
         if "i" in self.domain:
