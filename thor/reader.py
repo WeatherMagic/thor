@@ -75,7 +75,8 @@ class Reader():
             datetime.timedelta(days=self.netCDF.variables['time'][last])
         self.lastDate = datetime.datetime(lastDate.year, lastDate.month, 1)
 
-        self.dateResolution = 30.25
+        # Avg nr of days / month
+        self.dateResolution = 30.42
 
         if "i" in self.domain:
             self.minLat = self.netCDF.variables['lat'][0]
