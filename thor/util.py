@@ -85,7 +85,8 @@ def argumentsHandler(arguments):
                 "error": "Year has to be between 1950 and 2100!"
                 }
 
-    arguments["from-date"] = datetime(arguments["year"], arguments["to-month"], 1)
+    arguments["from-date"] = datetime(arguments["year"],
+                                      arguments["to-month"], 1)
     # ---------------------------------------
 
     # Handling latitude
