@@ -83,6 +83,7 @@ def api(variable):
     # Check if we've handled this response before
     # If so - read from memcache
     cacheLine = str(arguments["variable"]) +\
+        str(arguments["height-resolution"]) +\
         str(arguments["climate-model"]) +\
         str(arguments["exhaust-level"]) +\
         str(arguments["year"]) +\
