@@ -168,6 +168,10 @@ def argumentsHandler(arguments):
                "error": "Latitude or longitude range is zero"}
 
     resLon = floor(lenLon/lenLat*resLat)
+    # Ugly as fuck fix for no key-hole-shape on earth
+    # in weather-front if we ask for entire planet
+    if lenLon == 360:
+        resLon = resLon + 4
 
     arguments["return-dimension"] = [resLat,
                                      resLon]
@@ -322,7 +326,7 @@ def padWithMinusOneTwoEight(vector, pad_width, iaxis, kwargs):
     return vector
 
 
-def convertToPNGRange(data, variable):
+def convertToPNGRange(data, variable, fromLong, toLong, fromLat, toLat):
     """
     Purpose: Convert a numpy array into PNG range
     that works for our data variables and
@@ -330,6 +334,14 @@ def convertToPNGRange(data, variable):
     """
     borderValue = 0
     multiplier = 0
+    pad = True
+
+    # If entire earth - don't pad
+    # This hole pad/no-pad shit is
+    # in order to fix bugs in weather-front
+    # and has nothing to do with API/thor
+    if fromLong == -180 and toLong == 180:
+        pad = False
 
     # Kelvin->Celsius and fit into PNG 8-bit integer range (0 to 255)
     if variable == "temperature":
@@ -350,25 +362,39 @@ def convertToPNGRange(data, variable):
     # Get a mask that'll be the alpha channel
     maskArray = data.mask
     maskArray = maskArray.astype("uint8")
-    maskArray = np.lib.pad(maskArray, 1, padWithOnes)
+    if pad:
+        maskArray = np.lib.pad(maskArray, 1, padWithOnes)
     # Convert to alpha
     maskArray = (255-255*maskArray)
 
     # Set border in order to fix PNG res
     data = data.clip(0, borderValue)
-    data = np.lib.pad(data, 1, padWithZeros)
-    data[0, 0] = borderValue
+
+    if pad:
+        data = np.lib.pad(data, 1, padWithZeros)
+    # If we don't pad - compensate by inserting a zero
+    if not pad:
+        data[1, 1] = 0
+    data[1, 2] = borderValue
+
     data = data * multiplier
     data = data.astype("uint8")
     # Create an array with four channels (RGBA PNG)
     dimensions = data.shape
+    if not pad:
+        longScale = (toLong - fromLong) / (toLat - fromLat)
+        dimensions = [dimensions[0], int(longScale*dimensions[0])]
     outData = np.ndarray(shape=(dimensions[0],
                                 dimensions[1],
                                 4),
                          dtype="uint8")
-    outData[:, :, 0] = data[:, :]
+    if pad:
+        outData[:, :, 0] = data[:, :]
+        outData[:, :, 3] = maskArray[:, :]
+    else:
+        outData[:, :, 0] = data[:, 2:dimensions[1]+2]
+        outData[:, :, 3] = maskArray[:, 2:dimensions[1]+2]
     outData[:, :, 1] = 0
     outData[:, :, 2] = 0
-    outData[:, :, 3] = maskArray[:, :]
 
     return outData
