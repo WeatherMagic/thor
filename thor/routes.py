@@ -120,7 +120,13 @@ def api(variable):
     else:
         # Convert data to PNG integer range.
         returnData["data"]\
-                = util.convertToPNGRange(returnData["data"], variable)
+                = util.convertToPNGRange(returnData["data"],
+                                         variable,
+                                         arguments["from-longitude"],
+                                         arguments["to-longitude"],
+                                         arguments["from-latitude"],
+                                         arguments["to-latitude"]
+                                         )
         # Return a PNG as requested by weather-front
         output = io.BytesIO()
         image = PIL.Image.fromarray(returnData["data"], "RGBA")
