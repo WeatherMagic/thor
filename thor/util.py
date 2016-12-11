@@ -374,8 +374,8 @@ def convertToPNGRange(data, variable, fromLong, toLong, fromLat, toLat):
         data = np.lib.pad(data, 1, padWithZeros)
     # If we don't pad - compensate by inserting a zero
     if not pad:
-        data[1, 1] = 0
-    data[1, 2] = borderValue
+        data[0, 2] = 0
+    data[0, 3] = borderValue
 
     data = data * multiplier
     data = data.astype("uint8")
