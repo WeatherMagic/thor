@@ -82,16 +82,16 @@ def api(variable):
 
     # Check if we've handled this response before
     # If so - read from memcache
-    cacheLine = str(arguments["variable"]) +\
-        str(arguments["height-resolution"]) +\
-        str(arguments["climate-model"]) +\
-        str(arguments["exhaust-level"]) +\
-        str(arguments["year"]) +\
-        str(arguments["month"]) +\
-        str(arguments["from-longitude"]) +\
-        str(arguments["from-latitude"]) +\
-        str(arguments["to-longitude"]) +\
-        str(arguments["to-latitude"])
+    cacheLine = str(argCheckDict["variable"]) +\
+        str(argCheckDict["height-resolution"]) +\
+        str(argCheckDict["climate-model"]) +\
+        str(argCheckDict["exhaust-level"]) +\
+        str(argCheckDict["year"]) +\
+        str(argCheckDict["month"]) +\
+        str(argCheckDict["from-longitude"]) +\
+        str(argCheckDict["from-latitude"]) +\
+        str(argCheckDict["to-longitude"]) +\
+        str(argCheckDict["to-latitude"])
     cachedResponse = None
     if const.enableCache:
         cachedResponse = const.thorCache.get(cacheLine)
@@ -122,10 +122,10 @@ def api(variable):
         returnData["data"]\
                 = util.convertToPNGRange(returnData["data"],
                                          variable,
-                                         arguments["from-longitude"],
-                                         arguments["to-longitude"],
-                                         arguments["from-latitude"],
-                                         arguments["to-latitude"]
+                                         argCheckDict["from-longitude"],
+                                         argCheckDict["to-longitude"],
+                                         argCheckDict["from-latitude"],
+                                         argCheckDict["to-latitude"]
                                          )
         # Return a PNG as requested by weather-front
         output = io.BytesIO()
